@@ -1,29 +1,25 @@
-<div class="flex bg-linearBG2 w-[100vw] h-[100vh] justify-center items-center flex-col relative"
+<div class="flex bg-white w-[100vw] h-[100vh] justify-center items-center flex-col relative"
     (keyup.enter)="login()">
     <div
-        class="absolute top-10 right-10 rounded-[50%] size-[25px] text-[12px] cursor-pointer border-[#1C274C] border bg-[#FFF] flex justify-center items-center">
+        class="absolute top-10 left-10 rounded-[50%] size-[25px] text-[12px] cursor-pointer border-[#1C274C] border bg-[#FFF] flex justify-center items-center">
         <span *ngIf="language==='vi'" (click)="changeLanguage('en')" class="select-none">VN</span>
         <span *ngIf="language==='en'" (click)="changeLanguage('vi')" class="select-none">EN</span>
     </div>
     <div class="flex h-full w-full">
-        <div class="w-[40%] h-full flex items-center justify-center">
-            <img class="w-[350px] h-[350px] object-cover rounded-[50%] shadow-2xl"  src="../../../assets/img/Logo-Hoc-Vien-Ky-Thuat-Mat-Ma-ACTVN.webp"/>
-        </div>
-        <div class="grid flex-1 lg:w-[700px] grid-cols-1">
+        <div class="grid flex-1 lg:w-[500px] grid-cols-1">
             <div class="flex justify-center items-center flex-col">
                 <div
-                    class="bg-white shadow-2xl lg:w-[700px] border-[3px] border-[rgba(131,_166,_211,_0.64)] rounded-[20px] flex flex-col justify-center items-center p-5 py-10">
+                    class="bg-white shadow-2xl lg:w-[500px] border-[3px] border-[rgba(102, 102, 102, 0.50)] rounded-[20px] flex flex-col justify-center items-center p-5 py-10">
+                    <div class="flex items-center justify-center">
+                        <img class="object-cover"  src="../../../assets/img/logoSB.png"/>
+                    </div>
                     <form [formGroup]="formLogin" class="flex flex-col gap-7 w-[80%]">
                         <div class="w-full text-center">
-                            <div class="w-full [text-shadow:_0_1px_0_rgb(0_0_0_/_40%)] uppercase text-center text-primary text-[30px] font-semibold">
+                            <div class="w-full [text-shadow:_0_1px_0_rgb(0_0_0_/_40%)] text-center text-[#000] text-[30px] font-semibold">
                                 {{'Login.login'|translate}}
-                            </div>
-                            <div class="w-full text-center text-[#888] text-[16px] font-normal">
-                                {{'Login.text'|translate}}
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <label for="userName" class="w-52">{{'Login.username'|translate}}</label>
                             <mat-form-field class="custom-input" appearance="outline">
                                 <input formControlName="userName" name="userName" matInput
                                     placeholder="{{'Login.userNamePlaceholder'|translate}}" />
@@ -31,7 +27,6 @@
                             </mat-form-field>
                         </div>
                         <div class="flex flex-col relative">
-                            <label for="password" class="w-52">{{'Login.password'|translate}}</label>
                             <mat-form-field class="custom-input relative" appearance="outline">
                                 <input formControlName="password" name="password" matInput type="password"
                                     autocomplete="off" id="inputPass" placeholder="*********" />
@@ -69,6 +64,9 @@
     
             </div>
     
+        </div>
+        <div class="w-[60%] h-full flex items-center justify-center">
+            <img class="h-full object-cover"  src="../../../assets/img/bannerLogin.avif"/>
         </div>
     </div>
 
