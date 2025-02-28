@@ -18,7 +18,7 @@ import { MatInput, MatLabel } from '@angular/material/input';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/api/auth.service';
-import { Router, RouterState, RouterStateSnapshot } from '@angular/router';
+import { Router, RouterLink, RouterState, RouterStateSnapshot } from '@angular/router';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { RegisterComponent } from '../register/register.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -55,6 +55,7 @@ import { PopUpCheckPhoneComponent } from '../forgot-pass-word/pop-up-check-phone
     SocialLoginModule,
     PopUpCheckEmailComponent,
     PopUpCheckPhoneComponent,
+    RouterLink,
   ],
   providers: [
     {

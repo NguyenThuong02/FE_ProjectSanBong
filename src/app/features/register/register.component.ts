@@ -24,11 +24,10 @@ import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectModule, NzSelectSizeType } from 'ng-zorro-antd/select';
 import { phoneNumberValidator } from '../../shared/validate/check-phone-number.directive';
 import { rePassValidator } from '../../shared/validate/check-repass.directive';
-import { AuthService } from '../../core/api/auth.service';
-import { SnackbarService } from '../../core/services/snackbar.service';
-import { passWordValidator } from '../../shared/validate/check-password.directive';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { ManagermentService } from '../../core/api/managerment.service';
 
 @Component({
   selector: 'app-register',
@@ -51,22 +50,18 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent implements OnInit {
-  isConfirmLoading = false;
-  @Input() isVisiblePopUpRegister: boolean = false;
-  @Output() isVisiblePopUpOpen = new EventEmitter<any>();
-  registerSuccess: string;
-  notify: string;
-  AlerPhoneNumber: string;
-  AlerEmail: string;
-  handleOk(): void {
-    console.log('Button ok clicked!');
-    this.isVisiblePopUpOpen.emit(false);
-  }
-  size: NzSelectSizeType = 'default';
-  handleCancel(): void {
-    this.form.reset();
-    this.isVisiblePopUpOpen.emit(false);
-  }
+  @Input() isVisiblePopUpAddManagement: boolean = true;
+  @Input() idManagement: any = ''; 
+  @Input() mode: 'create' | 'edit';
+  @Output() visiblePopUpAddManagement = new EventEmitter<boolean>();
+  public hideOldPass: boolean = true;
+  public hidePass: boolean = true;
+  public hideRePass: boolean = true;
+  public edit: boolean = false;
+  avatarUrl: string | null = null;
+  identityCardUrl: string | null = null;
+
+
   listGender = [
     {
       label: 'Nam',
@@ -77,14 +72,17 @@ export class RegisterComponent implements OnInit {
       value: false,
     }
   ];
-  constructor(
-    private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
-    private modal: NzModalService,
-    private translate: TranslateService,
-    private authService: AuthService,
-  ) {}
-  _snack = inject(SnackbarService);
+  listRoles = [
+    {
+      label: 'Người dùng thường',
+      value: false,
+    },
+    {
+      label: 'Quản trị viên',
+      value: true,
+    }
+  ];
+
   public form: FormGroup = this.fb.group({
     fullName: [null, Validators.required],
     identityCardNumber: [null, Validators.required],
@@ -94,42 +92,33 @@ export class RegisterComponent implements OnInit {
     email: [null, Validators.email],
     birthday: [null, Validators.required],
     address: [null, Validators.required],
-    gender: [null, Validators.required],
+    gender: [true, Validators.required],
     cellPhone: [null, [phoneNumberValidator()]],
+    isAdmin: [false],
+    avatarUrl: [''], // Control for avatar
+    identityCardUrl: ['']
   });
-  ngOnInit(): void {
-    this.form
-      .get('rePass')
-      ?.addValidators(rePassValidator(this.form.get('password')?.value));
 
-    this.translate
-      .get('Toast.notify')
-      .subscribe((value) => (this.notify = value));
-    this.translate
-      .get('Toast.AlerEmail')
-      .subscribe((value) => (this.AlerEmail = value));
-    this.translate
-      .get('Toast.AlerPhoneNumber')
-      .subscribe((value) => (this.AlerPhoneNumber = value));
-    this.translate
-      .get('Toast.registerSuccess')
-      .subscribe((value) => (this.registerSuccess = value));
-    this.translate.onLangChange.subscribe((e) => {
-      this.translate
-        .get('Toast.notify')
-        .subscribe((value) => (this.notify = value));
-      this.translate
-        .get('Toast.AlerEmail')
-        .subscribe((value) => (this.AlerEmail = value));
-      this.translate
-        .get('Toast.AlerPhoneNumber')
-        .subscribe((value) => (this.AlerPhoneNumber = value));
-      this.translate
-        .get('Toast.registerSuccess')
-        .subscribe((value) => (this.registerSuccess = value));
-    });
+  constructor(
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef,
+    private modal: NzModalService,
+    private message: NzMessageService,
+    private managermentService: ManagermentService,
+  ) {}
+  ngOnInit(): void {
+    this.form.controls['isAdmin'].disable();
+    if(this.idManagement && this.mode === 'edit') {
+      this.edit = true;
+      this.viewInfoUser();
+    } else {
+      this.edit = false;
+      // this.form.reset(); 
+    }
   }
-  register(): void {
+  
+
+  handleOk(): void {
     const body = {
       userName: this.form.get('username')?.value,
       fullName: this.form.get('fullName')?.value,
@@ -141,7 +130,9 @@ export class RegisterComponent implements OnInit {
       address: this.form.get('address')?.value,
       birthday: this.form.get('birthday')?.value,
       gender: this.form.get('gender')?.value,
-      isAdmin: false,
+      imageUrl: this.avatarUrl,
+      urlIdentityCardImage: this.identityCardUrl,
+      isAdmin: this.form.get('isAdmin')?.value,
     };
     if (this.form.invalid) {
       this.form.get('username')?.markAsTouched();
@@ -156,30 +147,69 @@ export class RegisterComponent implements OnInit {
       this.form.get('email')?.markAsTouched();
       return;
     }
-    this.authService.register(body).subscribe({
-      next: (res) => {
-        this._snack.success(this.registerSuccess);
-        this.form.reset();
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
-    this.isVisiblePopUpOpen.emit(false);
+    // this.managermentService.addAccountManagementOwner(body).subscribe( => {
+    //   if(res) {
+    //     this.message.success("Tạo tài khoản thành công")
+    //     this.visiblePopUpAddManagement.emit(false);
+    //   }
+    // }, (err) => {
+    //   const errorMessage = err.error ? err.error.split('|')[1] : 'Có lỗi xảy ra';
+    //   this.message.error(errorMessage);
+    // })
   }
+
+  viewInfoUser(): void {
+    // this.managermentService.getUserById(this.idManagement).subscribe({
+    //   next: (res) => {
+    //     this.form.patchValue({
+    //       username: res.userName,
+    //       fullName: res.fullname,
+    //       cellPhone: res.cellPhone,
+    //       birthday: res.birthday,
+    //       address: res.address,
+    //       identityCardNumber: res.identityCardNumber,
+    //       identityCardDate: res.identityCardDate,
+    //       identityCardPlace: res.identityCardPlace,
+    //       gender: res.gender,
+    //       email: res.email,
+    //       avatarUrl: res?.imageUrl, 
+    //       identityCardUrl: res?.urlIdentityCardImage 
+    //     });
+    //     this.avatarUrl = res.imageUrl;
+    //     this.identityCardUrl = res.identityCardImage;
+    //   },
+    //   error: (err) => {
+    //     this.message.error('Lấy dữ liệu người dùng thất bại!');
+    //   }
+    // });
+  }
+
+  handleCancel(): void {
+    this.visiblePopUpAddManagement.emit(false);
+  }
+
   updateValidateRepass(e: any) {
     this.form.get('rePass')?.clearValidators();
     this.form.get('rePass')?.addValidators(rePassValidator(e.target.value));
   }
-  hidePass: boolean = true;
-  hideRePass: boolean = true;
-  showPass(e: any) {
+  showOldPass(e: any) {
     const inputPass = document.querySelector(
-      '#inputPassRegister',
+      '#inputPassChangeOldPassword',
     ) as HTMLInputElement;
     if (inputPass?.type === 'password') {
       inputPass.type = 'text';
-
+      this.hideOldPass = false;
+    } else {
+      inputPass.type = 'password';
+      this.hideOldPass = true;
+    }
+  }
+  showPass(e: any) {
+    const inputPass = document.querySelector(
+      '#inputPassChangePassword',
+    ) as HTMLInputElement;
+    if (inputPass?.type === 'password') {
+      inputPass.type = 'text';
       this.hidePass = false;
     } else {
       inputPass.type = 'password';
@@ -188,7 +218,7 @@ export class RegisterComponent implements OnInit {
   }
   showRePass(e: any) {
     const inputPass = document.querySelector(
-      '#inputRePassRegister',
+      '#inputRePassChangePassword',
     ) as HTMLInputElement;
     if (inputPass?.type === 'password') {
       inputPass.type = 'text';
@@ -198,25 +228,5 @@ export class RegisterComponent implements OnInit {
       inputPass.type = 'password';
       this.hideRePass = true;
     }
-  }
-  confirmModal?: NzModalRef;
-  showAlerPhoneNumber(): void {
-    this.confirmModal = this.modal.confirm({
-      nzTitle: 'Thông báo',
-      nzContent:
-        'Bạn không thể xác minh tài khoản thông qua số điện thoại nếu bỏ trống',
-      nzOnOk: () => {},
-    });
-  }
-  showAlerEmail(): void {
-    this.confirmModal = this.modal.confirm({
-      nzTitle: 'Thông báo',
-      nzContent:
-        'Bạn không thể xác minh tài khoản thông qua email nếu bỏ trống',
-      nzOnOk: () => {},
-    });
-  }
-  handleConfirmEmail() {
-    console.log('confirm email');
   }
 }
