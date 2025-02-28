@@ -30,6 +30,32 @@
                         <span class="text-white">Số điện thoại</span>
                         <div>
                             <input class="h-[40px] w-full rounded-[5px] px-[10px] py-[8px] outline-none border-none" formControlName="cellPhone" />
+                            <span *ngIf="form.get('cellPhone')?.invalid && form.get('cellPhone')?.touched" class="text-red-500 text-sh">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Số điện thoại không hợp lệ.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col flex-1 w-full gap-[6px]">
+                        <span class="text-white">Nhập mật khẩu</span>
+                        <div class="relative">
+                            <input id="inputPassChangePassword" type="password" class="h-[40px] w-full rounded-[5px] px-[10px] py-[8px] outline-none border-none" formControlName="password"/>
+                            <i *ngIf="hidePass" class="fas fa-eye absolute right-0 top-[50%] translate-y-[-50%] cursor-pointer"
+                                (click)="showPass($event)"></i>
+                            <i *ngIf="!hidePass" class="fa-solid fa-eye-slash absolute right-0 top-[50%] translate-y-[-50%] cursor-pointer"
+                                (click)="showPass($event)"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-col flex-1 w-full gap-[6px]">
+                        <span class="text-white">Nhập lại mật khẩu</span>
+                        <div class="relative">
+                            <input id="inputRePassChangePassword" type="password" class="h-[40px] w-full rounded-[5px] px-[10px] py-[8px] outline-none border-none" formControlName="passwordConfirm"/>
+                            <i *ngIf="hideRePass" class="fas fa-eye absolute right-0 top-[50%] translate-y-[-50%] cursor-pointer"
+                                (click)="showRePass($event)"></i>
+                            <i *ngIf="!hideRePass" class="fa-solid fa-eye-slash absolute right-0 top-[50%] translate-y-[-50%] cursor-pointer"
+                                (click)="showRePass($event)"></i>
+                            <div *ngIf="form.hasError('passwordMismatch') && form.get('passwordConfirm')?.touched" class="text-red-500">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Mật khẩu nhập lại không khớp
+                            </div>
                         </div>
                     </div>
                 </form>

@@ -54,10 +54,8 @@ export class RegisterComponent implements OnInit {
   @Input() idManagement: any = ''; 
   @Input() mode: 'create' | 'edit';
   @Output() visiblePopUpAddManagement = new EventEmitter<boolean>();
-  public hideOldPass: boolean = true;
-  public hidePass: boolean = true;
-  public hideRePass: boolean = true;
-  public edit: boolean = false;
+  hidePass: boolean = true;
+  hideRePass: boolean = true;
   avatarUrl: string | null = null;
   identityCardUrl: string | null = null;
 
@@ -85,19 +83,19 @@ export class RegisterComponent implements OnInit {
 
   public form: FormGroup = this.fb.group({
     fullName: [null, Validators.required],
-    identityCardNumber: [null, Validators.required],
-    identityCardDate: [null, Validators.required],
-    identityCardPlace: [null, Validators.required],
     username: [null, Validators.required],
     email: [null, Validators.email],
-    birthday: [null, Validators.required],
-    address: [null, Validators.required],
-    gender: [true, Validators.required],
     cellPhone: [null, [phoneNumberValidator()]],
-    isAdmin: [false],
-    avatarUrl: [''], // Control for avatar
-    identityCardUrl: ['']
-  });
+    password: [null, [Validators.required, Validators.minLength(6)]],
+    passwordConfirm: [null, [Validators.required]]
+  }, { validators: this.matchPasswords });
+
+  matchPasswords(group: FormGroup) {
+    const password = group.get('password')?.value;
+    const confirmPassword = group.get('passwordConfirm')?.value;
+    return password === confirmPassword ? null : { passwordMismatch: true };
+  }
+  
 
   constructor(
     private fb: FormBuilder,
@@ -107,14 +105,7 @@ export class RegisterComponent implements OnInit {
     private managermentService: ManagermentService,
   ) {}
   ngOnInit(): void {
-    this.form.controls['isAdmin'].disable();
-    if(this.idManagement && this.mode === 'edit') {
-      this.edit = true;
-      this.viewInfoUser();
-    } else {
-      this.edit = false;
-      // this.form.reset(); 
-    }
+
   }
   
 
@@ -192,18 +183,7 @@ export class RegisterComponent implements OnInit {
     this.form.get('rePass')?.clearValidators();
     this.form.get('rePass')?.addValidators(rePassValidator(e.target.value));
   }
-  showOldPass(e: any) {
-    const inputPass = document.querySelector(
-      '#inputPassChangeOldPassword',
-    ) as HTMLInputElement;
-    if (inputPass?.type === 'password') {
-      inputPass.type = 'text';
-      this.hideOldPass = false;
-    } else {
-      inputPass.type = 'password';
-      this.hideOldPass = true;
-    }
-  }
+
   showPass(e: any) {
     const inputPass = document.querySelector(
       '#inputPassChangePassword',
@@ -222,7 +202,6 @@ export class RegisterComponent implements OnInit {
     ) as HTMLInputElement;
     if (inputPass?.type === 'password') {
       inputPass.type = 'text';
-
       this.hideRePass = false;
     } else {
       inputPass.type = 'password';
