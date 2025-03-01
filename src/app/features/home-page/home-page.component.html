@@ -1,0 +1,80 @@
+<div class="w-full bg-white">
+    <div class="w-full bg-[#D1F2DB] h-[100px] flex items-center fixed top-0 left-0 right-0 z-10">
+        <div class="flex items-center justify-between w-full pr-7">
+            <img class="object-cover"  src="../../../assets/img/logoHomePage.png"/>
+            <div class="flex items-center justify-between gap-[30px] ">
+                <div class="text-primary italic text-[18px] hover:underline cursor-pointer">Trang chủ</div>
+                <div class="text-primary italic text-[18px] hover:underline cursor-pointer">Danh sách sân</div>
+                <div class="text-primary italic text-[18px] hover:underline cursor-pointer">Sự kiện</div>
+                <div class="text-primary italic text-[18px] hover:underline cursor-pointer">Liên hệ</div>
+            </div>
+            <div class="flex items-center justify-between gap-[20px]">
+                <div class="bg-[#4FC460] text-white text-center text-[16px] py-[8px] w-[100px] rounded-[8px] cursor-pointer italic shadow-shadow-btn"
+                [routerLink]="['/register']">Đăng ký</div>
+                <div class="bg-[#4FC460] text-white text-center text-[16px] py-[8px] w-[100px] rounded-[8px] cursor-pointer italic shadow-shadow-btn"
+                [routerLink]="['/login']">Đăng nhập</div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner -->
+    <div class="w-full relative mt-[100px]">
+        <img class="object-cover w-full h-full"  src="../../../assets/img/bannerHomePage.png"/>
+        <div class="absolute bottom-[50px] left-[100px]">
+            <div class="text-white w-[500px] text-[50px] font-semibold">Hệ thống hỗ trợ tìm sân nhanh</div>
+            <div class="flex w-fit items-center bg-primaryBG rounded-md">
+                <form [formGroup]="form" class="w-full p-2 flex items-center gap-4 text-white">
+                    <div class="flex items-center gap-1">
+                        Loại sân:
+                        <div class="w-fit">
+                            <nz-select class="w-fit" formControlName="type" nzPlaceHolder="Chọn loại sân">
+                                <nz-option *ngFor="let item of listType" [nzValue]="item.value" [nzLabel]="item.label"></nz-option>
+                            </nz-select>  
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        Khung giờ:
+                        <div>
+                            <input class="border-none outline-none h-[32px] text-[#000] w-[140px] px-2 rounded-lg" formControlName="time" placeholder="12:30, 02/03/2025" />
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        Địa chỉ:
+                        <div>
+                            <input class="border-none outline-none h-[32px] text-[#000] w-[200px] px-2 rounded-lg" formControlName="address" placeholder="Nhập địa chỉ" />
+                        </div>
+                    </div>
+                    <div (click)="search()" class="bg-[#4FC460] rounded-[10px] text-white px-[12px] py-[7px] cursor-pointer hover:scale-105">Tìm kiếm</div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Sân thể thao -->
+    <div class="w-full">
+        <div class="text-center text-[#181E4B] text-[32px] font-[montserrat] font-semibold my-5">Sân thể thao</div>
+        <div class="relative flex items-center w-full gap-[20px]">
+            <div (click)="scrollLeft()" class="ml-4">
+                <i class="fa-solid fa-circle-arrow-left text-[30px] text-primary cursor-pointer hover:scale-105"></i>
+            </div>
+            <div #scroller class="media-scroller snaps-inline bg-white overflow-x-auto whitespace-nowrap flex">
+                <div *ngFor="let item of listSanBong" class="flex-shrink-0 w-[300px] shadow-shadow-timeword mx-2 rounded-md">
+                    <div class="w-[300px] h-[200px]">
+                        <img class="object-cover w-full h-full rounded-tl-md rounded-tr-md" [src]="item.img"/>
+                    </div>
+                    <div class="flex flex-col p-4 gap-2">
+                        <div class="text-[#000] text-[18px] font-semibold">{{ item.name }}</div>
+                        <div class="text-[#000] text-[16px]">{{ item.address }}</div>
+                        <div class="text-[#000] text-[16px]">{{ item.type }}</div>
+                        <div class="text-[#000] text-[16px]">{{ item.time }}</div>
+                    </div>
+                </div>
+            </div>
+            <div (click)="scrollRight()" class="mr-4">
+                <i class="fa-solid fa-circle-arrow-right text-[30px] text-primary cursor-pointer hover:scale-105"></i>
+            </div>
+        </div>
+    </div>
+    <!-- Sự kiện  -->
+    <div class="w-full">
+        <div class="text-center text-[#181E4B] text-[32px] font-[montserrat] font-semibold my-5">Sự kiện</div>
+    </div>
+</div>

@@ -21,4 +21,11 @@ export const routes: Routes = [
     path: 'register',
     component: RegisterComponent,
   },
+  {
+    path: 'home-page',
+    loadChildren: () =>
+      import('./features/home-page/home-page.routing.module').then(
+        (m) => m.HomePageRoutingModule,
+      ),
+  },
 ];

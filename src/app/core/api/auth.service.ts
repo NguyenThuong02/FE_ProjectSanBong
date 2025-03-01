@@ -28,7 +28,7 @@ export class AuthService {
   logout(): void {
     this.storageService.clearStorage();
     this.OAuthService.logOut();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/home-page']);
   }
 
   handleOAuthLogin(token: string, email: string): Observable<any> {

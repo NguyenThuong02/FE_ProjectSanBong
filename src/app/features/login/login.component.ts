@@ -157,7 +157,7 @@ export class LoginComponent implements OnInit {
         'Noticed changes to access_token (most likely from another tab), updating isAuthenticated',
       );
       if (!this.OAuthService.hasValidAccessToken()) {
-        router.navigate(['/login']);
+        router.navigate(['/home-page']);
       }
     });
   }
