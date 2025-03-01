@@ -34,13 +34,13 @@
                     <div class="flex items-center gap-1">
                         Khung giờ:
                         <div>
-                            <input class="border-none outline-none h-[32px] text-[#000] w-[140px] px-2 rounded-lg" formControlName="time" placeholder="12:30, 02/03/2025" />
+                            <input class="border-none !outline-none !outline-transparent h-[32px] text-[#000] bg-white w-[140px] px-2 rounded-lg" formControlName="time" placeholder="12:30, 02/03/2025" />
                         </div>
                     </div>
                     <div class="flex items-center gap-1">
                         Địa chỉ:
                         <div>
-                            <input class="border-none outline-none h-[32px] text-[#000] w-[200px] px-2 rounded-lg" formControlName="address" placeholder="Nhập địa chỉ" />
+                            <input class="border-none !outline-none !outline-transparent h-[32px] text-[#000] bg-white w-[200px] px-2 rounded-lg" formControlName="address" placeholder="Nhập địa chỉ" />
                         </div>
                     </div>
                     <div (click)="search()" class="bg-[#4FC460] rounded-[10px] text-white px-[12px] py-[7px] cursor-pointer hover:scale-105">Tìm kiếm</div>
@@ -75,6 +75,43 @@
     </div>
     <!-- Sự kiện  -->
     <div class="w-full">
-        <div class="text-center text-[#181E4B] text-[32px] font-[montserrat] font-semibold my-5">Sự kiện</div>
+        <div class="text-center text-[#181E4B] text-[32px] font-[montserrat] font-semibold mt-8 mb-5">Sự kiện</div>
+        <div class="flex items-center w-full h-fit">
+            <div class="w-[50%] flex-1 relative">
+                <img class="object-cover w-full h-[300px]"  src="../../../assets/img/evenBongDa.png"/>
+                <div class="flex flex-col items-center justify-center gap-3 absolute inset-0">
+                    <div class="text-white text-[28px] font-semibold font-[montserrat]">Event Bóng Đá</div>
+                    <div class="px-4 py-1 bg-transparent border-white text-white border rounded-lg cursor-pointer">Chi tiết</div>
+                </div>
+            </div>
+            <div class="w-[50%] flex-1 relative">
+                <img class="object-cover w-full h-[300px]"  src="../../../assets/img/eventPickerBall.png"/>
+                <div class="flex flex-col items-center justify-center gap-3 absolute inset-0">
+                    <div class="text-white text-[28px] font-semibold font-[montserrat]">Event PickerBall</div>
+                    <div class="px-4 py-1 bg-transparent border-white text-white border rounded-lg cursor-pointer">Chi tiết</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footter -->
+    <div class="relative h-[300px] w-full mt-[150px] bg-[#D1F2DB] flex py-[40px] pl-[60px]">
+        <div class="flex justify-start gap-[40px] items-start w-full h-full">
+            <div class="flex flex-col items-center max-w-[260px]">
+                <img class="object-cover"  src="../../../assets/img/logoHomePage.png"/>
+                <div class="text-[#757095] leading-[145%] ">3AT SPORTS cung cấp các tiện ích thông minh giúp cho bạn tìm sân bãi và đặt sân một cách hiệu quả nhất.</div>
+            </div>
+            <div class="flex flex-col items-start max-w-[200px] mt-[12px]">
+                <div class="text-[#181433] leading-[145%] font-semibold">Thông tin</div>
+                <div class="text-[#757095] leading-[145%] mt-3">Email</div>
+                <div class="text-[#757095] leading-[145%] mt-3">Thông tin</div>
+                <div class="text-[#757095] leading-[145%] mt-3">Số điện thoại</div>
+            </div>
+            <div class="flex flex-col items-start max-w-[200px] mt-[12px]">
+                <div class="text-[#181433] leading-[145%] font-semibold">Liên hệ chủ sân</div>
+                <div class="text-[#757095] leading-[145%] mt-3">Nguyễn Văn Liêm</div>
+                <div class="text-[#757095] leading-[145%] mt-3">09384837434</div>
+            </div>
+        </div>
+        <img class="object-cover absolute bottom-[40px] right-0"  src="../../../assets/img/footerIcon.png"/>
     </div>
 </div>
