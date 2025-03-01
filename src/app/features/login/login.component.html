@@ -1,12 +1,12 @@
 <div class="flex bg-white w-[100vw] h-[100vh] justify-center items-center flex-col relative"
     (keyup.enter)="login()">
-    <!-- <div
-        class="absolute top-10 left-10 rounded-[50%] size-[25px] text-[12px] cursor-pointer border-[#1C274C] border bg-[#FFF] flex justify-center items-center">
-        <span *ngIf="language==='vi'" (click)="changeLanguage('en')" class="select-none">VN</span>
-        <span *ngIf="language==='en'" (click)="changeLanguage('vi')" class="select-none">EN</span>
-    </div> -->
+    <div *ngIf="step !== 'login'" (click)="backLogin()"
+        class="absolute top-10 left-10 hover:scale-105 text-primary cursor-pointer">
+        <i class="fa-solid fa-chevron-left"></i>
+        Quay lại
+    </div>
     <div class="flex h-full w-full">
-        <div class="grid flex-1 lg:w-[440px] grid-cols-1">
+        <div *ngIf="step === 'login'" class="grid flex-1 lg:w-[440px] grid-cols-1">
             <div class="flex justify-center items-center flex-col">
                 <div
                     class="bg-white lg:w-[440px] border-[2px] border-[rgba(102, 102, 102, 0.50)] rounded-[24px] flex flex-col justify-center items-center p-4 py-5">
@@ -30,13 +30,13 @@
                             <mat-form-field class="custom-input relative" appearance="outline">
                                 <input formControlName="password" name="password" matInput type="password"
                                     autocomplete="off" id="inputPass" placeholder="Nhập mật khẩu" />
-                                <i *ngIf="hide" class="fas fa-eye absolute right-0 top-[50%] translate-y-[-50%]"
+                                <i *ngIf="hidePass" class="fas fa-eye absolute right-0 top-[50%] translate-y-[-50%]"
                                     (click)="showPass($event)"></i>
-                                <i *ngIf="!hide" class="fa-solid fa-eye-slash absolute right-0 top-[50%] translate-y-[-50%]"
+                                <i *ngIf="!hidePass" class="fa-solid fa-eye-slash absolute right-0 top-[50%] translate-y-[-50%]"
                                     (click)="showPass($event)"></i>
                                 <mat-error>Vui lòng nhập đầy đủ thông tin!</mat-error>
                             </mat-form-field>
-                            <a class="absolute right-0 bottom-[-4px] underline hover:text-[#22B14C]">Quên mật khẩu</a>
+                            <a (click)="forGotPass()" class="absolute right-0 bottom-[-4px] underline hover:text-[#22B14C]">Quên mật khẩu</a>
                         </div>
                         <div class="flex flex-col items-center w-full gap-4 justify-center">
                             <div (click)="login()" class="bg-[#22B14C] text-white text-center text-[20px] w-full rounded-[40px] py-[8px] cursor-pointer">Đăng nhập</div>
@@ -48,10 +48,84 @@
             </div>
     
         </div>
+        <!-- Nhập Email -->
+        <div *ngIf="step === 'forgotPassword'" class="grid flex-1 lg:w-[440px] grid-cols-1">
+            <div class="flex justify-center items-center flex-col">
+                <div class="bg-[#FEFAFA] lg:w-[440px] border-[4px] border-[#53A34C] rounded-[24px] flex flex-col justify-center items-center gap-[20px] p-4 py-5">
+                    <div class="text-[28px] text-[#53A34C]">Quên mật khẩu</div>
+                    <div class="text-[16px]">Nhớ mật khẩu? <span (click)="backLogin()" class="underline cursor-pointer text-[#53A34C]">Đăng nhập</span></div>
+                    <form [formGroup]="formForGot" class="w-full">
+                        <div class="flex flex-col flex-1 gap-[6px] w-full">
+                            <span class="">Email</span>
+                            <div>
+                                <input class="h-[40px] w-full rounded-[5px] px-[10px] py-[8px] outline-none border border-[#D9CECE]" formControlName="email" />
+                            </div>
+                        </div>
+                    </form>
+                    <div (click)="btnEmail()" class="bg-[#53A34C] text-white text-center text-[20px] w-full rounded-[5px] py-[6px] cursor-pointer ">Xác nhận</div>
+                </div>
+            </div>
+        </div>
+        <!-- Nhập OTP -->
+        <div *ngIf="step === 'otpVerification'" class="grid flex-1 lg:w-[440px] grid-cols-1">
+            <div class="flex justify-center items-center flex-col">
+                <div class="bg-[#FEFAFA] lg:w-[440px] border-[4px] border-[#53A34C] rounded-[24px] flex flex-col justify-center items-center gap-[20px] p-4 py-5">
+                    <div class="text-center text-[#53A34C] font-semibold text-[20px] uppercase">
+                        <span>Xác thực OTP</span>
+                    </div>
+            
+                    <div 
+                    [ngClass]="{'text-red-500': isLast10Seconds}"
+                    class="text-center font-semibold text-[22px]">
+                        {{display}}
+                    </div>
+            
+                    <div class="flex flex-col gap-2 items-center h-fit lg:px-[30px] lg:pb-2 overflow-auto">
+                        <span class="text-[#888] text-[14px] font-normal">Nhận mã OTP từ email của bạn!</span>
+                        <div class="flex gap-4">
+                            <ng-otp-input #ngOtpInput [config]="otpConfig"></ng-otp-input>
+                        </div>
+                    </div>
+                    <div (click)="btnOTP()" class="bg-[#53A34C] text-white text-center text-[20px] w-full rounded-[5px] py-[6px] cursor-pointer ">Xác nhận</div>
+                </div>
+            </div>
+        </div>
+        <!-- Nhập mật khẩu mới -->
+        <div *ngIf="step === 'resetPassword'" class="grid flex-1 lg:w-[440px] grid-cols-1">
+            <div class="flex justify-center items-center flex-col">
+                <div class="bg-[#FEFAFA] lg:w-[440px] border-[4px] border-[#53A34C] rounded-[24px] flex flex-col justify-center items-center gap-[20px] p-4 py-5">
+                    <div class="text-[28px] text-[#53A34C]">Nhập mật khẩu mới</div>
+                    <form [formGroup]="formNewPassword" class="w-full">
+                        <div class="flex flex-col flex-1 w-full gap-[6px]">
+                            <span>Nhập mật khẩu mới</span>
+                            <div class="relative">
+                                <input id="inputPassChangePassword" type="password" class="h-[40px] w-full rounded-[5px] px-[10px] py-[8px] outline-none border border-[#D9CECE]" formControlName="password"/>
+                                <i *ngIf="hidePass" class="fas fa-eye absolute right-[6px] top-[50%] translate-y-[-50%] cursor-pointer"
+                                    (click)="showPass($event)"></i>
+                                <i *ngIf="!hidePass" class="fa-solid fa-eye-slash absolute right-[6px] top-[50%] translate-y-[-50%] cursor-pointer"
+                                    (click)="showPass($event)"></i>
+                            </div>
+                        </div>
+                        <div class="flex flex-col flex-1 w-full gap-[6px] mt-[16px]">
+                            <span>Nhập lại mật khẩu mới</span>
+                            <div class="relative">
+                                <input id="inputRePassChangePassword" type="password" class="h-[40px] w-full rounded-[5px] px-[10px] py-[8px] outline-none border border-[#D9CECE]" formControlName="passwordConfirm"/>
+                                <i *ngIf="hideRePass" class="fas fa-eye absolute right-[6px] top-[50%] translate-y-[-50%] cursor-pointer"
+                                    (click)="showRePass($event)"></i>
+                                <i *ngIf="!hideRePass" class="fa-solid fa-eye-slash absolute right-[6px] top-[50%] translate-y-[-50%] cursor-pointer"
+                                    (click)="showRePass($event)"></i>
+                                <div *ngIf="formNewPassword.hasError('passwordMismatch') && formNewPassword.get('passwordConfirm')?.touched" class="text-red-500">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Mật khẩu nhập lại không khớp
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div (click)="btnNewPassword()" class="bg-[#53A34C] text-white text-center text-[20px] w-full rounded-[5px] py-[6px] cursor-pointer ">Xác nhận</div>
+                </div>
+            </div>
+        </div>
         <div class="w-[60%] h-full flex items-center justify-center">
             <img class="h-full object-cover"  src="../../../assets/img/bannerLogin.avif"/>
         </div>
     </div>
-
-
 </div>

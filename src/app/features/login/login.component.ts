@@ -1,10 +1,8 @@
 import {
-  AfterContentChecked,
-  AfterViewChecked,
-  AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -14,26 +12,24 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInput, MatLabel } from '@angular/material/input';
+import { MatInput } from '@angular/material/input';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/api/auth.service';
-import { Router, RouterLink, RouterState, RouterStateSnapshot } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
-import { RegisterComponent } from '../register/register.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ForgotPassWordComponent } from '../forgot-pass-word/forgot-pass-word.component';
-import { PopUpInsertOTPComponent } from '../forgot-pass-word/pop-up-insert-otp/pop-up-insert-otp.component';
-import { PopUpChangePassComponent } from '../forgot-pass-word/pop-up-change-pass/pop-up-change-pass.component';
-import { OAuthService, TokenResponse } from 'angular-oauth2-oidc';
-import { authCodeFlowConfig } from '../../core/auth/auth-config';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { HttpClient } from '@angular/common/http';
 import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { SocialLoginModule, FacebookLoginProvider, SocialAuthService, SocialAuthServiceConfig, SocialUser } from '@abacritt/angularx-social-login';
-import { Observable } from 'rxjs';
-import { PopUpCheckEmailComponent } from '../forgot-pass-word/pop-up-check-email/pop-up-check-email.component';
-import { PopUpCheckPhoneComponent } from '../forgot-pass-word/pop-up-check-phone/pop-up-check-phone.component';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzSelectModule, NzSelectSizeType } from 'ng-zorro-antd/select';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NgOtpInputConfig, NgOtpInputModule } from  'ng-otp-input';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-login',
@@ -46,16 +42,11 @@ import { PopUpCheckPhoneComponent } from '../forgot-pass-word/pop-up-check-phone
     MatFormFieldModule,
     NzCheckboxModule,
     FormsModule,
-    RegisterComponent,
     TranslateModule,
-    ForgotPassWordComponent,
-    PopUpInsertOTPComponent,
-    PopUpChangePassComponent,
     NzButtonModule,
     SocialLoginModule,
-    PopUpCheckEmailComponent,
-    PopUpCheckPhoneComponent,
     RouterLink,
+    NgOtpInputModule,
   ],
   providers: [
     {
@@ -82,11 +73,68 @@ export class LoginComponent implements OnInit {
     userName: [null, Validators.required],
     password: [null, Validators.required],
   });
+  public formForGot: FormGroup = this.fb.group({
+    email: [null, Validators.required],
+  });
+  public formNewPassword: FormGroup = this.fb.group({
+    password: [null, Validators.required],
+    passwordConfirm: [null, Validators.required],
+  }, { validators: this.matchPasswords });
+
   wrongUserNameOrPassword: string;
   remember: boolean = false;
   isLoading: boolean = false;
   user: any;
   loggedIn: any;
+  hidePass: boolean = true;
+  hideRePass: boolean = true;
+  public step: 'login' | 'forgotPassword' | 'otpVerification' | 'resetPassword' = 'login';
+  isConfirmLoading = false;
+  @ViewChild('ngOtpInput') ngOtpInputRef:any;
+  otpConfig :NgOtpInputConfig = {
+    allowNumbersOnly: false,
+    length: 6,
+    isPasswordInput: false,
+    disableAutoFocus: true,
+    inputStyles:{
+      'border-radius': '16px'
+    },
+    containerStyles:{
+      'display':'flex'
+    },
+    inputClass:'each_input',
+    containerClass:'all_inputs'
+  };
+
+  size: NzSelectSizeType = 'default';
+  display: any;
+  isLast10Seconds = false;
+  timer(minute: any) {
+    // let minute = 1;
+    let seconds: number = minute * 60;
+    let textSec: any = "0";
+    let statSec: number = 60;
+
+    const prefix = minute < 10 ? "0" : "";
+
+    const timer = setInterval(() => {
+      seconds--;
+      if (statSec != 0) statSec--;
+      else statSec = 59;
+
+      if (statSec < 10) {
+        textSec = "0" + statSec;
+      } else textSec = statSec;
+
+      this.display = `${prefix}${Math.floor(seconds / 60)}:${textSec}`;
+      this.isLast10Seconds = seconds <= 10;
+      if (seconds == 0) {
+        console.log("finished");
+        clearInterval(timer);
+      }
+    }, 1000);
+  }
+
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
@@ -96,15 +144,9 @@ export class LoginComponent implements OnInit {
     private translate: TranslateService,
     private OAuthService: OAuthService,
     private authService: SocialAuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private message: NzMessageService,
   ) {
-    if (navigator.language.includes('vi')) {
-      this.translate.use('vi');
-      this.language = 'vi';
-    } else if (navigator.language.includes('en')) {
-      this.translate.use('en');
-      this.language = 'en';
-    }
     window.addEventListener('storage', (event) => {
       // The `key` is `null` if the event was caused by `.clear()`
       if (event.key !== 'access_token' && event.key !== null) {
@@ -134,12 +176,10 @@ export class LoginComponent implements OnInit {
       this.loggedIn = (user != null);
       if (this.loggedIn) {
         this.router.navigate(['/']); 
-        console.log("hhhhh")
       }
     });
   }
 
-  language: string = 'vi';
   login() {
     this.isLoading = true;
     const body = {
@@ -201,64 +241,67 @@ export class LoginComponent implements OnInit {
     this.OAuthService.loadDiscoveryDocumentAndTryLogin();
   }
 
-  hide: boolean = true;
   showPass(e: any) {
-    const inputPass = document.querySelector('#inputPass') as HTMLInputElement;
+    const inputPass = document.querySelector(
+      '#inputPassChangePassword',
+    ) as HTMLInputElement;
     if (inputPass?.type === 'password') {
       inputPass.type = 'text';
-
-      this.hide = false;
+      this.hidePass = false;
     } else {
       inputPass.type = 'password';
-      this.hide = true;
+      this.hidePass = true;
     }
   }
-  forgotPassword() {}
-  isVisibleRegister = false;
-  handleShowRegisterPopUp(e: boolean) {
-    this.isVisibleRegister = e;
-  }
-  handleOpenPopUpRegister() {
-    this.isVisibleRegister = true;
-  }
-
-  changeLanguage(e: any) {
-    this.language = e;
-    this.translate.use(this.language);
-    this.cdr.detectChanges();
-  }
-  loginWithTrueAccount() {
-    this.OAuthService.setupAutomaticSilentRefresh();
-    this.OAuthService.initImplicitFlow();
+  showRePass(e: any) {
+    const inputPass = document.querySelector(
+      '#inputRePassChangePassword',
+    ) as HTMLInputElement;
+    if (inputPass?.type === 'password') {
+      inputPass.type = 'text';
+      this.hideRePass = false;
+    } else {
+      inputPass.type = 'password';
+      this.hideRePass = true;
+    }
   }
 
-  signInWithFB(): void {
-    this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then((user) => {
-      console.log("Facebook login response:", user);
-      if (user) {
-        this.auth.handleOAuthLogin(user.authToken, user.email).subscribe(
-          (response) => {
-            this.OAuthService.setupAutomaticSilentRefresh();
-            this.router.navigate(['/']);
-          },
-          (error) => {
-            console.error("Failed to authenticate with server:", error);
-            this._snackBar.error(this.wrongUserNameOrPassword);
-          }
-        );
-      } else {
-        console.error("User login failed");
-        this._snackBar.error(this.wrongUserNameOrPassword);
-      }
-    }).catch((err) => {
-      console.error("Failed to log in with Facebook", err);
-      this._snackBar.error(this.wrongUserNameOrPassword);
-    });
+  matchPasswords(group: FormGroup) {
+    const password = group.get('password')?.value;
+    const confirmPassword = group.get('passwordConfirm')?.value;
+    return password === confirmPassword ? null : { passwordMismatch: true };
   }
-  
-  
 
   signOut(): void {
     this.authService.signOut();
+  }
+
+  forGotPass(): void {
+    this.step = 'forgotPassword';
+  }
+
+  backLogin(): void {
+    this.step = 'login';
+  }
+
+  btnEmail(): void {
+    this.timer(2);
+    this.step = 'otpVerification';
+  }
+
+  btnOTP(): void {
+    const body = {
+      otp: this.ngOtpInputRef.currentVal
+    }
+    if(this.ngOtpInputRef.currentVal === null || this.ngOtpInputRef.currentVal.length !== 6){
+      this.message.error("Nhập đầy đủ mã OTP!")
+      return;
+    } else {
+      this.step = 'resetPassword';
+    }
+  }
+
+  btnNewPassword(): void {
+    this.step = 'login';
   }
 }
