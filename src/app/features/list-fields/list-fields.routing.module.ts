@@ -1,18 +1,18 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { TranslateModule } from "@ngx-translate/core";
-import { HomePageComponent } from "./home-page.component";
+import { ListFieldsComponent } from "./list-fields.component";
 
 const routes: Routes = [
     {
         path:'',
-        component: HomePageComponent,
+        component: ListFieldsComponent,
         children:[
-            {
-                path:'',
-                redirectTo:'',
-                pathMatch:'full',
-            },
+            // {
+            //     path:'',
+            //     redirectTo:'list',
+            //     pathMatch:'full',
+            // },
         ],
     },
 ];
@@ -21,4 +21,4 @@ const routes: Routes = [
     imports:[RouterModule.forChild(routes), TranslateModule],
     exports:[RouterModule],
 })
-export class HomePageRoutingModule {}
+export class ListFieldsRoutingModule {}

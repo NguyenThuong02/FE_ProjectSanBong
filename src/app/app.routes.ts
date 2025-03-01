@@ -15,17 +15,10 @@ export const routes: Routes = [
       import('./layouts/main/main.routing.module').then(
         (m) => m.MainRoutingModule,
       ),
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
   },
   {
     path: 'register',
     component: RegisterComponent,
-  },
-  {
-    path: 'home-page',
-    loadChildren: () =>
-      import('./features/home-page/home-page.routing.module').then(
-        (m) => m.HomePageRoutingModule,
-      ),
   },
 ];

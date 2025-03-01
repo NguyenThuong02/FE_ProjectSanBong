@@ -11,9 +11,18 @@ const routes: Routes = [
     component: MainComponent,
     children: [
       {
-        path: '',
-        redirectTo: 'statistical',
-        pathMatch: 'full',
+        path: 'home-page',
+        loadChildren: () =>
+          import('../../features/home-page/home-page.routing.module').then(
+            (m) => m.HomePageRoutingModule,
+          ),
+      },
+      {
+        path: 'list-feilds',
+        loadChildren: () =>
+          import('../../features/list-fields/list-fields.routing.module').then(
+            (m) => m.ListFieldsRoutingModule,
+          ),
       },
       {
         path: 'statistical',

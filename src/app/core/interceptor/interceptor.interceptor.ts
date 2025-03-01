@@ -41,7 +41,7 @@ export const Interceptor: HttpInterceptorFn = (request, next) => {
           // Handle HTTP errors
           if (err.status === 401) {
             // Specific handling for unauthorized errors
-            router.navigate(['/home-page']);
+            router.navigate(['/']);
 
             console.error('Unauthorized request:', err);
             oauth
@@ -52,7 +52,7 @@ export const Interceptor: HttpInterceptorFn = (request, next) => {
               })
               .catch((err) => {
                 snackbar.error(toast);
-                router.navigate(['/home-page']);
+                router.navigate(['/']);
               });
 
             // You might trigger a re-authentication flow or redirect the user here

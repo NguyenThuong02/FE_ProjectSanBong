@@ -68,26 +68,10 @@ export class MainComponent implements OnInit, OnChanges {
   canActive: boolean = false;
   viewDetailUnit = false;
   width = 280;
-  language: string = 'vi';
   userName: string;
   role: string;
   _store = inject(Store);
-  languageList = [
-    {
-      label: 'Tiếng Việt',
-      value: 'vi',
-    },
-    {
-      label: 'Tiếng anh',
-      value: 'en',
-    },
-  ];
 
-  changeLanguage(e: any) {
-    this.language = e;
-    this.translate.use(this.language);
-    this.cdr.detectChanges();
-  }
   tabActive: number = 0;
   lengthTab: number = 5;
   deviceType: string;
@@ -106,13 +90,6 @@ export class MainComponent implements OnInit, OnChanges {
     private message: NzMessageService,
     private authService2: SocialAuthService,
   ) {
-    if (navigator.language.includes('vi')) {
-      this.translate.use('vi');
-      this.language = 'vi';
-    } else if (navigator.language.includes('en')) {
-      this.translate.use('en');
-      this.language = 'en';
-    }
     let keysPressed: any = {};
 
     document.addEventListener('keyup', (event: any) => {
@@ -138,10 +115,17 @@ export class MainComponent implements OnInit, OnChanges {
     this.role = JSON.parse(
       localStorage.getItem('id_token_claims_obj') || '{}',
     )?.role;
-    if(this.role[0] === 'Administrator'){
-      this.canActive = true;
-    } else if(this.role[0] === 'User') {
+    if(this.role) {
+      if(this.role[0] === 'Administrator'){
+        this.canActive = true;
+        this.router.navigate(['/statistical']);
+      } else if(this.role[0] === 'User') {
+        this.canActive = false;
+        this.router.navigate(['/home-page']);
+      }
+    } else {
       this.canActive = false;
+      this.router.navigate(['/home-page']);
     }
 
     console.log(this.OauthService.hasValidAccessToken());
@@ -165,7 +149,7 @@ export class MainComponent implements OnInit, OnChanges {
         clearInterval(idInterval);
       }
     }, 300);
-    this.checkPasswordStatus();
+
     MainComponent.getData();
     if (this.OauthService.hasValidIdToken()) {
       this.OauthService.refreshToken().then(() => {
@@ -178,25 +162,6 @@ export class MainComponent implements OnInit, OnChanges {
   changeTab(index: number) {
     this.tabActive = index;
     this.cdr.detectChanges();
-  }
-
-
-  checkPasswordStatus(): void {
-    this.accountService.checkPasswordStatus().subscribe({
-      next: (res) => {
-        if (res && (res.status === 200 || res.status === 201)) {
-          return;
-        }
-      },
-      error: (err) => {
-        this.isVisiblePopUpChangePassword = true;
-        this.message.error('Bạn chưa đổi mật khẩu mặc định, vui lòng đổi mật khẩu');
-      },
-    });
-  }
-  isVisiblePopUpChangePassword: boolean = false;
-  handelVisiblePopUpChangePassword(e: boolean) {
-    this.isVisiblePopUpChangePassword = e;
   }
 
   getDeviceType = () => {
@@ -221,7 +186,6 @@ export class MainComponent implements OnInit, OnChanges {
 
   public static data: any = [];
   public static getData: any = () => {
-    // console.log('á');
     MainComponent.data.push('a');
   };
   get staticData() {
@@ -275,6 +239,8 @@ export class MainComponent implements OnInit, OnChanges {
   handleLogout() {
     this.authService.logout();
     this.authService2.signOut();
+    this.cdr.detectChanges();
+    window.location.reload();
   }
 
   contextMenuOrgnization(

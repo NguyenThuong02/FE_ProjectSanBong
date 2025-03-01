@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 
 @Component({
@@ -13,6 +13,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
     FormsModule,
     NzSelectModule,
     ReactiveFormsModule,
+    RouterOutlet
   ],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss'
