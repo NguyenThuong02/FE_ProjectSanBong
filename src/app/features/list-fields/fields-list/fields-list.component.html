@@ -1,0 +1,50 @@
+<div class="mt-[100px] w-full p-5 mb-[-100px]">
+    <div class="flex items-center justify-start gap-2 text-[16px]">
+        <div class="cursor-pointer hover:scale-105 hover:text-primary" [routerLink]="['/home-page']">Trang chủ</div>
+        <div>/</div>
+        <div class="text-primary">Sân thể thao</div>
+    </div>
+    <div class="w-full mt-7 flex items-start justify-between gap-[40px]">
+        <div class="w-[20%]">
+            <div class="w-full relative">
+                <input type="text" class="w-full p-2 border outline-none border-gray-300 rounded-md" placeholder="Tìm kiếm sân thể thao">
+                <i class="fa-solid fa-magnifying-glass absolute top-[50%] translate-y-[-50%] right-3"></i>
+            </div>
+            <div class="w-full border border-gray-300 rounded-md mt-8 py-4 px-3">
+                <div class="italic text-[16px] font-semibold border-b pb-2">Danh sách sân bãi</div>
+                <div (click)="checkFeild(item)"
+                class="w-full flex items-center justify-between border-b text-[16px] py-2 max-h-[200px] overflow-y-auto cursor-pointer hover:text-primary checked:text-primary" *ngFor="let item of listFeilds">
+                    <div class="flex items-center justify-start gap-2">
+                        <i *ngIf="selectedFieldId === item.id" class="fa-solid fa-hand-point-right text-primary"></i>
+                        <div [ngClass]="{'text-primary': selectedFieldId === item.id}" class="italic">{{item.name}}</div>
+                    </div>
+                    <div class="bg-[#4FC460] rounded-[50%] text-white h-[20px] w-[20px] p-[2px] flex items-center justify-center">{{item.count}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="w-[80%]">
+            <div class="text-center text-[28px] font-semibold font-[montserrat]">{{nameFeildCheck}}</div>
+            <div class="w-full grid grid-cols-3 grid-rows-2 gap-[30px] mt-8">
+                <div *ngFor="let item of listSanBong" class="flex-shrink-0 pb-2 flex flex-col items-center grid-cols-1 shadow-shadow-timeword rounded-md">
+                    <div class="w-full h-[200px]">
+                        <img class="object-cover w-full h-full rounded-tl-md rounded-tr-md" [src]="item.img"/>
+                    </div>
+                    <div class="flex flex-col p-4 gap-2 w-full">
+                        <div class="text-[#000] text-[18px] font-semibold">{{ item.name }}</div>
+                        <div class="text-[#000] text-[16px]">{{ item.address }}</div>
+                        <div class="text-[#000] text-[16px]">{{ item.type }}</div>
+                        <div class="text-[#000] text-[16px]">{{ item.time }}</div>
+                    </div>
+                    <div (click)="viewDetail(item.id)" class="bg-[#DF6951] hover:scale-105 py-2 px-4 text-white cursor-pointer rounded-lg">Chi tiết</div>
+                </div>
+            </div>
+            <nz-pagination 
+                [nzPageSize]="pageSize" 
+                [nzTotal]="listSanBong.length" 
+                [(nzPageIndex)]="currentPage"
+                (nzPageIndexChange)="onPageChange($event)"
+                class="mt-7 text-right">
+            </nz-pagination>
+        </div>
+    </div>
+</div>

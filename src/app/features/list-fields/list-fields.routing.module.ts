@@ -8,11 +8,29 @@ const routes: Routes = [
         path:'',
         component: ListFieldsComponent,
         children:[
-            // {
-            //     path:'',
-            //     redirectTo:'list',
-            //     pathMatch:'full',
-            // },
+            {
+                path:'',
+                redirectTo:'',
+                pathMatch:'full',
+            },
+            {
+                path: '',
+                loadComponent: () =>
+                  import('./fields-list/fields-list.component').then(
+                    (m) => m.FieldsListComponent
+                  ),        
+            },
+            {
+                path: 'detail/:id',
+                loadComponent: () =>
+                  import('./fields-detail/fields-detail.component').then(
+                    (m) => m.FieldsDetailComponent
+                  ),        
+            },
+            {
+                path:"**",
+                redirectTo:'/',
+            },
         ],
     },
 ];

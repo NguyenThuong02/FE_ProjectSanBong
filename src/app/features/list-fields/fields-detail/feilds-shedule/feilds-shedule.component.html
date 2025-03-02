@@ -1,0 +1,161 @@
+<div>
+    <div class="mb-4 flex flex-wrap gap-2">
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-green-100 mr-1"></div>
+        <span>Trống</span>
+      </div>
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-blue-100 mr-1"></div>
+        <span>Hết chỗ</span>
+      </div>
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-gray-100 mr-1"></div>
+        <span>Đã đóng</span>
+      </div>
+    </div>
+    
+    <!-- Điều hướng tuần -->
+    <div class="flex justify-between items-center mb-4">
+      <button 
+        class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed" 
+        (click)="previousWeek()" 
+        [disabled]="!canGoPrevious()"
+      >
+        Tuần trước
+      </button>
+      
+      <h2 class="text-xl font-bold">{{ getCurrentWeekName() }}</h2>
+      
+      <button 
+        class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed" 
+        (click)="nextWeek()" 
+        [disabled]="!canGoNext()"
+      >
+        Tuần sau
+      </button>
+    </div>
+    
+    <!-- Thời khóa biểu -->
+    <div class="w-full overflow-x-auto">
+      <table class="w-full border-collapse">
+        <thead>
+          <tr>
+            <th class="border p-2 bg-gray-100 w-20">Thời gian</th>
+            <th *ngFor="let day of weekDays; let i = index" class="border p-2 bg-gray-300">
+              {{ dayNames[day.getDay()] }} <br>
+              <span class="text-sm">{{ formatDate(day) }}</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let timeRange of timeRanges">
+            <td class="border p-2 font-medium text-center whitespace-nowrap">
+              {{ timeRange.label }}
+            </td>
+            <td *ngFor="let day of weekDays; let dayIndex = index" 
+                class="border p-2 relative h-[60px] align-top"
+                [ngClass]="getSlot(dayIndex, timeRange.hour)?.status ? statusColorMap[getSlot(dayIndex, timeRange.hour)!.status] : ''">
+              
+              <div *ngIf="getSlot(dayIndex, timeRange.hour) as slot" 
+                  class="w-full h-full cursor-pointer" 
+                  (click)="selectSlot(slot)">
+                <div class="absolute top-1 right-1 text-xs font-medium">
+                  {{ statusTextMap[slot.status] }}
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Modal Chi tiết và Đặt lịch -->
+    <div *ngIf="selectedSlot" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-10">
+      <div class="bg-white rounded shadow-lg p-5 max-w-md w-full">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold">
+            {{ selectedSlot.status === 'available' ? 'Đặt lịch' : 'Chi tiết lịch' }}
+          </h2>
+          <button class="text-gray-400 hover:text-gray-600" (click)="closeModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="mb-4">
+          <p><span class="font-medium">Thời gian:</span> {{ selectedSlot.startTime | date:'dd/MM/yyyy HH:mm' }} - {{ selectedSlot.endTime | date:'HH:mm' }}</p>
+          <p><span class="font-medium">Trạng thái:</span> {{ statusTextMap[selectedSlot.status] }}</p>
+        </div>
+        
+        <!-- Chi tiết lịch đã đặt -->
+        <div *ngIf="selectedSlot.status !== 'available'">
+          <p *ngIf="selectedSlot.title"><span class="font-medium">Tiêu đề:</span> {{ selectedSlot.title }}</p>
+          <p *ngIf="selectedSlot.description"><span class="font-medium">Mô tả:</span> {{ selectedSlot.description }}</p>
+          
+          <div class="flex justify-end mt-4">
+            <button class="bg-gray-500 text-white px-4 py-2 rounded" (click)="closeModal()">
+              Đóng
+            </button>
+          </div>
+        </div>
+        
+        <!-- Form đặt lịch -->
+        <form *ngIf="selectedSlot.status === 'available'" [formGroup]="bookingForm" (ngSubmit)="submitBooking()">
+          <div class="mb-3">
+            <label class="block mb-1">Hành động:</label>
+            <div class="flex gap-4">
+              <label class="flex items-center">
+                <input type="radio" formControlName="action" value="book" class="mr-1">
+                Đặt lịch
+              </label>
+              <label class="flex items-center">
+                <input type="radio" formControlName="action" value="close" class="mr-1">
+                Đóng lịch
+              </label>
+            </div>
+          </div>
+          
+          <div class="mb-3" *ngIf="bookingForm.get('action')?.value === 'book'">
+            <label for="title" class="block mb-1">Tiêu đề:</label>
+            <input 
+              id="title" 
+              type="text" 
+              formControlName="title"
+              class="w-full border rounded px-2 py-1"
+            >
+          </div>
+          
+          <div class="mb-3">
+            <label for="description" class="block mb-1">
+              {{ bookingForm.get('action')?.value === 'book' ? 'Mô tả:' : 'Lý do đóng:' }}
+            </label>
+            <textarea 
+              id="description" 
+              formControlName="description"
+              class="w-full border rounded px-2 py-1"
+              rows="3"
+            ></textarea>
+          </div>
+          
+          <div class="flex justify-end">
+            <button 
+              type="button" 
+              class="bg-gray-300 text-gray-800 px-4 py-2 rounded mr-2"
+              (click)="closeModal()"
+            >
+              Hủy
+            </button>
+            <button 
+              type="submit" 
+              class="bg-blue-500 text-white px-4 py-2 rounded"
+              [disabled]="!bookingForm.valid"
+            >
+              {{ bookingForm.get('action')?.value === 'book' ? 'Đặt lịch' : 'Đóng lịch' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
