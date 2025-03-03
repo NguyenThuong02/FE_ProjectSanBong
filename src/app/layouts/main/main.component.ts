@@ -71,12 +71,7 @@ export class MainComponent implements OnInit, OnChanges {
   userName: string;
   role: string;
   _store = inject(Store);
-
-  tabActive: number = 0;
-  lengthTab: number = 5;
-  deviceType: string;
-  public idTenant: string = '';
-  public idParentUnit: string = '';
+  isUserMenuVisible: boolean = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -159,10 +154,6 @@ export class MainComponent implements OnInit, OnChanges {
       
     }
   }
-  changeTab(index: number) {
-    this.tabActive = index;
-    this.cdr.detectChanges();
-  }
 
   getDeviceType = () => {
     const ua = navigator.userAgent;
@@ -179,11 +170,6 @@ export class MainComponent implements OnInit, OnChanges {
     return 'desktop';
   };
 
-  visibleListObject: boolean = false;
-  handleVisibleListObject(e: boolean) {
-    this.visibleListObject = e;
-  }
-
   public static data: any = [];
   public static getData: any = () => {
     MainComponent.data.push('a');
@@ -191,139 +177,28 @@ export class MainComponent implements OnInit, OnChanges {
   get staticData() {
     return MainComponent.data;
   }
-  visiblePopUpChangeGroup: boolean = false;
-  handleVisiblePopUpGroup(e: boolean) {
-    this.visiblePopUpChangeGroup = e;
-  }
-
-  isVisiblePopUpChangeOrgnization: boolean = false;
-  handelVisiblePopUpChangeOrgnization(e: boolean) {
-    this.isVisiblePopUpChangeOrgnization = e;
-  }
-  handelOpenPopUpChangeOrgnization() {
-    this.isVisiblePopUpChangeOrgnization = true;
-  }
-
-  tenants: any = [];
-  public originalTenantsOrder: any[] = [];
-  public hiddenTenantIds: Set<number> = new Set();
-  unitOfTenant: any = [];
-  isVisiblePopUpCreateOrgnization: boolean = false;
-  handelVisiblePopUpCreateOrgnization(e: boolean) {
-    this.isVisiblePopUpCreateOrgnization = e;
-  }
-  handelOpenPopUpCreateOrgnization(idTenant?:any, event?: Event) { 
-    event?.preventDefault();  
-    event?.stopPropagation();
-    this.idTenant = idTenant;
-    this.isVisiblePopUpCreateOrgnization = true;
-  }
-
-  handleTenantCreated(a: any): void {
-    const tenantIndex = this.tenants.findIndex((tenant: any) => tenant.id === a.id);
-    if (tenantIndex !== -1) {
-      this.tenants[tenantIndex] = a;
-    } else {
-      this.tenants.push(a);
-    }
-  }
-
-  closeMenuIndividual(): void {
-    this.nzContextMenuService.close();
-  }
 
   closeMenu(): void {
     this.nzContextMenuService.close();
   }
 
   handleLogout() {
+    this.isUserMenuVisible = false;
     this.authService.logout();
     this.authService2.signOut();
     this.cdr.detectChanges();
     window.location.reload();
   }
 
-  contextMenuOrgnization(
-    $event: MouseEvent,
-    menu: NzDropdownMenuComponent,
-  ): void {
-    const element = $event.target as HTMLElement;
-    console.log($event);
-
-    $event.stopPropagation();
-    if (element.innerHTML === 'Organization' || element.innerHTML === 'Tổ chức')
-      this.nzContextMenuService.create($event, menu);
-  }
-
   stopPrevenDefault($event: any) {
     $event.preventDefault();
   }
 
-  openMap: { [key: number]: boolean } = {};
-  openSubMap: { [key: number]: boolean } = {};
-
-  openHandler(index: number, state: boolean): void {
-    for (const i in this.openSubMap) {
-      if (Number(i) !== index) {
-        this.openSubMap[i] = false;
-      }
+  toggleUserMenu(event?: Event) {
+    if (event) {
+      event.stopPropagation();
     }
-    this.openSubMap[index] = state;
-    // Đóng tất cả các unit cha và unit con
-    for (const i in this.openSubMap2) {
-      this.openSubMap2[i] = false;
-    }
-    for (const i in this.openSubMap3) {
-      this.openSubMap3[i] = false;
-    }
+    this.isUserMenuVisible = !this.isUserMenuVisible;
+    this.cdr.detectChanges();
   }
-
-  openMap2: { [key: number]: boolean } = {};
-  openSubMap2: { [key: number]: boolean } = {};
-
-  openHandler2(index: number, isSubMenu: boolean = false): void {
-    if (isSubMenu) {
-      for (const key in this.openSubMap2) {
-        if (key !== index.toString()) {
-          this.openSubMap2[key] = false;
-        }
-      }
-    } 
-  }
-
-  openMap3: { [key: number]: boolean } = {};
-  openSubMap3: { [key: number]: boolean } = {};
-
-  openHandler3(index: number, isSubMenu: boolean = false): void {
-    if (isSubMenu) {
-      for (const key in this.openSubMap3) {
-        if (key !== index.toString()) {
-          this.openSubMap3[key] = false;
-        }
-      }
-    } 
-  }
-
-  handlePinOrganization(tenantId: number | null): void {
-    if (tenantId === null) {
-      this.tenants = [...this.originalTenantsOrder];
-      localStorage.removeItem('pinnedTenantId');
-      return;
-    }
-    localStorage.setItem('pinnedTenantId', tenantId.toString());
-    const pinnedTenant = this.tenants.find((tenant: any) => tenant.id === tenantId);
-    if (pinnedTenant) {
-      this.tenants = this.tenants.filter((tenant: any) => tenant.id !== tenantId);
-      this.tenants.unshift(pinnedTenant);
-    }
-  }
-
-  handleToggleVisibilityTenant(tenantId: number): void {
-    if (this.hiddenTenantIds.has(tenantId)) {
-        this.hiddenTenantIds.delete(tenantId); 
-    } else {
-        this.hiddenTenantIds.add(tenantId); 
-    }
-  }
-
 }

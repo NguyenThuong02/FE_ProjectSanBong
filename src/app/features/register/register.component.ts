@@ -17,17 +17,18 @@ import {
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { NzSelectModule, NzSelectSizeType } from 'ng-zorro-antd/select';
+import { NzModalModule} from 'ng-zorro-antd/modal';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { phoneNumberValidator } from '../../shared/validate/check-phone-number.directive';
 import { rePassValidator } from '../../shared/validate/check-repass.directive';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { ManagermentService } from '../../core/api/managerment.service';
+import { AccountService } from '../../core/api/account.service';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -100,9 +101,9 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private modal: NzModalService,
     private message: NzMessageService,
-    private managermentService: ManagermentService,
+    private accountService: AccountService,
+    private router: Router,
   ) {}
   ngOnInit(): void {
 
@@ -114,69 +115,19 @@ export class RegisterComponent implements OnInit {
       userName: this.form.get('username')?.value,
       fullName: this.form.get('fullName')?.value,
       cellPhone: this.form.get('cellPhone')?.value,
-      identityCardNumber: this.form.get('identityCardNumber')?.value,
-      identityCardDate: this.form.get('identityCardDate')?.value,
-      identityCardPlace: this.form.get('identityCardPlace')?.value,
       email: this.form.get('email')?.value,
-      address: this.form.get('address')?.value,
-      birthday: this.form.get('birthday')?.value,
-      gender: this.form.get('gender')?.value,
-      imageUrl: this.avatarUrl,
-      urlIdentityCardImage: this.identityCardUrl,
-      isAdmin: this.form.get('isAdmin')?.value,
+      password: this.form.get('password')?.value,
+      rePassword: this.form.get('passwordConfirm')?.value
     };
-    if (this.form.invalid) {
-      this.form.get('username')?.markAsTouched();
-      this.form.get('fullName')?.markAsTouched();
-      this.form.get('identityCardNumber')?.markAsTouched();
-      this.form.get('identityCardDate')?.markAsTouched();
-      this.form.get('identityCardPlace')?.markAsTouched();
-      this.form.get('cellPhone')?.markAsTouched();
-      this.form.get('address')?.markAsTouched();
-      this.form.get('birthday')?.markAsTouched();
-      this.form.get('gender')?.markAsTouched();
-      this.form.get('email')?.markAsTouched();
-      return;
-    }
-    // this.managermentService.addAccountManagementOwner(body).subscribe( => {
-    //   if(res) {
-    //     this.message.success("Tạo tài khoản thành công")
-    //     this.visiblePopUpAddManagement.emit(false);
-    //   }
-    // }, (err) => {
-    //   const errorMessage = err.error ? err.error.split('|')[1] : 'Có lỗi xảy ra';
-    //   this.message.error(errorMessage);
-    // })
-  }
+    this.accountService.register(body).subscribe({
+      next: (res) => {
+        this.message.success("Đăng ký tài khoản thành công!");
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
 
-  viewInfoUser(): void {
-    // this.managermentService.getUserById(this.idManagement).subscribe({
-    //   next: (res) => {
-    //     this.form.patchValue({
-    //       username: res.userName,
-    //       fullName: res.fullname,
-    //       cellPhone: res.cellPhone,
-    //       birthday: res.birthday,
-    //       address: res.address,
-    //       identityCardNumber: res.identityCardNumber,
-    //       identityCardDate: res.identityCardDate,
-    //       identityCardPlace: res.identityCardPlace,
-    //       gender: res.gender,
-    //       email: res.email,
-    //       avatarUrl: res?.imageUrl, 
-    //       identityCardUrl: res?.urlIdentityCardImage 
-    //     });
-    //     this.avatarUrl = res.imageUrl;
-    //     this.identityCardUrl = res.identityCardImage;
-    //   },
-    //   error: (err) => {
-    //     this.message.error('Lấy dữ liệu người dùng thất bại!');
-    //   }
-    // });
-  }
-
-  handleCancel(): void {
-    this.visiblePopUpAddManagement.emit(false);
+      }
+    })
   }
 
   updateValidateRepass(e: any) {

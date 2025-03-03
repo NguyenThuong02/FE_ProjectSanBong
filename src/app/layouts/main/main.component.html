@@ -82,11 +82,35 @@
                 <div class="text-primary italic text-[18px] hover:underline cursor-pointer">Sự kiện</div>
                 <div class="text-primary italic text-[18px] hover:underline cursor-pointer">Liên hệ</div>
             </div>
-            <div class="flex items-center justify-between gap-[20px]">
+            <div *ngIf="!this.role" class="flex items-center justify-between gap-[20px]">
                 <div class="bg-[#4FC460] text-white text-center text-[16px] py-[8px] w-[100px] rounded-[8px] cursor-pointer italic shadow-shadow-btn"
                 [routerLink]="['/register']">Đăng ký</div>
                 <div class="bg-[#4FC460] text-white text-center text-[16px] py-[8px] w-[100px] rounded-[8px] cursor-pointer italic shadow-shadow-btn"
                 [routerLink]="['/login']">Đăng nhập</div>
+            </div>
+            <div class="flex items-center justify-end gap-4 relative cursor-pointer" *ngIf="this.role" (click)="toggleUserMenu()">
+              <div class="flex flex-col justify-between items-end">
+                <div class="text-[16px] text-primary">{{nameOwner}}</div>
+                <div class="text-[14px]">Khách hàng</div>
+              </div>
+              <i class="fa-regular fa-circle-user text-[32px]"></i>
+
+              <div *ngIf="isUserMenuVisible" class="absolute right-0 top-[45px] bg-white shadow-lg rounded-md w-[180px] z-50">
+                <ul class="py-2">
+                  <li class="px-4 py-2 hover:bg-[#F0F9F2] cursor-pointer" [routerLink]="['/user-profile']">
+                    <i class="fa-regular fa-user mr-2"></i>
+                    <span>Tài khoản</span>
+                  </li>
+                  <li class="px-4 py-2 hover:bg-[#F0F9F2] cursor-pointer">
+                    <i class="fa-solid fa-key mr-2"></i>
+                    <span>Đổi mật khẩu</span>
+                  </li>
+                  <li class="px-4 py-2 hover:bg-[#F0F9F2] text-red-500 cursor-pointer" (click)="handleLogout()">
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i>
+                    <span>Đăng xuất</span>
+                  </li>
+                </ul>
+              </div>
             </div>
         </div>
     </div>

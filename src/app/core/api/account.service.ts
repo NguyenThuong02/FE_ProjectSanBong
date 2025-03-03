@@ -12,8 +12,8 @@ export class AccountService {
 
   constructor(private http: HttpClient) { }
 
-  createTenant(body: any): Observable<any> {
-    return this.http.post(this.apiUrl + '/api/tenant/create', body);
+  register(body: any): Observable<any> {
+    return this.http.post(this.apiUrl + '/api/user/register', body);
   }
 
   getViewInfo(): Observable<any> {
@@ -34,10 +34,6 @@ export class AccountService {
 
   checkOTP(body: any): Observable<any> {
     return this.http.post(this.apiUrl + '/api/user/verify-otp', body);
-  }
-
-  checkPasswordStatus(): Observable<any> {
-    return this.http.get(this.apiUrl + '/api/user/check-password-first-time');
   }
 
   disableAccount(id?: any): Observable<any> {
