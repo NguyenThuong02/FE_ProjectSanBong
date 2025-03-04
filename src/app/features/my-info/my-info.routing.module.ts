@@ -10,11 +10,11 @@ const routes: Routes = [
         children:[
             {
                 path:'',
-                redirectTo:'view',
+                redirectTo:'',
                 pathMatch:'full',
             },
             {
-                path: 'view',
+                path: '',
                 loadComponent: () =>
                   import('../my-info/my-info-view/my-info-view.component').then(
                     (m) => m.MyInfoViewComponent
@@ -32,4 +32,4 @@ const routes: Routes = [
     imports:[RouterModule.forChild(routes), TranslateModule],
     exports:[RouterModule],
 })
-export class ManagementRoutingModule {}
+export class MyInfoRoutingModule {}

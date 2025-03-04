@@ -80,7 +80,7 @@
                 <div [routerLink]="['/home-page']" class="text-primary italic text-[18px] hover:underline cursor-pointer">Trang chủ</div>
                 <div [routerLink]="['/list-feilds']" class="text-primary italic text-[18px] hover:underline cursor-pointer">Danh sách sân</div>
                 <div class="text-primary italic text-[18px] hover:underline cursor-pointer">Sự kiện</div>
-                <div class="text-primary italic text-[18px] hover:underline cursor-pointer">Liên hệ</div>
+                <div [routerLink]="['/my-info']" class="text-primary italic text-[18px] hover:underline cursor-pointer">Liên hệ</div>
             </div>
             <div *ngIf="!this.role" class="flex items-center justify-between gap-[20px]">
                 <div class="bg-[#4FC460] text-white text-center text-[16px] py-[8px] w-[100px] rounded-[8px] cursor-pointer italic shadow-shadow-btn"

@@ -25,6 +25,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'my-info',
+        loadChildren: () =>
+          import('../../features/my-info/my-info.routing.module').then(
+            (m) => m.MyInfoRoutingModule,
+          ),
+      },
+      {
         path: 'statistical',
         loadChildren: () =>
           import('../../features/statistical/statistical.routing.module').then(
@@ -67,13 +74,6 @@ const routes: Routes = [
         loadChildren: () =>
           import('../../features/slection-follow/slection-follow.routing.module').then(
             (m) => m.SlectionFollowRoutingModule,
-          ),
-      },
-      {
-        path: 'user-infor/:id',
-        loadChildren: () =>
-          import('../../features/my-info/my-info.routing.module').then(
-            (m) => m.ManagementRoutingModule,
           ),
       },
       {
