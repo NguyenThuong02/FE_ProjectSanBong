@@ -47,36 +47,6 @@ const routes: Routes = [
           canActivate: [RolesGuard],
       },
       {
-        path: 'level-management',
-        loadChildren: () =>
-          import('../../features/level-management/level-management.routing.module').then(
-            (m) => m.LevelManagementRoutingModule,
-          ),
-          canActivate: [RolesGuard],
-      },
-      {
-        path: 'slection-management',
-        loadChildren: () =>
-          import('../../features/slection-management/slection-management.routing.module').then(
-            (m) => m.SlectionManagementRoutingModule,
-          ),
-          canActivate: [RolesGuard],
-      },
-      {
-        path: 'slection-ticket',
-        loadChildren: () =>
-          import('../../features/slection-evoting/slection-evoting.routing.module').then(
-            (m) => m.SlectionEvotingRoutingModule,
-          ),
-      },
-      {
-        path: 'slection-follow',
-        loadChildren: () =>
-          import('../../features/slection-follow/slection-follow.routing.module').then(
-            (m) => m.SlectionFollowRoutingModule,
-          ),
-      },
-      {
         path: 'setting',
         loadChildren: () =>
           import('../../features/setting/setting.routing.module').then(

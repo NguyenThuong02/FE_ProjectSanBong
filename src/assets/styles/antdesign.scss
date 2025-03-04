@@ -9,13 +9,13 @@
 }
 
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-  background-color: #01579b !important;
-  border-radius: 8px;
-  color: white;
+  margin-left: 20px !important;
+  background-color: #fff !important;
+  color: #22b14c;
+  font-size: 16px !important;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
   font-weight: bold !important;
-  // :hover {
-  //   color: white;
-  // }
 }
 .ant-btn {
   border-radius: 8px;

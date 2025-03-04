@@ -1,18 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-// :host ::ng-deep {
-//   .ant-menu-item-selected {
-//     background-color: #0EAF8F !important;
-//     color: white;
-
-//     :hover {
-//       color: white;
-//     }
-//   }
-// }
 .menu-item {
   font-size: 14px;
+  margin-top: 10px;
+  color: white;
 }
 .icon {
   height: fit-content;

@@ -6,7 +6,7 @@ import {
   SimpleChanges,
   inject,
 } from '@angular/core';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -32,7 +32,7 @@ import { edit } from '../../shared/components/iconAntd/iconAddOnAntd.component';
 import { AccountService } from '../../core/api/account.service';
 import { ChangePasswordComponent } from '../../features/setting/change-password/change-password.component';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-main',
@@ -72,6 +72,7 @@ export class MainComponent implements OnInit, OnChanges {
   role: string;
   _store = inject(Store);
   isUserMenuVisible: boolean = false;
+  pageTitle = 'Danh sách tài khoản';
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -92,12 +93,18 @@ export class MainComponent implements OnInit, OnChanges {
     });
 
     this.iconService.addIconLiteral('edit:antd', edit);
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.updatePageTitle();
+    });
   }
   count: number;
   userInfor: any = JSON.parse(
     localStorage.getItem('id_token_claims_obj') || '{}',
   );
   ngOnChanges(changes: SimpleChanges): void {
+    
   }
   ngOnInit(): void {
     // Xem quyền người dùng để hiển thị menu
@@ -113,10 +120,12 @@ export class MainComponent implements OnInit, OnChanges {
     if(this.role) {
       if(this.role[0] === 'Administrator'){
         this.canActive = true;
-        this.router.navigate(['/statistical']);
+        this.router.navigate(['/user-management']);
       } else if(this.role[0] === 'User') {
         this.canActive = false;
         this.router.navigate(['/home-page']);
+      } else if(this.role[0] === 'Customer') {
+        this.router.navigate(['/statistical']);
       }
     } else {
       this.canActive = false;
@@ -200,5 +209,17 @@ export class MainComponent implements OnInit, OnChanges {
     }
     this.isUserMenuVisible = !this.isUserMenuVisible;
     this.cdr.detectChanges();
+  }
+
+  updatePageTitle() {
+    const routeTitles: { [key: string]: string } = {
+      '/user-management': 'Danh sách tài khoản',
+      '/setting': 'Cài đặt',
+      '/home-page': 'Trang chủ',
+      '/list-feilds': 'Danh sách sân',
+      '/my-info': 'Thông tin cá nhân'
+    };
+    const currentUrl = this.router.url;
+    this.pageTitle = routeTitles[currentUrl] || 'Danh sách tài khoản';
   }
 }
