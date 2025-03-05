@@ -1,85 +1,68 @@
-<div class="border-b-2 p-10 border-solid border-[#D8D8D8] relative">
-  <ng-container >
-    <form [formGroup]="form" class="grid grid-cols-3 items-center gap-x-4 gap-y-3">
-      <mat-form-field class="custom-input" appearance="outline">
-        <mat-label>Họ tên</mat-label>
-        <input formControlName="fullName" matInput />
-      </mat-form-field>
-      <mat-form-field class="custom-input" appearance="outline">
-        <mat-label>Email</mat-label>
-        <input formControlName="email" matInput />
-      </mat-form-field>
-      <mat-form-field class="custom-input" appearance="outline">
-        <mat-label>Số điện thoại</mat-label>
-        <input formControlName="cellPhone" matInput />
-      </mat-form-field>
-      <mat-form-field class="custom-input" appearance="outline">
-        <mat-label>Trạng thái tài khoản</mat-label>
-        <mat-select formControlName="status">
-          <mat-option *ngFor="let status of listStatus" [value]="status.value">
-            {{ status.label }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field class="custom-input" appearance="outline">
-        <mat-label>Quyền người dùng</mat-label>
-        <mat-select formControlName="roles">
-          <mat-option *ngFor="let role of listRoles" [value]="role.value">
-            {{ role.label }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <div class="custom-input flex w-full gap-3 items-start">
-        <button (click)="handleCancel()"
-          class="bg-[#EDEDED] w-full h-10 px-4 rounded text-[#000]"
-          >Huỷ bỏ
-        </button>
-        <button (click)="handleSearch()"
-        class="bg-primary w-full h-10 px-4 hover:bg-[#10c39f] rounded text-white"
-          >Tìm kiếm
-        </button>
-      </div>
-    </form>
-  </ng-container>
-
-</div>
-
 <div class="h-[100vh] w-full p-10">
     <div class="mb-8 flex justify-between items-center">
-        <h3 class="uppercase text-primary text-[18px] font-medium">{{'Management.userList'| translate }}</h3>
+        <div class="relative w-[400px]">
+          <i class="fa-solid fa-magnifying-glass absolute left-[12px] top-[50%] translate-y-[-50%]"></i>
+          <input class="h-[40px] bg-[#f1f1f1] outline-none border-[2px] border-primary w-full pr-2 pl-8 rounded-xl" placeholder="Tìm kiếm tên thành viên" />
+        </div>
         <div (click)="handelOpenPopUpAddManagement()" class="px-[12px] py-[8px] rounded-[6px] border border-primary text-primary cursor-pointer hover:bg-primary hover:text-[#fff]" >Thêm mới người dùng</div>
     </div>
-    <app-share-table [pageIndex]="params.page" [pageSize]="params.pageSize" [loaded]="!isLoading" [data]="listUserManagements" [total]="totalCount"
-      [maxHeight]="'calc(100vh - 150px)'" (pageIndexChange)="changePage($event)"
-      (pageSizeChange)="changePageSize($event)">
-      <ng-template #headers>
-        <th scope="col" class="font-semibold !text-center">STT</th>
-        <th scope="col" class="!text-start">Họ và tên</th>
-        <th scope="col" class="!text-start">Tên đăng nhập</th>
-        <th scope="col" class="!text-start">Email</th>
-        <th scope="col" class="!text-start">Số điện thoại</th>
-        <th scope="col" class="!text-start">Ngày sinh</th>
-        <th scope="col" class="!text-start">Địa chỉ</th>
-        <th scope="col" class="!text-start">Trạng thái</th>
-        <th scope="col" class="!text-center">Thao tác</th>
-      </ng-template>
-      <ng-template #rows let-row let-index="index">
-        <td class="!text-center">{{ index + 1 + (params.page - 1) * params.pageSize }}</td>
-        <td (click)="handleDetail(row?.id)" class="hover:cursor-pointer hover:text-green-500 hover:scale-105" scope="col" >{{ row.fullname }}</td>
-        <td class="hover:cursor-pointer hover:text-green-500 hover:scale-105" scope="col" >{{ row.userName }}</td>
-        <td scope="col" >{{ row.email }}</td>
-        <td scope="col" >{{ row.cellPhone }}</td>
-        <td scope="col" >{{ row.birthday | date: 'dd/MM/yyyy' }}</td>
-        <td scope="col" >{{ row.address }}</td>
-        <td scope="col" [ngClass]="{'text-green-500': row.status === 'Active', 'text-red-600': row.status === 'Disable'}">
-          {{row.status === 'Active' ? 'Hoạt động' : 'Vô hiệu hoá'}}
-        </td>
-        <td (click)="openDisablePopup(row?.id, row?.userName, row?.status)" scope="col" class="!text-center cursor-pointer">
-          <i *ngIf="row.status === 'Active'" class="fa-solid fa-user-xmark text-myRed"></i>
-          <i *ngIf="row.status === 'Disable'" class="fa-solid fa-user-check text-green-500"></i>
-        </td>
-      </ng-template>
-    </app-share-table>
+    <div>
+      <div [style.height]=" maxheight ? maxheight:'450px'"
+      class="mt-[27px] w-full min-w-full overflow-x-auto overflow-y-auto">
+      <table class="text-[13px] font-normal w-full relative">
+        <thead class="bg-[#96E6A1] *:py-4 *:text-center  font-medium sticky top-0 ">
+            <th class="">Họ và tên</th>
+            <th class="">Username</th>
+            <th class="">SĐT</th>
+            <th class="">Email</th>
+            <th class="">Chức vụ</th>
+            <th class="">Trạng thái</th>
+        </thead>
+        <div class="w-full" *ngIf="isLoading; else data">
+          <div class="flex items-center justify-center absolute mt-[100px] !w-[100%]">
+            <nz-spin class="inline-block w-full text-center" nzSize="large" ></nz-spin>
+          </div>
+        </div>  
+        <div class="w-full" *ngIf="listUserManagements.length == 0">
+          <div class="flex flex-col items-center justify-center absolute mt-[100px] !w-[100%]">
+            <span nz-icon nzType="exclamation-circle" nzTheme="outline" class="text-[20px]"></span>
+            <div class="text-myText font-[500] text-[14px] mt-[10px]">Danh sách trống</div>
+          </div>
+        </div>  
+        <ng-template #data>
+          <tbody> 
+            <tr class="*:py-4 *:text-center border-b border px-2 h-[60px]" *ngFor="let item of listUserManagements; let index = index">
+              <td class="px-2">
+                {{item?.fullname}}
+              </td>
+              <td >
+                {{item?.userName}}
+              </td>
+              <td >
+                {{item?.cellPhone}}
+              </td>
+              <td >
+                {{item?.email}}
+              </td>
+              <td >
+                {{item?.role}}
+              </td>
+              <td class="flex justify-center">
+                <div class="w-fit px-2 py-[8px] flex items-center border border-solid justify-center rounded-lg leading-[100%]"
+                [ngClass]="{'bg-green-500 border-[#00B087] text-[#008767]': item.status === 'Active', 'bg-[#FFC5C5] border-[#DF0404] text-[#DF0404]': item.status === 'Disable'}">
+                  {{item.status === 'Active' ? 'Hoạt động' : 'Vô hiệu hoá'}}
+                </div>
+              </td>
+            </tr>
+          </tbody> 
+        </ng-template>                   
+      </table>
+      </div>
+      <div class="float-right w-fit pb-6">
+        <app-pagi [totalCount]="totalCount" [page]="params.page" [pageSize]="params.pageSize"
+          (PageEvent)="changePage($event)" (PageSizeEvent)="changePageSize($event)"></app-pagi>
+      </div>
+    </div>
 </div>
 
 <app-management-add *ngIf="isVisiblePopUpAddManagement" [mode]="mode" [idManagement]="idManagement"

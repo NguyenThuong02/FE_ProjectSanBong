@@ -14,6 +14,8 @@ import { ManagementAddComponent } from '../management-add/management-add.compone
 import { AccountDisableComponent } from './account-disable/account-disable.component';
 import { AccountService } from '../../../core/api/account.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { PagiComponent } from '../../../shared/components/pagi/pagi.component';
 
 @Component({
   selector: 'app-management-list',
@@ -26,13 +28,15 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     ShareTableModule,
     RouterModule,
     NzIconModule,
+    NzSpinModule,
     TranslateModule,
     MatInputModule,
     MatFormFieldModule,
     MatDatepickerModule,
     MatSelectModule,
     ManagementAddComponent,
-    AccountDisableComponent
+    AccountDisableComponent,
+    PagiComponent
   ],
   templateUrl: './management-list.component.html',
   styleUrl: './management-list.component.scss'
@@ -45,46 +49,11 @@ export class ManagementListComponent implements OnInit{
   public listUserManagements : any = [];
   public mode: 'create' | 'edit' = 'create';
   public role: string;
+  maxheight: string = '';
   public params = {
     page: 1,
     pageSize:10
   }
-
-  listStatus = [
-    {
-      label: 'Chưa đổi mật khẩu',
-      value: 0,
-    },
-    {
-      label: 'Hoạt động',
-      value: 1,
-    },
-    {
-      label: 'Khoá',
-      value: 2,
-    },
-  ];
-
-  listRoles = [
-    {
-      label: 'Quản trị viên',
-      value: 0,
-    },
-    {
-      label: 'Người dùng thường',
-      value: 1,
-    }
-  ];
-
-  form: FormGroup = this.fb.group({
-    fullName: [''],
-    email: [null],
-    cellPhone: [null],
-    createdDate: [null],
-    status: [null],
-    roles: [null],
-  });
-
 
   constructor(
     private fb: FormBuilder,
@@ -153,15 +122,6 @@ export class ManagementListComponent implements OnInit{
     if (data.isSuccess == true) {
       this.viewListUser();
     }
-  }
-
-  handleCancel() {
-    this.form.reset({ emitEvent: true });
-    this.handleSearch();
-  }
-
-  handleSearch() {
-
   }
 
   changePage(e: number) {
