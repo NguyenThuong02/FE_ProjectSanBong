@@ -124,8 +124,9 @@ export class MainComponent implements OnInit, OnChanges {
       } else if(this.role[0] === 'User') {
         this.canActive = false;
         this.router.navigate(['/home-page']);
-      } else if(this.role[0] === 'Customer') {
-        this.router.navigate(['/statistical']);
+      } else if(this.role[0] === 'FacilityOwner') {
+        this.canActive = true;
+        this.router.navigate(['/facility']);
       }
     } else {
       this.canActive = false;
@@ -215,6 +216,7 @@ export class MainComponent implements OnInit, OnChanges {
     const routeTitles: { [key: string]: string } = {
       '/user-management': 'Danh sách tài khoản',
       '/setting': 'Cài đặt',
+      '/facility/list': 'Quản lý sân',
       '/home-page': 'Trang chủ',
       '/list-feilds': 'Danh sách sân',
       '/my-info': 'Thông tin cá nhân'

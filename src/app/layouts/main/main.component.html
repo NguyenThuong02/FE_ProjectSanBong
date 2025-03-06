@@ -5,11 +5,27 @@
     <div class="relative w-full h-[70px]">
       <img class="object-cover w-full h-full"  src="../../../assets/img/logoSB.png"/>
     </div>
-    <div *ngIf="canActive" class="mt-5">
+    <div *ngIf="this.role[0] === 'Administrator'" class="mt-5">
       <ul nz-menu [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed" class="border-none">
         <li nz-menu-item [routerLink]="['/', 'user-management']" nzMatchRouter class="menu-item">
           <i class="fa-solid fa-users"></i>
           <span class="ml-3">Danh sách tài khoản</span>
+        </li>
+        <li nz-menu-item [routerLink]="['/', 'setting']" nzMatchRouter class="menu-item">
+          <i class="fa-solid fa-gear"></i>
+          <span class="ml-3">Cài đặt</span>
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="this.role[0] === 'FacilityOwner'" class="mt-5">
+      <ul nz-menu [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed" class="border-none">
+        <li nz-menu-item [routerLink]="['/', 'facility']" nzMatchRouter class="menu-item">
+          <i class="fa-solid fa-volleyball"></i>
+          <span class="ml-3">Quản lý sân</span>
+        </li>
+        <li nz-menu-item [routerLink]="['/', 'concert']" nzMatchRouter class="menu-item">
+          <i class="fa-solid fa-medal"></i>
+          <span class="ml-3">Quản lý sự kiện</span>
         </li>
         <li nz-menu-item [routerLink]="['/', 'setting']" nzMatchRouter class="menu-item">
           <i class="fa-solid fa-gear"></i>
@@ -27,7 +43,7 @@
       <div class="flex items-center justify-end gap-4 relative cursor-pointer" (click)="toggleUserMenu()">
         <div class="flex flex-col h-full justify-between items-end">
           <div class="text-[16px] text-primary leading-[120%]">{{nameOwner}}</div>
-          <div class="text-[14px] leading-[120%]">Admin</div>
+          <div class="text-[14px] leading-[120%]">{{this.role[0]}}</div>
         </div>
         <i class="fa-regular fa-circle-user text-[32px]"></i>
 

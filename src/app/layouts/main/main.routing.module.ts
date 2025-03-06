@@ -39,6 +39,20 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'facility',
+        loadChildren: () =>
+          import('../../features/facility/facility.routing.module').then(
+            (m) => m.FacilityRoutingModule,
+          ),
+      },
+      {
+        path: 'concert',
+        loadChildren: () =>
+          import('../../features/concert/concert.routing.module').then(
+            (m) => m.ConcertRoutingModule,
+          ),
+      },
+      {
         path: 'user-management',
         loadChildren: () =>
           import('../../features/management/management.routing.module').then(

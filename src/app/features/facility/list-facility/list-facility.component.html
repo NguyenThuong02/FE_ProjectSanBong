@@ -1,0 +1,74 @@
+<div class="h-[100vh] w-full p-10">
+    <div class="mb-8 flex justify-between items-center">
+        <div class="relative w-[400px]">
+          <i class="fa-solid fa-magnifying-glass absolute left-[12px] top-[50%] translate-y-[-50%]"></i>
+          <input class="h-[40px] bg-[#f1f1f1] outline-none border-[2px] border-primary w-full pr-2 pl-8 rounded-xl" placeholder="Tìm kiếm tên sân" />
+        </div>
+        <div [routerLink]="['/facility/add']" class="px-[12px] py-[8px] rounded-[6px] flex items-center justify-center gap-1 border border-primary text-primary cursor-pointer hover:bg-primary hover:text-[#fff]" >
+            <i class="fa-solid fa-circle-plus"></i>
+            Thêm sân mới
+        </div>
+    </div>
+    <div>
+      <div [style.height]=" maxheight ? maxheight:'450px'"
+      class="mt-[27px] w-full min-w-full overflow-x-auto overflow-y-auto">
+      <table class="text-[13px] font-normal w-full relative">
+        <thead class="border-b-[#96E6A1] border-b *:py-4 *:text-center  font-medium sticky top-0 ">
+            <th class="">#</th>
+            <th class="">Môn thể thao</th>
+            <th class="">Tên sân</th>
+            <th class="">Ảnh</th>
+            <th class="">Giá</th>
+            <th class="">Địa chỉ</th>
+            <th class=""></th>
+        </thead>
+        <div class="w-full" *ngIf="isLoading; else data">
+          <div class="flex items-center justify-center absolute mt-[100px] !w-[100%]">
+            <nz-spin class="inline-block w-full text-center" nzSize="large" ></nz-spin>
+          </div>
+        </div>  
+        <div class="w-full" *ngIf="listFacility.length == 0">
+          <div class="flex flex-col items-center justify-center absolute mt-[100px] !w-[100%]">
+            <span nz-icon nzType="exclamation-circle" nzTheme="outline" class="text-[20px]"></span>
+            <div class="text-myText font-[500] text-[14px] mt-[10px]">Danh sách trống</div>
+          </div>
+        </div>  
+        <ng-template #data>
+          <tbody> 
+            <tr class="*:py-4 *:text-center border-b border px-2 h-[60px]" *ngFor="let item of listFacility; let index = index">
+              <td>
+                {{index + 1}}
+              </td>
+              <td>
+                {{item?.facilityType}}
+              </td>
+              <td >
+                {{item?.name}}
+              </td>
+              <td >
+                <div class="flex justify-center"><img class="object-cover w-[100px] h-[60px]" src="https://bulbal.vn/wp-content/uploads/2023/01/TOP-10-SAN-BONG-DA-PHUI-TAI-TPHCM-NAM-2023.jpg"/></div>
+              </td>
+              <td >
+                {{item?.price}}
+              </td>
+              <td> 
+                {{item?.address}}
+              </td>
+              <td class="relative">
+                <i class="fa-solid fa-ellipsis-vertical cursor-pointer p-4 hover:scale-105 hover:text-primary" (click)="toggleMenu(item.id)"></i>
+                <div *ngIf="selectedFacilityId === item.id" class="absolute right-0 mt-1 w-[120px] bg-white border rounded-lg shadow-lg z-10">
+                  <div class="p-2 cursor-pointer hover:bg-gray-200" (click)="viewDetail(item.id)">Xem chi tiết</div>
+                  <div class="p-2 cursor-pointer hover:bg-gray-200 text-red-500" (click)="deleteFacility(item.id)">Xoá</div>
+                </div>
+              </td>              
+            </tr>
+          </tbody> 
+        </ng-template>                   
+      </table>
+      </div>
+      <div class="float-right w-fit pb-6">
+        <app-pagi [totalCount]="totalCount" [page]="params.page" [pageSize]="params.pageSize"
+          (PageEvent)="changePage($event)" (PageSizeEvent)="changePageSize($event)"></app-pagi>
+      </div>
+    </div>
+</div>

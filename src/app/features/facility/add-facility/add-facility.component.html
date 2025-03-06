@@ -1,0 +1,83 @@
+<div class="w-full mt-[100px] p-5 mb-[-100px]">
+    <div class="flex items-center justify-start gap-2 text-[16px]">
+        <div class="cursor-pointer hover:scale-105 hover:text-primary" [routerLink]="['/facility/list']">Quản lý sân</div>
+        <div>/</div>
+        <div *ngIf="!isEdit" class="text-primary">Tạo sân mới</div>
+        <div *ngIf="isEdit" class="text-primary">Chỉnh sửa sân</div>
+    </div>
+    <div class="flex-1 pt-8 px-[50px] rounded-lg overflow-y-auto">
+        <form class="flex flex-col gap-2 mt-4 p-[1px] " [formGroup]="form">
+            <div class="flex w-full gap-9">
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Tên sân</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <input matInput placeholder="Nhập tên sân" formControlName="name" />
+                        <mat-error
+                            *ngIf="form.get('name')?.errors?.['required']&& (form.get('name')?.dirty || form.get('name')?.touched)"
+                            class="text-red-600">
+                            Vui lòng nhập đầy đủ thông tin!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class=" flex flex-col flex-1">
+                    <span class="mb-1">Loại thể thao</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <mat-select formControlName="type">
+                            <mat-option *ngFor="let type of listType" [value]="type.value">
+                              {{ type.label }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error
+                            *ngIf="form.get('type')?.errors?.['required']&& (form.get('type')?.dirty || form.get('type')?.touched)"
+                            class="text-red-600">
+                            Vui lòng nhập đầy đủ thông tin
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex w-full gap-9">
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Địa chỉ</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <input matInput placeholder="Nhập địa chỉ" formControlName="address" />
+                        <mat-error
+                            *ngIf="form.get('address')?.errors?.['required']&& (form.get('address')?.dirty || form.get('address')?.touched)"
+                            class="text-red-600">
+                            Vui lòng nhập đầy đủ thông tin!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Giá</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <input matInput placeholder="Nhập giá tiền" formControlName="price" />
+                        <mat-error
+                            *ngIf="form.get('price')?.errors?.['required']&& (form.get('price')?.dirty || form.get('price')?.touched)"
+                            class="text-red-600">
+                            Vui lòng nhập đầy đủ thông tin!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex w-full gap-9">
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Ảnh sân</span>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Mô tả</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <textarea matInput formControlName="description" rows="5"></textarea>
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+        <div class="flex justify-center items-center mt-[140px] gap-4">
+            <div [routerLink]="['/facility/list']" class="rounded-lg px-3 py-2 font-semibold text-white bg-[#BAC1CC] cursor-pointer">
+                Huỷ bỏ
+            </div>
+            <div (click)="handleSubmit()" class="rounded-lg px-3 py-2 font-semibold text-white bg-[#22B14C] cursor-pointer">
+                {{isEdit ? 'Chỉnh sửa' : 'Thêm mới'}}
+            </div>
+        </div>
+    </div>
+</div>
