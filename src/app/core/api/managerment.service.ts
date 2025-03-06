@@ -12,36 +12,32 @@ export class ManagermentService {
 
   constructor(private http: HttpClient) { }
 
-  getAllManagementOwner(page: number, pageSize: number): Observable<any> {
-    return this.http.get(this.apiUrl + `/api/user/get-all-user?page=${page}&pageSize=${pageSize}`);
-  }
 
   getAllManagement(page: number, pageSize: number): Observable<any> {
     return this.http.get(this.apiUrl + `/api/user/get-all-users?page=${page}&pageSize=${pageSize}`);
   }
 
-  updateAccountManagement(body: any): Observable<any> {
-    return this.http.patch(this.apiUrl + '/api/user/update-user-by-admin', body)
+  updateUsers(body?: any): Observable<any> {
+    return this.http.patch(this.apiUrl + `/api/user/update-user`, body);
   }
 
-  addAccountManagementOwner(body?: any): Observable<any> {
-    return this.http.post(this.apiUrl + `/api/user/register`, body);
+  changeRole(id: any, role?: any): Observable<any> {
+    return this.http.post(this.apiUrl + `/admin/update-account/${id}?role=${role}`, {});
   }
 
   disableAccount(id?: any): Observable<any> {
-    return this.http.post(this.apiUrl + `/api/user/disable-user/${id}`, {});
+    return this.http.post(this.apiUrl + `/admin/disable-account/${id}`, {});
+  }
+
+  activeAccount(id?: any): Observable<any> {
+    return this.http.post(this.apiUrl + `/admin/active-account/${id}`, {});
   }
 
   getUserById(id?: any): Observable<any> {
     return this.http.get(this.apiUrl + `/api/user/get-user/${id}`);
   }
 
-  getAllCandidateVoter(page: number, pageSize: number): Observable<any> {
-    return this.http.get(this.apiUrl + `/api/user/select-candidates?page=${page}&pageSize=${pageSize}`);
-  }
-
   uploadImage(formData: FormData): Observable<{ filename: string }> {
     return this.http.post<{ filename: string }>('https://be.youth.com.vn/api/upload/UploadImage', formData);
-  }
-  
+  }  
 }

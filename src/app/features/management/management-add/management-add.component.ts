@@ -10,10 +10,9 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalComponent, NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { ManagermentService } from '../../../core/api/managerment.service';
-import { rePassValidator } from '../../../shared/validate/check-repass.directive';
 import { phoneNumberValidator } from '../../../shared/validate/check-phone-number.directive';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-management-add',
@@ -22,7 +21,7 @@ import { phoneNumberValidator } from '../../../shared/validate/check-phone-numbe
     FormsModule,
     MatInput,
     CommonModule,
-    NzModalComponent,
+    RouterModule,
     NzModalModule,
     NzIconModule,
     MatFormFieldModule,
@@ -30,89 +29,139 @@ import { phoneNumberValidator } from '../../../shared/validate/check-phone-numbe
     MatSelectModule,
     TranslateModule,
     NzButtonModule,
-    NzPopconfirmModule,
     ReactiveFormsModule,
   ],
   templateUrl: './management-add.component.html',
   styleUrl: './management-add.component.scss'
 })
-export class ManagementAddComponent implements OnInit, OnChanges {
-  @Input() isVisiblePopUpAddManagement: boolean = true;
-  @Input() idManagement: any = ''; 
-  @Input() mode: 'create' | 'edit';
-  @Output() visiblePopUpAddManagement = new EventEmitter<boolean>();
-  public hideOldPass: boolean = true;
-  public hidePass: boolean = true;
-  public hideRePass: boolean = true;
-  public edit: boolean = false;
-  avatarUrl: string | null = null;
+export class ManagementAddComponent implements OnInit {
+  requiredMsg: string = '';
+  fullName: string = '';
+  isLoadingSaveEdit: boolean = false;
+  isEdit: boolean = false;
+  idOwner: any;
+  nameOwner: any;
+  cityData: any = [];
+  districtData: any = [];
+  wardsData: any = [];
   identityCardUrl: string | null = null;
-
-
-  listGender = [
+  idUser: any;
+  avatarPreview:string = "../../../assets/img/Logo-Hoc-Vien-Ky-Thuat-Mat-Ma-ACTVN.webp"
+  public listGender: any = [
     {
+      value: true,
       label: 'Nam',
-      value: true,
     },
     {
+      value: false,
       label: 'Nữ',
-      value: false,
-    }
+    },
   ];
-  listRoles = [
+  public listRole: any = [
     {
-      label: 'Người dùng thường',
-      value: false,
+      value: 'User',
+      label: 'Khách hàng',
     },
     {
-      label: 'Quản trị viên',
-      value: true,
+      value: 'FacilityOwner',
+      label: 'Chủ sân',
     }
-  ];
-
-  public form: FormGroup = this.fb.group({
-    fullName: [null, Validators.required],
-    identityCardNumber: [null, Validators.required],
-    identityCardDate: [null, Validators.required],
-    identityCardPlace: [null, Validators.required],
-    username: [null, Validators.required],
-    email: [null, Validators.email],
-    birthday: [null, Validators.required],
-    address: [null, Validators.required],
-    gender: [true, Validators.required],
-    cellPhone: [null, [phoneNumberValidator()]],
-    isAdmin: [false],
-    avatarUrl: [''], // Control for avatar
-    identityCardUrl: ['']
-  });
-
+  ]
   constructor(
-    private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
-    private modal: NzModalService,
-    private message: NzMessageService,
-    private managermentService: ManagermentService,
+      private fb: FormBuilder,
+      private message: NzMessageService,
+      private cdr: ChangeDetectorRef,
+      private managermentService: ManagermentService,
+      private route: ActivatedRoute,
+      private router: Router,
   ) {}
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['idManagement']) {
-      if(this.idManagement && this.mode === 'edit') {
-        this.edit = true;
-        this.viewInfoUser();
-      } else {
-        this.edit = false;
-        // this.form.reset(); 
-      }
+  ngOnInit(): void {
+    this.idUser = this.route.snapshot.paramMap.get('id');
+    if(this.idUser) {
+      this.getViewInfo();
     }
   }
-  ngOnInit(): void {
-    this.form.controls['isAdmin'].disable();
-    if(this.idManagement && this.mode === 'edit') {
-      this.edit = true;
-      this.viewInfoUser();
-    } else {
-      this.edit = false;
-      // this.form.reset(); 
+  
+  public form: FormGroup = this.fb.group({
+    fullName: [{ value: null, disabled: true }, Validators.required],
+    userName: [{ value: null, disabled: true }, Validators.required],
+    dob: [{ value: null, disabled: true }, Validators.required],
+    phoneNumber: [{ value: null, disabled: true }, [Validators.required, phoneNumberValidator()]],
+    email: [{ value: null, disabled: true }, [Validators.required, Validators.email]],
+    gender: [{ value: true, disabled: true }, Validators.required],
+    role: [null, Validators.required], 
+    status: [null, Validators.required], 
+  });
+
+    // avatar change
+  public avatarChangeForm: FormGroup = this.fb.group({
+      image: [null]
+  }) 
+
+  getViewInfo(): void {
+    this.managermentService.getUserById(this.idUser).subscribe({
+      next: (res) => {
+        this.form.patchValue({
+          fullName: res.fullname,
+          userName: res.userName,
+          email: res.email,
+          gender: res.gender,
+          phoneNumber: res.cellPhone,
+          dob: res.birthday,
+          role: res.role,
+          status: res.status,
+        });
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.message.error('Lấy thông tin thất bại');
+      },
+    })
+  }
+
+  handleSubmit(): void {
+    if(this.form.get('status')?.value === 'Active'){
+      this.managermentService.activeAccount(this.idUser).subscribe ({
+        next: (res) => {
+          this.managermentService.changeRole(this.idUser, this.form.get('role')?.value).subscribe ({
+            next: (res2) => {
+              this.message.success('Cập nhật thành công!')
+              this.cdr.detectChanges();
+              this.router.navigate([`/user-management/list`]);
+            },
+            error: (err) => {
+              this.message.error('Cấp quyền thất bại');
+            }
+          })
+        },
+        error: (err) => {
+          this.message.error('Cập nhật thông tin thất bại!');
+        }
+      })
     }
+    if(this.form.get('status')?.value === 'Disable'){
+      this.managermentService.disableAccount(this.idUser).subscribe ({
+        next: (res) => {
+          this.managermentService.changeRole(this.idUser, this.form.get('role')?.value).subscribe ({
+            next: (res2) => {
+              this.message.success('Cập nhật thành công!')
+              this.cdr.detectChanges();
+              this.router.navigate([`/user-management/list`]);
+            },
+            error: (err) => {
+              this.message.error('Cấp quyền thất bại');
+            }
+          })
+        },
+        error: (err) => {
+          this.message.error('Cập nhật thông tin thất bại!');
+        }
+      })
+    }
+}
+
+  changeStatus(status: string): void {
+    this.form.get('status')?.setValue(status);
   }
 
   handleFileChange(event: Event, type: 'avatar' | 'identityCard'): void {
@@ -130,8 +179,8 @@ export class ManagementAddComponent implements OnInit, OnChanges {
     this.managermentService.uploadImage(formData).subscribe(
       (response) => {
         if (type === 'avatar') {
-          this.avatarUrl = response.filename;
-          this.form.get('avatarUrl')?.setValue(this.avatarUrl);
+          this.avatarPreview = response.filename;
+          this.avatarChangeForm.get('image')?.setValue(this.avatarPreview);
         } else {
           this.identityCardUrl = response.filename;
           this.form.get('identityCardUrl')?.setValue(this.identityCardUrl);
@@ -143,137 +192,6 @@ export class ManagementAddComponent implements OnInit, OnChanges {
       }
     );
   }
-  
 
-  handleOk(): void {
-    const body = {
-      userName: this.form.get('username')?.value,
-      fullName: this.form.get('fullName')?.value,
-      cellPhone: this.form.get('cellPhone')?.value,
-      identityCardNumber: this.form.get('identityCardNumber')?.value,
-      identityCardDate: this.form.get('identityCardDate')?.value,
-      identityCardPlace: this.form.get('identityCardPlace')?.value,
-      email: this.form.get('email')?.value,
-      address: this.form.get('address')?.value,
-      birthday: this.form.get('birthday')?.value,
-      gender: this.form.get('gender')?.value,
-      imageUrl: this.avatarUrl,
-      urlIdentityCardImage: this.identityCardUrl,
-      isAdmin: this.form.get('isAdmin')?.value,
-    };
-    if (this.form.invalid) {
-      this.form.get('username')?.markAsTouched();
-      this.form.get('fullName')?.markAsTouched();
-      this.form.get('identityCardNumber')?.markAsTouched();
-      this.form.get('identityCardDate')?.markAsTouched();
-      this.form.get('identityCardPlace')?.markAsTouched();
-      this.form.get('cellPhone')?.markAsTouched();
-      this.form.get('address')?.markAsTouched();
-      this.form.get('birthday')?.markAsTouched();
-      this.form.get('gender')?.markAsTouched();
-      this.form.get('email')?.markAsTouched();
-      return;
-    }
-    this.managermentService.addAccountManagementOwner(body).subscribe(res => {
-      if(res) {
-        this.message.success("Tạo tài khoản thành công")
-        this.visiblePopUpAddManagement.emit(false);
-      }
-    }, (err) => {
-      const errorMessage = err.error ? err.error.split('|')[1] : 'Có lỗi xảy ra';
-      this.message.error(errorMessage);
-    })
-  }
 
-  viewInfoUser(): void {
-    this.managermentService.getUserById(this.idManagement).subscribe({
-      next: (res) => {
-        this.form.patchValue({
-          username: res.userName,
-          fullName: res.fullname,
-          cellPhone: res.cellPhone,
-          birthday: res.birthday,
-          address: res.address,
-          identityCardNumber: res.identityCardNumber,
-          identityCardDate: res.identityCardDate,
-          identityCardPlace: res.identityCardPlace,
-          gender: res.gender,
-          email: res.email,
-          avatarUrl: res?.imageUrl, 
-          identityCardUrl: res?.urlIdentityCardImage 
-        });
-        this.avatarUrl = res.imageUrl;
-        this.identityCardUrl = res.identityCardImage;
-      },
-      error: (err) => {
-        this.message.error('Lấy dữ liệu người dùng thất bại!');
-      }
-    });
-  }
-
-  handleCancel(): void {
-    this.visiblePopUpAddManagement.emit(false);
-  }
-
-  updateValidateRepass(e: any) {
-    this.form.get('rePass')?.clearValidators();
-    this.form.get('rePass')?.addValidators(rePassValidator(e.target.value));
-  }
-  showOldPass(e: any) {
-    const inputPass = document.querySelector(
-      '#inputPassChangeOldPassword',
-    ) as HTMLInputElement;
-    if (inputPass?.type === 'password') {
-      inputPass.type = 'text';
-      this.hideOldPass = false;
-    } else {
-      inputPass.type = 'password';
-      this.hideOldPass = true;
-    }
-  }
-  showPass(e: any) {
-    const inputPass = document.querySelector(
-      '#inputPassChangePassword',
-    ) as HTMLInputElement;
-    if (inputPass?.type === 'password') {
-      inputPass.type = 'text';
-      this.hidePass = false;
-    } else {
-      inputPass.type = 'password';
-      this.hidePass = true;
-    }
-  }
-  showRePass(e: any) {
-    const inputPass = document.querySelector(
-      '#inputRePassChangePassword',
-    ) as HTMLInputElement;
-    if (inputPass?.type === 'password') {
-      inputPass.type = 'text';
-
-      this.hideRePass = false;
-    } else {
-      inputPass.type = 'password';
-      this.hideRePass = true;
-    }
-  }
-  confirmModal?: NzModalRef;
-  showAlerPhoneNumber(): void {
-    this.confirmModal = this.modal.confirm({
-      nzTitle: 'Thông báo',
-      nzContent:
-        'Bạn không thể xác minh tài khoản thông qua số điện thoại nếu bỏ trống',
-      nzOnOk: () => {},
-    });
-  }
-  showAlerEmail(): void {
-    this.confirmModal = this.modal.confirm({
-      nzTitle: 'Thông báo',
-      nzContent:
-        'Bạn không thể xác minh tài khoản thông qua email nếu bỏ trống',
-      nzOnOk: () => {},
-    });
-  }
-  handleConfirmEmail() {
-    console.log('confirm email');
-  }
 }

@@ -21,6 +21,20 @@ const routes: Routes = [
                   ),        
             },
             {
+                path: 'add',
+                loadComponent: () =>
+                  import('../management/management-add/management-add.component').then(
+                    (m) => m.ManagementAddComponent
+                  ),        
+            },
+            {
+                path: 'detail/:id',
+                loadComponent: () =>
+                  import('../management/management-add/management-add.component').then(
+                    (m) => m.ManagementAddComponent
+                  ),        
+            },
+            {
                 path:"**",
                 redirectTo:'/',
             },

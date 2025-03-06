@@ -1,10 +1,9 @@
 <div class="h-[100vh] w-full p-10">
-    <div class="mb-8 flex justify-between items-center">
+    <div class="mb-8 flex justify-start items-center">
         <div class="relative w-[400px]">
           <i class="fa-solid fa-magnifying-glass absolute left-[12px] top-[50%] translate-y-[-50%]"></i>
           <input class="h-[40px] bg-[#f1f1f1] outline-none border-[2px] border-primary w-full pr-2 pl-8 rounded-xl" placeholder="Tìm kiếm tên thành viên" />
         </div>
-        <div (click)="handelOpenPopUpAddManagement()" class="px-[12px] py-[8px] rounded-[6px] border border-primary text-primary cursor-pointer hover:bg-primary hover:text-[#fff]" >Thêm mới người dùng</div>
     </div>
     <div>
       <div [style.height]=" maxheight ? maxheight:'450px'"
@@ -32,10 +31,10 @@
         <ng-template #data>
           <tbody> 
             <tr class="*:py-4 *:text-center border-b border px-2 h-[60px]" *ngFor="let item of listUserManagements; let index = index">
-              <td class="px-2">
+              <td (click)="viewDetail(item?.id)" class="px-2 hover:text-primary hover:scale-105 cursor-pointer">
                 {{item?.fullname}}
               </td>
-              <td >
+              <td (click)="viewDetail(item?.id)" class="px-2 hover:text-primary hover:scale-105 cursor-pointer">
                 {{item?.userName}}
               </td>
               <td >
@@ -47,8 +46,8 @@
               <td >
                 {{item?.role}}
               </td>
-              <td class="flex justify-center">
-                <div class="w-fit px-2 py-[8px] flex items-center border border-solid justify-center rounded-lg leading-[100%]"
+              <td class="flex justify-center" (click)="openDisablePopup(item?.id, item?.userName, item?.status)"> 
+                <div class="w-fit px-2 py-[8px] cursor-pointer flex items-center border border-solid justify-center rounded-lg leading-[100%]"
                 [ngClass]="{'bg-green-500 border-[#00B087] text-[#008767]': item.status === 'Active', 'bg-[#FFC5C5] border-[#DF0404] text-[#DF0404]': item.status === 'Disable'}">
                   {{item.status === 'Active' ? 'Hoạt động' : 'Vô hiệu hoá'}}
                 </div>
@@ -64,9 +63,5 @@
       </div>
     </div>
 </div>
-
-<app-management-add *ngIf="isVisiblePopUpAddManagement" [mode]="mode" [idManagement]="idManagement"
-[isVisiblePopUpAddManagement]="isVisiblePopUpAddManagement"
-(visiblePopUpAddManagement)="handelVisiblePopUpAddManagement($event)"></app-management-add>
 
 <app-account-disable [isVisible]="isVisible" [nameManagement]="nameManagement" [idManagement]="idManagement" (changeVisibleDelete)="handleChangeVisible($event)"></app-account-disable>
