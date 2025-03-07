@@ -58,7 +58,8 @@
                 <i class="fa-solid fa-ellipsis-vertical cursor-pointer p-4 hover:scale-105 hover:text-primary" (click)="toggleMenu(item.id)"></i>
                 <div *ngIf="selectedFacilityId === item.id" class="absolute right-0 mt-1 w-[120px] bg-white border rounded-lg shadow-lg z-10">
                   <div class="p-2 cursor-pointer hover:bg-gray-200" (click)="viewDetail(item.id)">Xem chi tiết</div>
-                  <div class="p-2 cursor-pointer hover:bg-gray-200 text-red-500" (click)="deleteFacility(item.id)">Xoá</div>
+                  <div (click)="openDeletePopup(item)"
+                  class="p-2 cursor-pointer hover:bg-gray-200 text-red-500">Xoá</div>
                 </div>
               </td>              
             </tr>
@@ -72,3 +73,5 @@
       </div>
     </div>
 </div>
+
+<app-popup-delete [isVisible]="isVisible" [facilityItem]="facilityItem" (changeVisibleDelete)="handleChangeVisible($event)"></app-popup-delete>

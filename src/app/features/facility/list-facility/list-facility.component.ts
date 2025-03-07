@@ -12,6 +12,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { PagiComponent } from '../../../shared/components/pagi/pagi.component';
 import { FacilityService } from '../../../core/api/facility.service';
+import { PopupDeleteComponent } from './popup-delete/popup-delete.component';
 
 @Component({
   selector: 'app-list-facility',
@@ -26,7 +27,8 @@ import { FacilityService } from '../../../core/api/facility.service';
     NzIconModule,
     NzSpinModule,
     TranslateModule,
-    PagiComponent
+    PagiComponent,
+    PopupDeleteComponent
   ],
   templateUrl: './list-facility.component.html',
   styleUrl: './list-facility.component.scss'
@@ -36,6 +38,7 @@ export class ListFacilityComponent implements OnInit{
   public totalCount: number = 10;
   public listFacility : any = [];
   public selectedFacilityId: number | null = null;
+  facilityItem: any;
   maxheight: string = '';
   public params = {
     page: 1,
@@ -80,9 +83,15 @@ export class ListFacilityComponent implements OnInit{
     this.selectedFacilityId = this.selectedFacilityId === id ? null : id;
   }
 
-  deleteFacility(id: number) {
-    // Gọi API hoặc thực hiện thao tác xoá
-    console.log("Xóa sân với ID:", id);
+  openDeletePopup(item?: any) {
+    this.facilityItem = item;
+    this.isVisible = true;
   }
-
+  isVisible: boolean = false;
+  handleChangeVisible(data: any) {
+    this.isVisible = data.visible;
+    if (data.isSuccess == true) {
+      this.viewListFacility();
+    }
+  }
 }

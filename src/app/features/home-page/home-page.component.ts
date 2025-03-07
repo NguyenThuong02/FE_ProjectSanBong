@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { FacilityService } from '../../core/api/facility.service';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-home-page',
@@ -20,64 +22,36 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 })
 export class HomePageComponent {
   @ViewChild('scroller') scroller!: ElementRef;
+  isLoading: boolean = false;
   listType: any = [
-    { value: '1', label: 'Type 1' },
-    { value: '2', label: 'Type 2' },
-    { value: '3', label: 'Type 3' },
-  ];
-  listSanBong: any = [
-    { 
-      img: 'https://www.sporta.vn/assets/default_venue_0-dc1f6687f619915230b62712508933a71a6e9529c390237b9766acc0d59539ab.webp', 
-      name: 'Sân Bóng 1',
-      address: '123 ABC',
-      type: 'Type 1',
-      time: '18:00 - 20:00, 12/03/2025', 
+    {
+      value: 'Football',
+      label: 'Football',
     },
-    { 
-      img: 'https://www.sporta.vn/assets/default_venue_0-dc1f6687f619915230b62712508933a71a6e9529c390237b9766acc0d59539ab.webp', 
-      name: 'Sân Bóng 2',
-      address: '123 ABC',
-      type: 'Type 1',
-      time: '18:00 - 20:00, 12/03/2025', 
+    {
+      value: 'Pickerball',
+      label: 'Pickerball',
     },
-    { 
-      img: 'https://www.sporta.vn/assets/default_venue_0-dc1f6687f619915230b62712508933a71a6e9529c390237b9766acc0d59539ab.webp', 
-      name: 'Sân Bóng 3',
-      address: '123 ABC',
-      type: 'Type 1',
-      time: '18:00 - 20:00, 12/03/2025', 
+    {
+      value: 'Tenis',
+      label: 'Tenis',
     },
-    { 
-      img: 'https://www.sporta.vn/assets/default_venue_0-dc1f6687f619915230b62712508933a71a6e9529c390237b9766acc0d59539ab.webp', 
-      name: 'Sân Bóng 4',
-      address: '123 ABC',
-      type: 'Type 1',
-      time: '18:00 - 20:00, 12/03/2025', 
+    {
+      value: 'Bóng rổ',
+      label: 'Bóng rổ',
     },
-    { 
-      img: 'https://www.sporta.vn/assets/default_venue_0-dc1f6687f619915230b62712508933a71a6e9529c390237b9766acc0d59539ab.webp', 
-      name: 'Sân Bóng 5',
-      address: '123 ABC',
-      type: 'Type 1',
-      time: '18:00 - 20:00, 12/03/2025', 
-    },
-    { 
-      img: 'https://www.sporta.vn/assets/default_venue_0-dc1f6687f619915230b62712508933a71a6e9529c390237b9766acc0d59539ab.webp', 
-      name: 'Sân Bóng 6',
-      address: '123 ABC',
-      type: 'Type 1',
-      time: '18:00 - 20:00, 12/03/2025', 
-    },
-    { 
-      img: 'https://www.sporta.vn/assets/default_venue_0-dc1f6687f619915230b62712508933a71a6e9529c390237b9766acc0d59539ab.webp', 
-      name: 'Sân Bóng 7',
-      address: '123 ABC',
-      type: 'Type 1',
-      time: '18:00 - 20:00, 12/03/2025', 
+    {
+      value: 'Cầu lông',
+      label: 'Cầu lông',
     },
   ];
+  listSanBong: any = [];
   constructor(
     private fb: FormBuilder,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private facilityService: FacilityService,
+    private message: NzMessageService,
   ) {}
 
   public form: FormGroup = this.fb.group({
@@ -88,6 +62,14 @@ export class HomePageComponent {
 
   search(): void {
     console.log(this.form.value);
+  }
+
+  viewListFacilityGeneral() {
+    this.isLoading = true;
+    this.facilityService.getAllFacility(1, 999).subscribe(res => {
+      this.isLoading = false;
+      this.listSanBong = res.data;
+    })
   }
 
   scrollLeft() {
