@@ -53,6 +53,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'concert-by-owner',
+        loadChildren: () =>
+          import('../../features/concert-by-owner/concert-by-owner.routing.module').then(
+            (m) => m.ConcertByOwnerRoutingModule,
+          ),
+      },
+      {
         path: 'user-management',
         loadChildren: () =>
           import('../../features/management/management.routing.module').then(

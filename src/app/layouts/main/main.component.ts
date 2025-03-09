@@ -215,6 +215,9 @@ export class MainComponent implements OnInit, OnChanges {
       '/user-management': 'Danh sách tài khoản',
       '/setting': 'Cài đặt',
       '/facility/list': 'Quản lý sân',
+      '/facility/add': 'Tạo sân mới',
+      '/facility/edit': 'Chỉnh sửa sân',
+      '/concert-by-owner': 'Quản lý sự kiện',
       '/home-page': 'Trang chủ',
       '/list-feilds': 'Danh sách sân',
       '/my-info': 'Thông tin cá nhân'
