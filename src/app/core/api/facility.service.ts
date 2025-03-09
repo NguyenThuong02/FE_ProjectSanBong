@@ -33,4 +33,16 @@ export class FacilityService {
     
     return this.http.get(url);
   }
+
+  getFacilityById(id?: any): Observable<any> {
+    return this.http.get(this.apiUrl + `/api/facility/get-facility-by-id/` + id);
+  }
+
+  updateFacility(body?: any): Observable<any> {
+    return this.http.put(this.apiUrl + `/api/facility/update-facility`, body);
+  }
+
+  deleteFacilityById(id?: any): Observable<any> {
+    return this.http.delete(this.apiUrl + `/api/facility/delete-facility/` + id);
+  }
 }

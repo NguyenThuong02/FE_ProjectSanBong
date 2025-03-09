@@ -71,10 +71,7 @@ export class FieldsListComponent implements OnInit{
     this.isLoading = true;
     this.facilityService.getAllFacility(1, 999, this.searchTerm).subscribe(res => {
       this.isLoading = false;
-      this.allFacilities = res.data.map((item: any) => ({
-        ...item,
-        img: 'https://www.sporta.vn/assets/default_venue_0-dc1f6687f619915230b62712508933a71a6e9529c390237b9766acc0d59539ab.webp'
-      }));
+      this.allFacilities = res.data;
       this.generateFacilityTypeList();
       this.filterFacilities();
       this.cdr.detectChanges();

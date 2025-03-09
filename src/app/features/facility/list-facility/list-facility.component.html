@@ -1,4 +1,4 @@
-<div class="h-[100vh] w-full p-10">
+<div class="h-[100vh] w-full p-5">
     <div class="mb-8 flex justify-between items-center">
         <div class="relative w-[400px]">
           <i class="fa-solid fa-magnifying-glass absolute left-[12px] top-[50%] translate-y-[-50%]"></i>
@@ -14,7 +14,7 @@
       class="mt-[27px] w-full min-w-full overflow-x-auto overflow-y-auto">
       <table class="text-[13px] font-normal w-full relative">
         <thead class="border-b-[#96E6A1] border-b *:py-4 *:text-center  font-medium sticky top-0 ">
-            <th class="">#</th>
+            <th class="px-1">#</th>
             <th class="">Môn thể thao</th>
             <th class="">Tên sân</th>
             <th class="">Ảnh</th>
@@ -36,7 +36,7 @@
         <ng-template #data>
           <tbody> 
             <tr class="*:py-4 *:text-center border-b border px-2 h-[60px]" *ngFor="let item of listFacility; let index = index">
-              <td>
+              <td class="px-1">
                 {{index + 1}}
               </td>
               <td>
@@ -46,7 +46,7 @@
                 {{item?.name}}
               </td>
               <td >
-                <div class="flex justify-center"><img class="object-cover w-[100px] h-[60px]" src="https://bulbal.vn/wp-content/uploads/2023/01/TOP-10-SAN-BONG-DA-PHUI-TAI-TPHCM-NAM-2023.jpg"/></div>
+                <div class="flex justify-center"><img class="object-cover w-[100px] h-[60px]" [src]="item.image"/></div>
               </td>
               <td >
                 {{item?.price}}

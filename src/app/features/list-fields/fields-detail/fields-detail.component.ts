@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { FeildsSheduleComponent } from './feilds-shedule/feilds-shedule.component';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { FacilityService } from '../../../core/api/facility.service';
 
 interface TimeSlot {
   id: number;
@@ -32,14 +34,32 @@ interface TimeSlot {
 })
 export class FieldsDetailComponent implements OnInit {
   isShedule: boolean = false;
-  selectedField = {
-    name: 'Sân Bóng đá Đầm Hồng',
-    address: 'Thạch Thất, Hà Nội',
-    description: 'Sân bóng đá 7 người, chất lương tốt, thời gian thoải mái, giá tiền hợp lý',
-    img: 'https://bulbal.vn/wp-content/uploads/2023/01/TOP-10-SAN-BONG-DA-PHUI-TAI-TPHCM-NAM-2023.jpg',
-  }
+  idFacility: any;
+  selectedField: any;
+
+  constructor(
+    private route: ActivatedRoute,
+    private message: NzMessageService,
+    private cdr: ChangeDetectorRef,
+    private facilityService: FacilityService,
+  ){}
+
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    this.idFacility = this.route.snapshot.paramMap.get('id');
+    this.getViewInfo();
+  }
+
+  getViewInfo(): void {
+    if (!this.idFacility) return;
+
+    this.facilityService.getFacilityById(this.idFacility).subscribe({
+      next: (res) => {
+        this.selectedField = res.data;
+      },
+      error: (err) => {
+        this.message.error('Không thể lấy thông tin sân!');
+      }
+    });
   }
 
   nextShedule() {

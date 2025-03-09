@@ -71,10 +71,7 @@ export class HomePageComponent implements OnInit{
     this.isLoading = true;
     this.facilityService.getAllFacility(1, 999).subscribe(res => {
       this.isLoading = false;
-      this.listSanBong = res.data.map((item: any) => ({
-        ...item,
-        img: 'https://www.sporta.vn/assets/default_venue_0-dc1f6687f619915230b62712508933a71a6e9529c390237b9766acc0d59539ab.webp'
-      }));
+      this.listSanBong = res.data;
       this.cdr.detectChanges();
     });
   }

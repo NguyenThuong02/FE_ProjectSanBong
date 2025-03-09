@@ -37,20 +37,16 @@ export class PopupDeleteComponent {
   ) {}
 
   handleOk(): void {
-    // this.accountService.disableAccount(this.idManagement).subscribe({
-    //   next: (res) => {
-    //     this.message.success('Disable account successfully!');
-    //     this.changeVisibleDelete.emit({ visible: false, isSuccess: true });
-    //     this.cdr.detectChanges();
-    //   },
-    //   error: (err) => {
-    //     if (err.error.message.includes('User has voted in an active vote')) {
-    //       this.message.error('Người dùng đang trong cuộc bầu cử, không thể vô hiệu hoá');
-    //     } else {
-    //       this.message.error(`Lỗi: ${err.error.message}`);
-    //     }
-    //   },
-    // })
+    this.facilityService.deleteFacilityById(this.facilityItem.id).subscribe({
+      next: (res) => {
+        this.message.success('Xoá thành công!');
+        this.changeVisibleDelete.emit({ visible: false, isSuccess: true });
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.message.error('Xoá sân không thành công !')
+      },
+    })
   }
 
   handleCancel(): void {
