@@ -1,1 +1,69 @@
-<p>concert-list works!</p>
+<div class="mt-[100px] w-full p-5 mb-[-100px]">
+    <div class="flex items-center justify-start gap-2 text-[16px]">
+        <div class="cursor-pointer hover:scale-105 hover:text-primary" [routerLink]="['/home-page']">Trang chủ</div>
+        <div>/</div>
+        <div class="text-primary">Sự kiện</div>
+    </div>
+    <div class="w-full mt-7 flex items-start justify-between gap-[40px]">
+        <div class="w-[20%]">
+            <div class="w-full relative">
+                <input 
+                  type="text" 
+                  class="w-full p-2 border outline-none border-gray-300 rounded-md" 
+                  placeholder="Tìm kiếm sự kiện"
+                  (input)="onSearch($event)">
+                <i class="fa-solid fa-magnifying-glass absolute top-[50%] translate-y-[-50%] right-3"></i>
+            </div>
+            <div class="w-full border border-gray-300 rounded-md mt-8 py-4 px-3">
+                <div class="italic text-[16px] font-semibold border-b pb-2">Danh sách sự kiện</div>
+                <div *ngIf="isLoading" class="py-3 text-center">
+                    <div>Đang tải...</div>
+                </div>
+                <div *ngIf="!isLoading && listFeilds.length === 0" class="py-3 text-center">
+                    <div>Không có loại sân</div>
+                </div>
+                <div *ngFor="let item of listFeilds"
+                  (click)="checkFeild(item)"
+                  class="w-full flex items-center justify-between border-b text-[16px] py-2 cursor-pointer hover:text-primary">
+                    <div class="flex items-center justify-start gap-2">
+                        <i *ngIf="selectedFieldId === item.id" class="fa-solid fa-hand-point-right text-primary"></i>
+                        <div [ngClass]="{'text-primary': selectedFieldId === item.id}" class="italic">{{item.name}}</div>
+                    </div>
+                    <div class="bg-[#4FC460] rounded-[50%] text-white h-[20px] w-[20px] p-[2px] flex items-center justify-center">{{item.count}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="w-[80%]">
+            <div class="text-center text-[28px] font-semibold font-[montserrat]">{{nameFeildCheck}}</div>
+            <div *ngIf="isLoading" class="w-full flex justify-center my-8">
+                <div class="text-center">Đang tải dữ liệu...</div>
+            </div>
+            <div *ngIf="!isLoading && listSanBong.length === 0" class="w-full flex justify-center my-8">
+                <div class="text-center">Không tìm thấy sân thể thao nào</div>
+            </div>
+            <div *ngIf="!isLoading && listSanBong.length > 0" class="w-full grid grid-cols-3 grid-rows-2 gap-[30px] mt-8">
+                <div *ngFor="let item of listSanBong" class="flex-shrink-0 pb-2 flex flex-col grid-cols-1 shadow-shadow-timeword rounded-md">
+                    <div class="w-full h-[200px]">
+                        <img class="object-cover w-full h-full rounded-tl-md rounded-tr-md" [src]="item.img"/>
+                    </div>
+                    <div class="flex flex-col items-start p-4">
+                        <div class="text-[#000] text-[18px] font-semibold">{{ item.name }}</div>
+                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1"><i class="fa-solid fa-location-dot text-[16px] w-[18px] h-[18px]"></i> {{ item.address }}</div>
+                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1"><i class="fa-solid fa-calendar-days text-[16px] w-[18px] h-[18px]"></i> {{ item.facilityType }}</div>
+                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1"><i class="fa-solid fa-clock text-[16px] w-[18px] h-[18px]"></i> 14:00 - 16:00</div>
+                    </div>
+                    <div class="w-full flex justify-center">
+                        <div (click)="viewDetail(item.id)" class="bg-[#DF6951] hover:scale-105 py-2 px-4 text-white cursor-pointer rounded-lg w-[100px] text-center">Chi tiết</div>
+                    </div>
+                </div>
+            </div>
+            <nz-pagination 
+                [nzPageSize]="pageSize" 
+                [nzTotal]="totalItems" 
+                [(nzPageIndex)]="currentPage"
+                (nzPageIndexChange)="onPageChange($event)"
+                class="mt-7 text-right">
+            </nz-pagination>
+        </div>
+    </div>
+</div>
