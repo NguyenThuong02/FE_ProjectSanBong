@@ -2,7 +2,7 @@
     <div class="mb-8 flex justify-between items-center">
         <div class="relative w-[400px]">
           <i class="fa-solid fa-magnifying-glass absolute left-[12px] top-[50%] translate-y-[-50%]"></i>
-          <input class="h-[40px] bg-[#f1f1f1] outline-none border-[2px] border-primary w-full pr-2 pl-8 rounded-xl" placeholder="Tìm kiếm tên sân" />
+          <input (input)="onSearch($event)" class="h-[40px] bg-[#f1f1f1] outline-none border-[2px] border-primary w-full pr-2 pl-8 rounded-xl" placeholder="Tìm kiếm tên sân" />
         </div>
         <div [routerLink]="['/facility/add']" class="px-[12px] py-[8px] rounded-[6px] flex items-center justify-center gap-1 border border-primary text-primary cursor-pointer hover:bg-primary hover:text-[#fff]" >
             <i class="fa-solid fa-circle-plus"></i>

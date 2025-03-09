@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -20,7 +20,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss'
 })
-export class HomePageComponent {
+export class HomePageComponent implements OnInit{
   @ViewChild('scroller') scroller!: ElementRef;
   isLoading: boolean = false;
   listType: any = [
@@ -53,6 +53,9 @@ export class HomePageComponent {
     private facilityService: FacilityService,
     private message: NzMessageService,
   ) {}
+  ngOnInit(): void {
+    this.viewListFacilityGeneral();
+  }
 
   public form: FormGroup = this.fb.group({
     type: [null],
@@ -68,8 +71,12 @@ export class HomePageComponent {
     this.isLoading = true;
     this.facilityService.getAllFacility(1, 999).subscribe(res => {
       this.isLoading = false;
-      this.listSanBong = res.data;
-    })
+      this.listSanBong = res.data.map((item: any) => ({
+        ...item,
+        img: 'https://www.sporta.vn/assets/default_venue_0-dc1f6687f619915230b62712508933a71a6e9529c390237b9766acc0d59539ab.webp'
+      }));
+      this.cdr.detectChanges();
+    });
   }
 
   scrollLeft() {
@@ -84,4 +91,7 @@ export class HomePageComponent {
     }
   }
   
+  viewDetail(id: any) {
+    this.router.navigate([`/list-feilds/detail/${id}`]);
+  }
 }

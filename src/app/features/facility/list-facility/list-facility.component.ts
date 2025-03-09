@@ -13,6 +13,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { PagiComponent } from '../../../shared/components/pagi/pagi.component';
 import { FacilityService } from '../../../core/api/facility.service';
 import { PopupDeleteComponent } from './popup-delete/popup-delete.component';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-list-facility',
@@ -38,11 +39,13 @@ export class ListFacilityComponent implements OnInit{
   public totalCount: number = 10;
   public listFacility : any = [];
   public selectedFacilityId: number | null = null;
+  searchTerms = new Subject<string>();
+  searchText: string = '';
   facilityItem: any;
   maxheight: string = '';
   public params = {
     page: 1,
-    pageSize:10
+    pageSize: 10
   }
 
   constructor(
@@ -54,22 +57,43 @@ export class ListFacilityComponent implements OnInit{
   ){}
   
   ngOnInit(): void {
+    this.setupSearch();
     this.viewListFacility();
+  }
+
+  setupSearch(): void {
+    this.searchTerms.pipe(
+      // Đợi 300ms sau mỗi lần gõ để tránh request quá nhiều
+      debounceTime(300),
+      // Đảm bảo request chỉ gửi khi giá trị thay đổi
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.searchText = term;
+      this.params.page = 1; 
+      this.viewListFacility();
+    });
+  }
+
+  onSearch(event: any): void {
+    const term = event.target.value;
+    this.searchTerms.next(term);
   }
 
   viewListFacility() {
     this.isLoading = true;
-    this.facilityService.getAllFacilityOwner(this.params.page, this.params.pageSize).subscribe(res => {
-      this.isLoading = false;
-      this.listFacility = res.data;
-      this.totalCount = res.totalItems;
-    })
+    this.facilityService.getAllFacilityOwner(this.params.page, this.params.pageSize, this.searchText)
+      .subscribe(res => {
+        this.isLoading = false;
+        this.listFacility = res.data;
+        this.totalCount = res.data.length;
+      });
   }
 
   changePage(e: number) {
     this.params.page = e;
     this.viewListFacility();
   }
+  
   changePageSize(e: number) {
     this.params.pageSize = e;
     this.viewListFacility();
@@ -87,6 +111,7 @@ export class ListFacilityComponent implements OnInit{
     this.facilityItem = item;
     this.isVisible = true;
   }
+  
   isVisible: boolean = false;
   handleChangeVisible(data: any) {
     this.isVisible = data.visible;

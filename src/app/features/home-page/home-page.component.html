@@ -34,7 +34,7 @@
     <div class="w-full">
         <div class="text-center text-[#181E4B] text-[32px] font-[montserrat] font-semibold my-5">Sân thể thao</div>
         <div class="relative flex items-center w-full gap-[20px]">
-            <div (click)="scrollLeft()" class="ml-4">
+            <div *ngIf="listSanBong.length > 4" (click)="scrollLeft()" class="ml-4">
                 <i class="fa-solid fa-circle-arrow-left text-[30px] text-primary cursor-pointer hover:scale-105"></i>
             </div>
             <div #scroller class="media-scroller snaps-inline bg-white overflow-x-auto whitespace-nowrap flex">
@@ -42,15 +42,18 @@
                     <div class="w-[300px] h-[200px]">
                         <img class="object-cover w-full h-full rounded-tl-md rounded-tr-md" [src]="item.img"/>
                     </div>
-                    <div class="flex flex-col p-4 gap-2">
+                    <div class="flex flex-col p-4">
                         <div class="text-[#000] text-[18px] font-semibold">{{ item.name }}</div>
-                        <div class="text-[#000] text-[16px]">{{ item.address }}</div>
-                        <div class="text-[#000] text-[16px]">{{ item.type }}</div>
-                        <div class="text-[#000] text-[16px]">{{ item.time }}</div>
+                        <div class="text-[#7D7D7D] text-[14px]"><i class="fa-solid fa-location-dot"></i> {{ item.address }}</div>
+                        <div class="text-[#000] font-normal text-[15px] mt-3">Thể loại: {{ item.facilityType }}</div>
+                        <div class="text-[#000] font-normal text-[15px] mt-1"> Mô tả: {{ item.description }}</div>
+                    </div>
+                    <div class="w-full flex justify-center mb-2">
+                        <div (click)="viewDetail(item.id)" class="bg-[#DF6951] hover:scale-105 py-2 px-4 text-white cursor-pointer rounded-lg w-[100px] text-center">Chi tiết</div>
                     </div>
                 </div>
             </div>
-            <div (click)="scrollRight()" class="mr-4">
+            <div *ngIf="listSanBong.length > 4" (click)="scrollRight()" class="mr-4">
                 <i class="fa-solid fa-circle-arrow-right text-[30px] text-primary cursor-pointer hover:scale-105"></i>
             </div>
         </div>

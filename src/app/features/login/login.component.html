@@ -29,10 +29,10 @@
                         <div class="flex flex-col relative">
                             <mat-form-field class="custom-input relative" appearance="outline">
                                 <input formControlName="password" name="password" matInput type="password"
-                                    autocomplete="off" id="inputPass" placeholder="Nhập mật khẩu" />
-                                <i *ngIf="hidePass" class="fas fa-eye absolute right-0 top-[50%] translate-y-[-50%]"
+                                    autocomplete="off" id="inputPassChangePassword" placeholder="Nhập mật khẩu" />
+                                <i *ngIf="hidePass" class="fas fa-eye absolute right-0 top-[50%] translate-y-[-50%] cursor-pointer"
                                     (click)="showPass($event)"></i>
-                                <i *ngIf="!hidePass" class="fa-solid fa-eye-slash absolute right-0 top-[50%] translate-y-[-50%]"
+                                <i *ngIf="!hidePass" class="fa-solid fa-eye-slash absolute right-0 top-[50%] translate-y-[-50%] cursor-pointer"
                                     (click)="showPass($event)"></i>
                                 <mat-error>Vui lòng nhập đầy đủ thông tin!</mat-error>
                             </mat-form-field>
@@ -62,7 +62,11 @@
                             </div>
                         </div>
                     </form>
-                    <div (click)="btnEmail()" class="bg-[#53A34C] text-white text-center text-[20px] w-full rounded-[5px] py-[6px] cursor-pointer ">Xác nhận</div>
+                    <div (click)="btnEmail()" class="bg-[#53A34C] text-white text-center text-[20px] w-full rounded-[5px] py-[6px] cursor-pointer ">
+                        Xác nhận
+                        <!-- <i *ngIf="!isConfirmLoading" class="fa-solid fa-check-circle ml-2"></i> -->
+                        <i *ngIf="isConfirmLoading" class="fa-solid fa-spinner fa-spin ml-2"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,7 +90,10 @@
                             <ng-otp-input #ngOtpInput [config]="otpConfig"></ng-otp-input>
                         </div>
                     </div>
-                    <div (click)="btnOTP()" class="bg-[#53A34C] text-white text-center text-[20px] w-full rounded-[5px] py-[6px] cursor-pointer ">Xác nhận</div>
+                    <div (click)="btnOTP()" class="bg-[#53A34C] text-white text-center text-[20px] w-full rounded-[5px] py-[6px] cursor-pointer ">
+                        Xác nhận
+                        <i *ngIf="isConfirmLoading" class="fa-solid fa-spinner fa-spin ml-2"></i>
+                    </div>
                 </div>
             </div>
         </div>

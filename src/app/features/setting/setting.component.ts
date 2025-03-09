@@ -7,13 +7,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { timeZoneList } from '../../core/enums/timeZone.enum';
-import { ChangePasswordComponent } from './change-password/change-password.component';
 import { AccountService } from '../../core/api/account.service';
-import { CheckPasswordComponent } from './check-password/check-password.component';
-import { CheckInsertOtpComponent } from './check-insert-otp/check-insert-otp.component';
-import { CheckEmailComponent } from './check-email/check-email.component';
-import { ChangeEmailComponent } from './change-email/change-email.component';
-import { InsertOtpNewEmailComponent } from './insert-otp-new-email/insert-otp-new-email.component';
 
 
 @Component({
@@ -27,12 +21,6 @@ import { InsertOtpNewEmailComponent } from './insert-otp-new-email/insert-otp-ne
     FormsModule,
     NzFormModule,
     ReactiveFormsModule,
-    ChangePasswordComponent,
-    CheckPasswordComponent,
-    CheckEmailComponent,
-    CheckInsertOtpComponent,
-    ChangeEmailComponent,
-    InsertOtpNewEmailComponent
 ],
   templateUrl: './setting.component.html',
   styleUrl: './setting.component.scss'

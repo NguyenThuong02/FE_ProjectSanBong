@@ -14,13 +14,6 @@ const routes: Routes = [
                 pathMatch:'full',
             },
             {
-                path: 'change-password',
-                loadComponent: () =>
-                  import('../setting/change-password/change-password.component').then(
-                    (m) => m.ChangePasswordComponent
-                  ),        
-            },
-            {
                 path:"**",
                 redirectTo:'/',
             },

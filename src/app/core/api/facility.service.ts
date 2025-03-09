@@ -16,11 +16,21 @@ export class FacilityService {
     return this.http.post(this.apiUrl + `/api/facility/create-facility`, body);
   }
 
-  getAllFacility(page: number, pageSize: number): Observable<any> {
-    return this.http.get(this.apiUrl + `/api/facility/get-all-facility?page=${page}&pageSize=${pageSize}`);
+  getAllFacilityOwner(page: number, pageSize: number, name: string = ''): Observable<any> {
+    let url = this.apiUrl + `/api/facility/get-all-facility-by-owner?page=${page}&pageSize=${pageSize}`;
+    if (name && name.trim() !== '') {
+      url += `&name=${name}`;
+    }
+    
+    return this.http.get(url);
   }
 
-  getAllFacilityOwner(page: number, pageSize: number): Observable<any> {
-    return this.http.get(this.apiUrl + `/api/facility/get-all-facility-by-owner?page=${page}&pageSize=${pageSize}`);
+  getAllFacility(page: number, pageSize: number, name: string = ''): Observable<any> {
+    let url = this.apiUrl + `/api/facility/get-all-facility?page=${page}&pageSize=${pageSize}`;
+    if (name && name.trim() !== '') {
+      url += `&name=${name}`;
+    }
+    
+    return this.http.get(url);
   }
 }

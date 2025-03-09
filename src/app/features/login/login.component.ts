@@ -30,6 +30,7 @@ import { NzSelectModule, NzSelectSizeType } from 'ng-zorro-antd/select';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NgOtpInputConfig, NgOtpInputModule } from  'ng-otp-input';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { AccountService } from '../../core/api/account.service';
 
 @Component({
   selector: 'app-login',
@@ -146,6 +147,7 @@ export class LoginComponent implements OnInit {
     private authService: SocialAuthService,
     private http: HttpClient,
     private message: NzMessageService,
+    private accountService: AccountService
   ) {
     window.addEventListener('storage', (event) => {
       // The `key` is `null` if the event was caused by `.clear()`
@@ -285,23 +287,56 @@ export class LoginComponent implements OnInit {
   }
 
   btnEmail(): void {
-    this.timer(2);
-    this.step = 'otpVerification';
+    const body = {
+      email: this.formForGot.get('email')?.value,
+    }
+    this.isConfirmLoading = true;
+    this.accountService.checkEmail(body).subscribe(res => {
+      this.message.success("Xác thực email thành công!")
+      this.timer(2);
+      this.step = 'otpVerification';
+      this.isConfirmLoading = false;
+    }, 
+    (err) =>{
+      this.message.error("Xác thực email không thành công!")
+      this.isConfirmLoading = false;
+    })
   }
 
   btnOTP(): void {
     const body = {
+      email: this.formForGot.get('email')?.value,
       otp: this.ngOtpInputRef.currentVal
     }
     if(this.ngOtpInputRef.currentVal === null || this.ngOtpInputRef.currentVal.length !== 6){
       this.message.error("Nhập đầy đủ mã OTP!")
       return;
     } else {
-      this.step = 'resetPassword';
+      this.isConfirmLoading = true;
+      this.accountService.checkOTP(body).subscribe(res => {
+        this.step = 'resetPassword';
+        this.isConfirmLoading = false;
+      }, (err) => {
+        this.isConfirmLoading = false;
+        this.message.error("Mã OTP không hợp lệ!")
+      })
     }
   }
 
   btnNewPassword(): void {
-    this.step = 'login';
+    const body = {
+      email: this.formForGot.get('email')?.value,
+      password: this.formNewPassword.get('password')?.value,
+      confirmPassword: this.formNewPassword.get ('passwordConfirm')?.value
+    }
+    this.isConfirmLoading = true;
+    this.accountService.forgotPassword(body).subscribe(res => {
+      this.isConfirmLoading = false;
+      this.message.success('Đổi mật khẩu thành công!')
+      this.step = 'login';
+    }, (err) => {
+      this.isConfirmLoading = false;
+      this.message.error('Đổi mật khẩu thất bại');
+    })
   }
 }

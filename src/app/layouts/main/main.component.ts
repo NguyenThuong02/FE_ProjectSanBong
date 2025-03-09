@@ -30,7 +30,6 @@ import {
 import { SocialAuthService } from '@abacritt/angularx-social-login';
 import { edit } from '../../shared/components/iconAntd/iconAddOnAntd.component';
 import { AccountService } from '../../core/api/account.service';
-import { ChangePasswordComponent } from '../../features/setting/change-password/change-password.component';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { filter } from 'rxjs/operators';
 
@@ -55,7 +54,6 @@ import { filter } from 'rxjs/operators';
     MatSelectModule,
     FormsModule,
     TranslateModule,
-    ChangePasswordComponent
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',

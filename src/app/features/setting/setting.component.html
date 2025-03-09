@@ -48,22 +48,3 @@
         </div>
     </div>
 </div>
-
-<app-change-password *ngIf="isVisiblePopUpChangePassword"
-[isVisiblePopUpChangePassword]="isVisiblePopUpChangePassword"
-(visiblePopUpChangePassword)="handelVisiblePopUpChangePassword($event)"></app-change-password>
-
-<app-check-password *ngIf="isVisibleCheckPassword" [isVisiblePopUpCheckPassword]="isVisibleCheckPassword"
-(isVisiblePopUpOpen)="handleShowPopUpForgotPassWord($event)"></app-check-password>
-
-<app-check-email *ngIf="isVisibleCheckEmail" [isVisiblePopUpCheckEmail]="isVisibleCheckEmail"
-(isVisiblePopUpOpen)="handleShowCheckEmail($event)"></app-check-email>
-
-<app-check-insert-otp *ngIf="isVisibleInsertOTP" [isVisiblePopUpInsertOTP]="isVisibleInsertOTP"
-(isVisiblePopUpOpen)="handleShowInsertOTPPopUp($event)"></app-check-insert-otp>
-
-<app-change-email *ngIf="isVisibleChangeEmail" [isVisiblePopUpChangeEmail]="isVisibleChangeEmail"
-(isVisiblePopUpOpen)="handleShowChangeEmail($event)"></app-change-email>
-
-<app-insert-otp-new-email *ngIf="isVisiblePopUpNewOTP" [isVisiblePopUpNewOTP]="isVisiblePopUpNewOTP"
-(isVisiblePopUpOpen)="handleShowNewOTPPopUp($event)"></app-insert-otp-new-email>
