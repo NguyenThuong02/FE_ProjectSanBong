@@ -52,15 +52,54 @@
                     </mat-form-field>
                 </div>
             </div>
-            <div class="flex w-full">
+            <div class="flex w-full gap-9">
                 <div class="flex flex-col flex-1">
-                    <span class="mb-1">Ngày bắt đầu - kết thúc</span>
-                    <mat-form-field class="custom-input " appearance="outline">
-                        <input matInput placeholder="Nhập giá tiền" formControlName="time" />
+                    <span class="mb-1">Ngày bắt đầu</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput [matDatepicker]="startDatePicker" placeholder="Chọn ngày bắt đầu" formControlName="startDate">
+                        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startDatePicker></mat-datepicker>
                         <mat-error
-                            *ngIf="form.get('time')?.errors?.['required']&& (form.get('time')?.dirty || form.get('time')?.touched)"
+                            *ngIf="form.get('startDate')?.errors?.['required'] && (form.get('startDate')?.dirty || form.get('startDate')?.touched)"
                             class="text-red-600">
-                            Vui lòng nhập đầy đủ thông tin!
+                            Vui lòng chọn ngày bắt đầu!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Giờ bắt đầu (định dạng 24h)</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput type="time" placeholder="HH:mm" formControlName="startTime" step="60">
+                        <mat-error
+                            *ngIf="form.get('startTime')?.errors?.['required'] && (form.get('startTime')?.dirty || form.get('startTime')?.touched)"
+                            class="text-red-600">
+                            Vui lòng chọn giờ bắt đầu!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex w-full gap-9">
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Ngày kết thúc</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput [matDatepicker]="endDatePicker" placeholder="Chọn ngày kết thúc" formControlName="endDate">
+                        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #endDatePicker></mat-datepicker>
+                        <mat-error
+                            *ngIf="form.get('endDate')?.errors?.['required'] && (form.get('endDate')?.dirty || form.get('endDate')?.touched)"
+                            class="text-red-600">
+                            Vui lòng chọn ngày kết thúc!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Giờ kết thúc (định dạng 24h)</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput type="time" placeholder="HH:mm" formControlName="endTime" step="60">
+                        <mat-error
+                            *ngIf="form.get('endTime')?.errors?.['required'] && (form.get('endTime')?.dirty || form.get('endTime')?.touched)"
+                            class="text-red-600">
+                            Vui lòng chọn giờ kết thúc!
                         </mat-error>
                     </mat-form-field>
                 </div>

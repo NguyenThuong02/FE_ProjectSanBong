@@ -3,8 +3,9 @@ import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@an
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatNativeDateModule } from '@angular/material/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -13,6 +14,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { ConcertService } from '../../../core/api/concert.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-concert-by-owner-add',
@@ -20,12 +22,14 @@ import { ConcertService } from '../../../core/api/concert.service';
   imports: [
     FormsModule,
     MatInput,
+    MatInputModule,
     CommonModule,
     RouterModule,
     NzModalModule,
     NzIconModule,
     MatFormFieldModule,
     MatDatepickerModule,
+    MatNativeDateModule,
     MatSelectModule,
     TranslateModule,
     NzButtonModule,
@@ -93,7 +97,10 @@ export class ConcertByOwnerAddComponent implements OnInit{
     name: [null, Validators.required],
     type: ['Football', Validators.required],
     address: [null, Validators.required],
-    time: [null, Validators.required],
+    startDate: [null, Validators.required],
+    startTime: ['00:00', Validators.required],
+    endDate: [null, Validators.required],
+    endTime: ['00:00', Validators.required],
     description: [null],
     imageUrl: [null],
     imageName: [null]
@@ -104,24 +111,82 @@ export class ConcertByOwnerAddComponent implements OnInit{
     
     this.concertService.getEventById(this.idFacility).subscribe({
       next: (res) => {
-        this.form.patchValue({
-          name: res.data.name,
-          type: res.data.facilityType,
-          address: res.data.address,
-          time: res.data.time,
-          description: res.data.description,
-          imageUrl: res.data.image
-        });
+        // Parse the time string if it exists
+        if (res.data.time) {
+          const timeParts = this.parseTimeString(res.data.time);
+          
+          this.form.patchValue({
+            name: res.data.name,
+            type: res.data.facilityType,
+            address: res.data.address,
+            startDate: timeParts.startDate,
+            startTime: timeParts.startTime,
+            endDate: timeParts.endDate,
+            endTime: timeParts.endTime,
+            description: res.data.description,
+            imageUrl: res.data.image
+          });
+        } else {
+          this.form.patchValue({
+            name: res.data.name,
+            type: res.data.facilityType,
+            address: res.data.address,
+            description: res.data.description,
+            imageUrl: res.data.image
+          });
+        }
         
         if (res.data.image) {
           this.imagePreview = res.data.image;
-          // this.selectedFileName = res.data.imageName || this.extractFileNameFromUrl(res.data.imageUrl);
         }
       },
       error: (err) => {
-        this.message.error('Không thể lấy thông tin sân!');
+        this.message.error('Không thể lấy thông tin sự kiện!');
       }
     });
+  }
+
+  // Parse time string in format "HH:mm yyyy-MM-dd to HH:mm yyyy-MM-dd"
+  parseTimeString(timeString: string): any {
+    try {
+      const parts = timeString.split(' to ');
+      
+      if (parts.length === 2) {
+        const startParts = parts[0].split(' ');
+        const endParts = parts[1].split(' ');
+        
+        if (startParts.length === 2 && endParts.length === 2) {
+          const startTime = startParts[0];
+          const startDate = new Date(startParts[1]);
+          
+          const endTime = endParts[0];
+          const endDate = new Date(endParts[1]);
+          
+          return {
+            startDate: startDate,
+            startTime: startTime,
+            endDate: endDate,
+            endTime: endTime
+          };
+        }
+      }
+      
+      // Return default values if parsing fails
+      return {
+        startDate: null,
+        startTime: null,
+        endDate: null,
+        endTime: null
+      };
+    } catch (error) {
+      console.error('Error parsing time string:', error);
+      return {
+        startDate: null,
+        startTime: null,
+        endDate: null,
+        endTime: null
+      };
+    }
   }
 
   extractFileNameFromUrl(url: string): string {
@@ -183,6 +248,36 @@ export class ConcertByOwnerAddComponent implements OnInit{
     });
   }
 
+  // Format the datetime values for the API
+  formatDateTimeValues(): { startTime: string, endTime: string } {
+    try {
+      const startDate = this.form.get('startDate')?.value;
+      const startTime = this.form.get('startTime')?.value;
+      const endDate = this.form.get('endDate')?.value;
+      const endTime = this.form.get('endTime')?.value;
+      
+      if (!startDate || !startTime || !endDate || !endTime) {
+        return { startTime: '', endTime: '' };
+      }
+      
+      // Format dates to yyyy-MM-dd
+      const formattedStartDate = formatDate(startDate, 'dd-MM-yyyy', 'en-US');
+      const formattedEndDate = formatDate(endDate, 'dd-MM-yyyy', 'en-US');
+      
+      // Combine dates and times
+      const formattedStartTime = `${startTime} ${formattedStartDate}`;
+      const formattedEndTime = `${endTime} ${formattedEndDate}`;
+      
+      return {
+        startTime: formattedStartTime,
+        endTime: formattedEndTime
+      };
+    } catch (error) {
+      console.error('Error formatting date time values:', error);
+      return { startTime: '', endTime: '' };
+    }
+  }
+
   handleSubmit(): void {
     if (this.form.invalid) {
       Object.keys(this.form.controls).forEach(key => {
@@ -195,6 +290,9 @@ export class ConcertByOwnerAddComponent implements OnInit{
       this.message.warning('Vui lòng nhập đầy đủ thông tin bắt buộc!');
       return;
     }
+    
+    // Format date and time fields
+    const { startTime, endTime } = this.formatDateTimeValues();
         
     if(!this.isEdit) {
       const body = {
@@ -202,12 +300,22 @@ export class ConcertByOwnerAddComponent implements OnInit{
         address: this.form.get('address')?.value,
         description: this.form.get('description')?.value,
         facilityType: this.form.get('type')?.value,
-        time: this.form.get('time')?.value,
+        startTime: startTime,
+        endTime: endTime,
         image: this.form.get('imageUrl')?.value,
         status: 1
       };
-      console.log("Body create: ", body);
-
+      // this.concertService.createEvent(body).subscribe({
+      //   next: (res) => {
+      //     this.message.success('Tạo sự kiện mới thành công');
+      //     this.cdr.detectChanges();
+      //     this.router.navigate(['/facility/list']);
+      //   },
+      //   error: (err) => {
+      //     this.message.error('Tạo sự kiện mới thất bại!');
+      //   }
+      // });
+      console.log("ROOOCC: ", body);
     } else {
       const body = {
         id: this.idFacility,
@@ -216,11 +324,21 @@ export class ConcertByOwnerAddComponent implements OnInit{
         address: this.form.get('address')?.value,
         description: this.form.get('description')?.value,
         facilityType: this.form.get('type')?.value,
-        time: this.form.get('time')?.value,
+        startTime: startTime,
+        endTime: endTime,
         image: this.form.get('imageUrl')?.value,
         status: 1
       };
-
+      // this.concertService.updateEvent(body).subscribe({
+      //   next: (res) => {
+      //     this.message.success('Cập nhật sự kiện thành công');
+      //     this.cdr.detectChanges();
+      //     this.router.navigate(['/facility/list']);
+      //   },
+      //   error: (err) => {
+      //     this.message.error('Cập nhật sự kiện thất bại!');
+      //   }
+      // });
     }
   }
 }
