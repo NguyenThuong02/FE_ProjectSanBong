@@ -12,6 +12,7 @@ import { PagiComponent } from '../../../shared/components/pagi/pagi.component';
 import { FacilityService } from '../../../core/api/facility.service';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { PopupDeleteComponent } from './popup-delete/popup-delete.component';
+import { ConcertService } from '../../../core/api/concert.service';
 
 @Component({
   selector: 'app-concert-by-owner-list',
@@ -35,8 +36,8 @@ import { PopupDeleteComponent } from './popup-delete/popup-delete.component';
 export class ConcertByOwnerListComponent implements OnInit{
   public isLoading: boolean = false;
   public totalCount: number = 10;
-  public listFacility : any = [];
-  public selectedFacilityId: number | null = null;
+  public listConcert : any = [];
+  public selectedConcertId: number | null = null;
   searchTerms = new Subject<string>();
   searchText: string = '';
   facilityItem: any;
@@ -50,7 +51,7 @@ export class ConcertByOwnerListComponent implements OnInit{
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private facilityService: FacilityService,
+    private concertService: ConcertService,
     private message: NzMessageService,
   ){}
   
@@ -79,10 +80,10 @@ export class ConcertByOwnerListComponent implements OnInit{
 
   viewListFacility() {
     this.isLoading = true;
-    this.facilityService.getAllFacilityOwner(this.params.page, this.params.pageSize, this.searchText)
+    this.concertService.getAllEventOwner(this.params.page, this.params.pageSize, this.searchText)
       .subscribe(res => {
         this.isLoading = false;
-        this.listFacility = res.data;
+        this.listConcert = res.data;
         this.totalCount = res.data.length;
       });
   }
@@ -102,7 +103,7 @@ export class ConcertByOwnerListComponent implements OnInit{
   }
 
   toggleMenu(id: number) {
-    this.selectedFacilityId = this.selectedFacilityId === id ? null : id;
+    this.selectedConcertId = this.selectedConcertId === id ? null : id;
   }
 
   openDeletePopup(item?: any) {

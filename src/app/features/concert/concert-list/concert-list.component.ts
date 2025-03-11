@@ -7,6 +7,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FacilityService } from '../../../core/api/facility.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { ConcertService } from '../../../core/api/concert.service';
 
 @Component({
   selector: 'app-concert-list',
@@ -23,26 +24,25 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
   styleUrl: './concert-list.component.scss'
 })
 export class ConcertListComponent implements OnInit{
-  nameFeildCheck: any = 'Sự kiện';
-  selectedFieldId: any; 
+  nameConcertCheck: any = 'Sự kiện';
+  selectedConcertId: any; 
   pageSize = 6; 
   currentPage = 1;
   isLoading: boolean = false;
-  pagedListSanBong: any[] = [];
   searchTerm: string = '';
   searchTerms = new Subject<string>();
   totalItems: number = 0;
   
-  listFeilds: any[] = [];
-  allFacilities: any[] = [];
-  listSanBong: any[] = [];
+  listConcerts: any[] = [];
+  allConcerts: any[] = [];
+  listEvents: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private message: NzMessageService,
-    private facilityService: FacilityService,
+    private concertService: ConcertService,
   ) {}
   
   ngOnInit(): void {
@@ -69,66 +69,66 @@ export class ConcertListComponent implements OnInit{
 
   loadAllFacilities() {
     this.isLoading = true;
-    this.facilityService.getAllFacility(1, 999, this.searchTerm).subscribe(res => {
+    this.concertService.getAllEvent(1, 999, this.searchTerm).subscribe(res => {
       this.isLoading = false;
-      this.allFacilities = res.data.map((item: any) => ({
+      this.allConcerts = res.data.map((item: any) => ({
         ...item,
         img: '../../../assets/img/imgEvent.png'
       }));
-      this.generateFacilityTypeList();
+      this.generateEventTypeList();
       this.filterFacilities();
       this.cdr.detectChanges();
     });
   }
 
-  generateFacilityTypeList() {
+  generateEventTypeList() {
     const typesMap = new Map<string, number>();
-    this.allFacilities.forEach(facility => {
-      if (facility.facilityType) {
-        const count = typesMap.get(facility.facilityType) || 0;
-        typesMap.set(facility.facilityType, count + 1);
+    this.allConcerts.forEach(item => {
+      if (item.eventType) {
+        const count = typesMap.get(item.eventType) || 0;
+        typesMap.set(item.eventType, count + 1);
       }
     });
-    this.listFeilds = Array.from(typesMap).map(([name, count], index) => ({
+    this.listConcerts = Array.from(typesMap).map(([name, count], index) => ({
       id: index,
       name: name,
       count: count
     }));
-    this.listFeilds.unshift({
+    this.listConcerts.unshift({
       id: -1,
       name: 'Tất cả sự kiện',
-      count: this.allFacilities.length
+      count: this.allConcerts.length
     });
-    if (this.listFeilds.length > 0 && !this.selectedFieldId) {
-      this.selectedFieldId = -1;
-      this.nameFeildCheck = 'Tất cả sự kiện';
+    if (this.listConcerts.length > 0 && !this.selectedConcertId) {
+      this.selectedConcertId = -1;
+      this.nameConcertCheck = 'Tất cả sự kiện';
     }
   }
 
   filterFacilities() {
-    let filteredList = [...this.allFacilities];
+    let filteredList = [...this.allConcerts];
     if (this.searchTerm && this.searchTerm.trim() !== '') {
       const term = this.searchTerm.toLowerCase().trim();
       filteredList = filteredList.filter(item => 
         item.name && item.name.toLowerCase().includes(term)
       );
     }
-    if (this.selectedFieldId !== -1 && this.selectedFieldId !== undefined) {
-      const selectedType = this.listFeilds.find(f => f.id === this.selectedFieldId)?.name;
+    if (this.selectedConcertId !== -1 && this.selectedConcertId !== undefined) {
+      const selectedType = this.listConcerts.find(f => f.id === this.selectedConcertId)?.name;
       if (selectedType) {
         filteredList = filteredList.filter(item => 
-          item.facilityType === selectedType
+          item.eventType === selectedType
         );
       }
     }
     this.totalItems = filteredList.length;
     const startIndex = (this.currentPage - 1) * this.pageSize;
-    this.listSanBong = filteredList.slice(startIndex, startIndex + this.pageSize);
+    this.listEvents = filteredList.slice(startIndex, startIndex + this.pageSize);
   }
 
   checkFeild(item: any) {
-    this.nameFeildCheck = item.name;
-    this.selectedFieldId = item.id;
+    this.nameConcertCheck = item.name;
+    this.selectedConcertId = item.id;
     this.currentPage = 1; 
     this.filterFacilities();
   }

@@ -19,37 +19,37 @@
                 <div *ngIf="isLoading" class="py-3 text-center">
                     <div>Đang tải...</div>
                 </div>
-                <div *ngIf="!isLoading && listFeilds.length === 0" class="py-3 text-center">
+                <div *ngIf="!isLoading && listConcerts.length === 0" class="py-3 text-center">
                     <div>Không có loại sân</div>
                 </div>
-                <div *ngFor="let item of listFeilds"
+                <div *ngFor="let item of listConcerts"
                   (click)="checkFeild(item)"
                   class="w-full flex items-center justify-between border-b text-[16px] py-2 cursor-pointer hover:text-primary">
                     <div class="flex items-center justify-start gap-2">
-                        <i *ngIf="selectedFieldId === item.id" class="fa-solid fa-hand-point-right text-primary"></i>
-                        <div [ngClass]="{'text-primary': selectedFieldId === item.id}" class="italic">{{item.name}}</div>
+                        <i *ngIf="selectedConcertId === item.id" class="fa-solid fa-hand-point-right text-primary"></i>
+                        <div [ngClass]="{'text-primary': selectedConcertId === item.id}" class="italic">{{item.name}}</div>
                     </div>
                     <div class="bg-[#4FC460] rounded-[50%] text-white h-[20px] w-[20px] p-[2px] flex items-center justify-center">{{item.count}}</div>
                 </div>
             </div>
         </div>
         <div class="w-[80%]">
-            <div class="text-center text-[28px] font-semibold font-[montserrat]">{{nameFeildCheck}}</div>
+            <div class="text-center text-[28px] font-semibold font-[montserrat]">{{nameConcertCheck}}</div>
             <div *ngIf="isLoading" class="w-full flex justify-center my-8">
                 <div class="text-center">Đang tải dữ liệu...</div>
             </div>
-            <div *ngIf="!isLoading && listSanBong.length === 0" class="w-full flex justify-center my-8">
+            <div *ngIf="!isLoading && listEvents.length === 0" class="w-full flex justify-center my-8">
                 <div class="text-center">Không tìm thấy sân thể thao nào</div>
             </div>
-            <div *ngIf="!isLoading && listSanBong.length > 0" class="w-full grid grid-cols-3 grid-rows-2 gap-[30px] mt-8">
-                <div *ngFor="let item of listSanBong" class="flex-shrink-0 pb-2 flex flex-col grid-cols-1 shadow-shadow-timeword rounded-md">
+            <div *ngIf="!isLoading && listEvents.length > 0" class="w-full grid grid-cols-3 grid-rows-2 gap-[30px] mt-8">
+                <div *ngFor="let item of listEvents" class="flex-shrink-0 pb-2 flex flex-col grid-cols-1 shadow-shadow-timeword rounded-md">
                     <div class="w-full h-[200px]">
                         <img class="object-cover w-full h-full rounded-tl-md rounded-tr-md" [src]="item.img"/>
                     </div>
                     <div class="flex flex-col items-start p-4">
                         <div class="text-[#000] text-[18px] font-semibold">{{ item.name }}</div>
                         <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1"><i class="fa-solid fa-location-dot text-[16px] w-[18px] h-[18px]"></i> {{ item.address }}</div>
-                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1"><i class="fa-solid fa-calendar-days text-[16px] w-[18px] h-[18px]"></i> {{ item.facilityType }}</div>
+                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1"><i class="fa-solid fa-calendar-days text-[16px] w-[18px] h-[18px]"></i> {{ item.eventType }}</div>
                         <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1"><i class="fa-solid fa-clock text-[16px] w-[18px] h-[18px]"></i> 14:00 - 16:00</div>
                     </div>
                     <div class="w-full flex justify-center">

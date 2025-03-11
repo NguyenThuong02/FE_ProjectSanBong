@@ -27,7 +27,7 @@
             <nz-spin class="inline-block w-full text-center" nzSize="large" ></nz-spin>
           </div>
         </div>  
-        <div class="w-full" *ngIf="listFacility.length == 0">
+        <div class="w-full" *ngIf="listConcert.length == 0">
           <div class="flex flex-col items-center justify-center absolute mt-[100px] !w-[100%]">
             <span nz-icon nzType="exclamation-circle" nzTheme="outline" class="text-[20px]"></span>
             <div class="text-myText font-[500] text-[14px] mt-[10px]">Danh sách trống</div>
@@ -35,7 +35,7 @@
         </div>  
         <ng-template #data>
           <tbody> 
-            <tr class="*:py-4 *:text-center border-b border px-2 h-[60px]" *ngFor="let item of listFacility; let index = index">
+            <tr class="*:py-4 *:text-center border-b border px-2 h-[60px]" *ngFor="let item of listConcert; let index = index">
               <td class="px-1">
                 {{index + 1}}
               </td>
@@ -56,7 +56,7 @@
               </td>
               <td class="relative">
                 <i class="fa-solid fa-ellipsis-vertical cursor-pointer p-4 hover:scale-105 hover:text-primary" (click)="toggleMenu(item.id)"></i>
-                <div *ngIf="selectedFacilityId === item.id" class="absolute right-0 mt-1 w-[120px] bg-white border rounded-lg shadow-lg z-10">
+                <div *ngIf="selectedConcertId === item.id" class="absolute right-0 mt-1 w-[120px] bg-white border rounded-lg shadow-lg z-10">
                   <div class="p-2 cursor-pointer hover:bg-gray-200" (click)="viewDetail(item.id)">Xem chi tiết</div>
                   <div (click)="openDeletePopup(item)"
                   class="p-2 cursor-pointer hover:bg-gray-200 text-red-500">Xoá</div>

@@ -1,1 +1,104 @@
-<p>concert-by-owner-add works!</p>
+<div class="w-full mt-[100px] p-5 mb-[-100px]">
+    <div class="flex items-center justify-start gap-2 text-[16px]">
+        <div class="cursor-pointer hover:scale-105 hover:text-primary" [routerLink]="['/facility/list']">Quản lý sự kiện</div>
+        <div>/</div>
+        <div *ngIf="!isEdit" class="text-primary">Tạo sự kiện</div>
+        <div *ngIf="isEdit" class="text-primary">Cập nhật sự kiện</div>
+    </div>
+    <div class="flex-1 pt-8 px-[50px] rounded-lg overflow-y-auto">
+        <form class="flex flex-col gap-2 mt-4 p-[1px] " [formGroup]="form">
+            <div *ngIf="imagePreview" class="w-full flex flex-col items-center gap-1 justify-center mb-2">
+                <img [src]="imagePreview" alt="Preview" class="max-w-[300px] max-h-[200px] object-cover border rounded">
+                <div class="mt-1 text-sm text-gray-700 italic">{{ selectedFileName }}</div>
+            </div>
+            <div class="flex w-full gap-9">
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Tiêu đề</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <input matInput placeholder="Nhập tiêu đề" formControlName="name" />
+                        <mat-error
+                            *ngIf="form.get('name')?.errors?.['required']&& (form.get('name')?.dirty || form.get('name')?.touched)"
+                            class="text-red-600">
+                            Vui lòng nhập đầy đủ thông tin!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class=" flex flex-col flex-1">
+                    <span class="mb-1">Loại sự kiện</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <mat-select formControlName="type">
+                            <mat-option *ngFor="let type of listType" [value]="type.value">
+                              {{ type.label }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error
+                            *ngIf="form.get('type')?.errors?.['required']&& (form.get('type')?.dirty || form.get('type')?.touched)"
+                            class="text-red-600">
+                            Vui lòng nhập đầy đủ thông tin
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex w-full gap-9">
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Địa chỉ</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <input matInput placeholder="Nhập địa chỉ" formControlName="address" />
+                        <mat-error
+                            *ngIf="form.get('address')?.errors?.['required']&& (form.get('address')?.dirty || form.get('address')?.touched)"
+                            class="text-red-600">
+                            Vui lòng nhập đầy đủ thông tin!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex w-full">
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Ngày bắt đầu - kết thúc</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <input matInput placeholder="Nhập giá tiền" formControlName="time" />
+                        <mat-error
+                            *ngIf="form.get('time')?.errors?.['required']&& (form.get('time')?.dirty || form.get('time')?.touched)"
+                            class="text-red-600">
+                            Vui lòng nhập đầy đủ thông tin!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex w-full gap-9">
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Ảnh sân</span>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-center">
+                            <button type="button" class="bg-[#353535] border-none flex justify-center items-center gap-1 text-white px-4 py-2 rounded" (click)="fileInput.click()">
+                                <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                Tải ảnh
+                            </button>
+                            <input hidden type="file" #fileInput (change)="onFileSelected($event)" accept="image/*">
+                            <span *ngIf="uploadProgress > 0 && uploadProgress < 100" class="ml-3">
+                                Đang tải lên: {{ uploadProgress }}%
+                            </span>
+                        </div>
+                        <div *ngIf="form.get('imageUrl')?.value" class="text-green-600 text-sm">
+                            Ảnh đã được tải lên thành công
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Mô tả</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <textarea matInput formControlName="description" rows="5"></textarea>
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+        <div class="flex justify-center items-center mt-[140px] gap-4">
+            <div [routerLink]="['/facility/list']" class="rounded-lg px-3 py-2 font-semibold text-white bg-[#BAC1CC] cursor-pointer">
+                Huỷ bỏ
+            </div>
+            <div (click)="handleSubmit()" class="rounded-lg px-3 py-2 font-semibold text-white bg-[#22B14C] cursor-pointer">
+                {{isEdit ? 'Chỉnh sửa' : 'Thêm mới'}}
+            </div>
+        </div>
+    </div>
+</div>
