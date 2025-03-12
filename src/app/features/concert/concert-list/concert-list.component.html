@@ -44,13 +44,26 @@
             <div *ngIf="!isLoading && listEvents.length > 0" class="w-full grid grid-cols-3 grid-rows-2 gap-[30px] mt-8">
                 <div *ngFor="let item of listEvents" class="flex-shrink-0 pb-2 flex flex-col grid-cols-1 shadow-shadow-timeword rounded-md">
                     <div class="w-full h-[200px]">
-                        <img class="object-cover w-full h-full rounded-tl-md rounded-tr-md" [src]="item.img"/>
+                        <img class="object-cover w-full h-full rounded-tl-md rounded-tr-md" [src]="item.image"/>
                     </div>
                     <div class="flex flex-col items-start p-4">
                         <div class="text-[#000] text-[18px] font-semibold">{{ item.name }}</div>
-                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1"><i class="fa-solid fa-location-dot text-[16px] w-[18px] h-[18px]"></i> {{ item.address }}</div>
-                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1"><i class="fa-solid fa-calendar-days text-[16px] w-[18px] h-[18px]"></i> {{ item.eventType }}</div>
-                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1"><i class="fa-solid fa-clock text-[16px] w-[18px] h-[18px]"></i> 14:00 - 16:00</div>
+                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1">
+                            <i class="fa-solid fa-location-dot text-[16px] w-[18px] h-[18px]"></i> 
+                            <span class="font-semibold">Địa chỉ: </span>{{ item.address }}
+                        </div>
+                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1">
+                            <i class="fa-solid fa-filter"></i>
+                            <span class="font-semibold">Thể loại: </span>{{ item.eventType }}
+                        </div>
+                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1">
+                            <i class="fa-solid fa-clock text-[16px] w-[18px] h-[18px]"></i> 
+                            <span class="font-semibold">Ngày bắt đầu: </span>{{item?.startDate | date:'HH:mm dd/MM/yyyy'}}
+                        </div>
+                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1">
+                            <i class="fa-solid fa-clock-rotate-left text-[16px] w-[18px] h-[18px]"></i>
+                            <span class="font-semibold">Ngày kết thúc: </span>{{item?.endDate | date:'HH:mm dd/MM/yyyy'}}
+                        </div>
                     </div>
                     <div class="w-full flex justify-center">
                         <div (click)="viewDetail(item.id)" class="bg-[#DF6951] hover:scale-105 py-2 px-4 text-white cursor-pointer rounded-lg w-[100px] text-center">Chi tiết</div>

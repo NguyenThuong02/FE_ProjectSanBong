@@ -20,6 +20,13 @@ const routes: Routes = [
                   ),        
             },
             {
+                path: 'detail/:id',
+                loadComponent: () =>
+                  import('../concert/concert-detail/concert-detail.component').then(
+                    (m) => m.ConcertDetailComponent
+                  ),        
+            },
+            {
                 path:"**",
                 redirectTo:'/',
             },

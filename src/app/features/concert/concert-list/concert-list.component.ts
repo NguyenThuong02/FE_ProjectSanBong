@@ -134,6 +134,6 @@ export class ConcertListComponent implements OnInit{
   }
 
   viewDetail(id: any) {
-    this.router.navigate([`/list-feilds/detail/${id}`]);
+    this.router.navigate([`/concert/detail/${id}`]);
   }
 }
