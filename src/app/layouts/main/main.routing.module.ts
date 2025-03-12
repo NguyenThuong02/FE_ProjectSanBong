@@ -32,6 +32,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'changePassword',
+        loadChildren: () =>
+          import('../../features/change-password/change-password.routing.module').then(
+            (m) => m.ChangePasswordRoutingModule,
+          ),
+      },
+      {
         path: 'statistical',
         loadChildren: () =>
           import('../../features/statistical/statistical.routing.module').then(

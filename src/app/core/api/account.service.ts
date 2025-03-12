@@ -44,8 +44,8 @@ export class AccountService {
     return this.http.post(this.apiUrl + `/admin/active-account/${id}`, {});
   }
 
-  changeNewEmail(body: any): Observable<any> {
-    return this.http.put(this.apiUrl + '/api/user/change-email', body);
+  changePassword(body: any): Observable<any> {
+    return this.http.put(this.apiUrl + '/api/user/change-password', body);
   }
 
   checkPassword(body: any): Observable<any> {
