@@ -7,6 +7,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
 import { FacilityService } from '../../../../core/api/facility.service';
+import { ConcertService } from '../../../../core/api/concert.service';
 
 @Component({
   selector: 'app-popup-delete',
@@ -26,24 +27,24 @@ import { FacilityService } from '../../../../core/api/facility.service';
 })
 export class PopupDeleteComponent {
   @Input() isVisible!: boolean;
-  @Input() facilityItem?: any;
+  @Input() eventItem?: any;
   @Output() changeVisibleDelete = new EventEmitter<any>();
 
   constructor(
     private cdr: ChangeDetectorRef,
     private message: NzMessageService,
-    private facilityService: FacilityService,
+    private concertService: ConcertService,
   ) {}
 
   handleOk(): void {
-    this.facilityService.deleteFacilityById(this.facilityItem.id).subscribe({
+    this.concertService.deleteEvent(this.eventItem.id).subscribe({
       next: (res) => {
         this.message.success('Xoá thành công!');
         this.changeVisibleDelete.emit({ visible: false, isSuccess: true });
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.message.error('Xoá sân không thành công !')
+        this.message.error('Xoá không thành công !')
       },
     })
   }

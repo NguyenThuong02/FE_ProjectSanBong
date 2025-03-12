@@ -111,33 +111,37 @@ export class ConcertByOwnerAddComponent implements OnInit{
     
     this.concertService.getEventById(this.idFacility).subscribe({
       next: (res) => {
-        // Parse the time string if it exists
-        if (res.data.time) {
-          const timeParts = this.parseTimeString(res.data.time);
+        if (res.data) {
+          // Parse the ISO date strings from the API response
+          const startDateTime = new Date(res.data.startDate);
+          const endDateTime = new Date(res.data.endDate);
+          
+          // Format start time as HH:MM for the form
+          const startHours = String(startDateTime.getHours()).padStart(2, '0');
+          const startMinutes = String(startDateTime.getMinutes()).padStart(2, '0');
+          const startTime = `${startHours}:${startMinutes}`;
+          
+          // Format end time as HH:MM for the form
+          const endHours = String(endDateTime.getHours()).padStart(2, '0');
+          const endMinutes = String(endDateTime.getMinutes()).padStart(2, '0');
+          const endTime = `${endHours}:${endMinutes}`;
           
           this.form.patchValue({
             name: res.data.name,
-            type: res.data.facilityType,
-            address: res.data.address,
-            startDate: timeParts.startDate,
-            startTime: timeParts.startTime,
-            endDate: timeParts.endDate,
-            endTime: timeParts.endTime,
+            type: res.data.eventType,
+            address: '', // Set a default value or leave as null if not in response
+            startDate: startDateTime,
+            startTime: startTime,
+            endDate: endDateTime,
+            endTime: endTime,
             description: res.data.description,
             imageUrl: res.data.image
           });
-        } else {
-          this.form.patchValue({
-            name: res.data.name,
-            type: res.data.facilityType,
-            address: res.data.address,
-            description: res.data.description,
-            imageUrl: res.data.image
-          });
-        }
-        
-        if (res.data.image) {
-          this.imagePreview = res.data.image;
+          
+          if (res.data.image) {
+            this.imagePreview = res.data.image;
+            this.selectedFileName = this.extractFileNameFromUrl(res.data.image);
+          }
         }
       },
       error: (err) => {
@@ -146,7 +150,6 @@ export class ConcertByOwnerAddComponent implements OnInit{
     });
   }
 
-  // Parse time string in format "HH:mm yyyy-MM-dd to HH:mm yyyy-MM-dd"
   parseTimeString(timeString: string): any {
     try {
       const parts = timeString.split(' to ');
@@ -204,15 +207,12 @@ export class ConcertByOwnerAddComponent implements OnInit{
         imageName: file.name
       });
       
-      // Hiển thị preview
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.imagePreview = e.target.result;
         this.cdr.detectChanges();
       };
       reader.readAsDataURL(file);
-      
-      // Upload file
       this.uploadFile(file);
     }
   }
@@ -235,7 +235,6 @@ export class ConcertByOwnerAddComponent implements OnInit{
             this.form.patchValue({
               imageUrl: response[0]
             });
-            console.log("OK: ", this.form.get('imageUrl')?.value);
             this.message.success('Tải ảnh lên thành công!');
           }
         }
@@ -247,34 +246,44 @@ export class ConcertByOwnerAddComponent implements OnInit{
       }
     });
   }
-
-  // Format the datetime values for the API
-  formatDateTimeValues(): { startTime: string, endTime: string } {
+  formatDateTimeValues(): { startDate: string, endDate: string } {
     try {
       const startDate = this.form.get('startDate')?.value;
-      const startTime = this.form.get('startTime')?.value;
+      const startTime = this.form.get('startTime')?.value || '00:00';
       const endDate = this.form.get('endDate')?.value;
-      const endTime = this.form.get('endTime')?.value;
+      const endTime = this.form.get('endTime')?.value || '00:00';
       
-      if (!startDate || !startTime || !endDate || !endTime) {
-        return { startTime: '', endTime: '' };
+      if (!startDate || !endDate) {
+        return { startDate: '', endDate: '' };
+      }
+      const startDateTime = new Date(startDate);
+      const endDateTime = new Date(endDate);
+      if (startTime) {
+        const [startHours, startMinutes] = startTime.split(':').map(Number);
+        startDateTime.setHours(startHours, startMinutes);
       }
       
-      // Format dates to yyyy-MM-dd
-      const formattedStartDate = formatDate(startDate, 'dd-MM-yyyy', 'en-US');
-      const formattedEndDate = formatDate(endDate, 'dd-MM-yyyy', 'en-US');
-      
-      // Combine dates and times
-      const formattedStartTime = `${startTime} ${formattedStartDate}`;
-      const formattedEndTime = `${endTime} ${formattedEndDate}`;
+      if (endTime) {
+        const [endHours, endMinutes] = endTime.split(':').map(Number);
+        endDateTime.setHours(endHours, endMinutes);
+      }
+      const formatToISOWithVietnamTimezone = (date: Date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}+07:00`;
+      };
       
       return {
-        startTime: formattedStartTime,
-        endTime: formattedEndTime
+        startDate: formatToISOWithVietnamTimezone(startDateTime),
+        endDate: formatToISOWithVietnamTimezone(endDateTime)
       };
     } catch (error) {
       console.error('Error formatting date time values:', error);
-      return { startTime: '', endTime: '' };
+      return { startDate: '', endDate: '' };
     }
   }
 
@@ -290,32 +299,30 @@ export class ConcertByOwnerAddComponent implements OnInit{
       this.message.warning('Vui lòng nhập đầy đủ thông tin bắt buộc!');
       return;
     }
-    
-    // Format date and time fields
-    const { startTime, endTime } = this.formatDateTimeValues();
+
+    const { startDate, endDate } = this.formatDateTimeValues();
         
     if(!this.isEdit) {
       const body = {
         name: this.form.get('name')?.value,
-        address: this.form.get('address')?.value,
+        // address: this.form.get('address')?.value,
         description: this.form.get('description')?.value,
-        facilityType: this.form.get('type')?.value,
-        startTime: startTime,
-        endTime: endTime,
+        eventType: this.form.get('type')?.value,
+        startDate: startDate,
+        endDate: endDate,
         image: this.form.get('imageUrl')?.value,
-        status: 1
       };
-      // this.concertService.createEvent(body).subscribe({
-      //   next: (res) => {
-      //     this.message.success('Tạo sự kiện mới thành công');
-      //     this.cdr.detectChanges();
-      //     this.router.navigate(['/facility/list']);
-      //   },
-      //   error: (err) => {
-      //     this.message.error('Tạo sự kiện mới thất bại!');
-      //   }
-      // });
-      console.log("ROOOCC: ", body);
+      this.concertService.createEvent(body).subscribe({
+        next: (res) => {
+          this.message.success('Tạo sự kiện mới thành công');
+          this.cdr.detectChanges();
+          this.router.navigate(['/concert-by-owner']);
+        },
+        error: (err) => {
+          this.message.error('Tạo sự kiện mới thất bại!');
+          console.error('Error creating event:', err);
+        }
+      });
     } else {
       const body = {
         id: this.idFacility,
@@ -323,22 +330,22 @@ export class ConcertByOwnerAddComponent implements OnInit{
         name: this.form.get('name')?.value,
         address: this.form.get('address')?.value,
         description: this.form.get('description')?.value,
-        facilityType: this.form.get('type')?.value,
-        startTime: startTime,
-        endTime: endTime,
+        eventType: this.form.get('type')?.value,
+        startDate: startDate,
+        endDate: endDate,
         image: this.form.get('imageUrl')?.value,
-        status: 1
-      };
-      // this.concertService.updateEvent(body).subscribe({
-      //   next: (res) => {
-      //     this.message.success('Cập nhật sự kiện thành công');
-      //     this.cdr.detectChanges();
-      //     this.router.navigate(['/facility/list']);
-      //   },
-      //   error: (err) => {
-      //     this.message.error('Cập nhật sự kiện thất bại!');
-      //   }
-      // });
+      };      
+      this.concertService.updateEvent(body).subscribe({
+        next: (res) => {
+          this.message.success('Cập nhật sự kiện thành công');
+          this.cdr.detectChanges();
+          this.router.navigate(['/concert-by-owner']);
+        },
+        error: (err) => {
+          this.message.error('Cập nhật sự kiện thất bại!');
+          console.error('Error updating event:', err);
+        }
+      });
     }
   }
 }

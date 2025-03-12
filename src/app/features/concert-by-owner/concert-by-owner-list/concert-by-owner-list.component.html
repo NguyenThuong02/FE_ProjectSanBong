@@ -40,7 +40,7 @@
                 {{index + 1}}
               </td>
               <td>
-                {{item?.facilityType}}
+                {{item?.eventType}}
               </td>
               <td >
                 {{item?.name}}
@@ -49,10 +49,10 @@
                 <div class="flex justify-center"><img class="object-cover w-[100px] h-[60px]" [src]="item.image"/></div>
               </td>
               <td >
-                {{item?.price}}
+                {{item?.startDate | date:'HH:mm dd/MM/yyyy'}}
               </td>
               <td> 
-                {{item?.address}}
+                {{item?.endDate | date:'HH:mm dd/MM/yyyy'}}
               </td>
               <td class="relative">
                 <i class="fa-solid fa-ellipsis-vertical cursor-pointer p-4 hover:scale-105 hover:text-primary" (click)="toggleMenu(item.id)"></i>
@@ -74,4 +74,4 @@
     </div>
 </div>
 
-<app-popup-delete [isVisible]="isVisible" [facilityItem]="facilityItem" (changeVisibleDelete)="handleChangeVisible($event)"></app-popup-delete>
+<app-popup-delete [isVisible]="isVisible" [eventItem]="eventItem" (changeVisibleDelete)="handleChangeVisible($event)"></app-popup-delete>

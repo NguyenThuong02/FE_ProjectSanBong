@@ -40,7 +40,7 @@ export class ConcertByOwnerListComponent implements OnInit{
   public selectedConcertId: number | null = null;
   searchTerms = new Subject<string>();
   searchText: string = '';
-  facilityItem: any;
+  eventItem: any;
   maxheight: string = '';
   public params = {
     page: 1,
@@ -107,7 +107,7 @@ export class ConcertByOwnerListComponent implements OnInit{
   }
 
   openDeletePopup(item?: any) {
-    this.facilityItem = item;
+    this.eventItem = item;
     this.isVisible = true;
   }
   
