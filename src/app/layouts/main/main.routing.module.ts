@@ -67,6 +67,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'shedule-owner',
+        loadChildren: () =>
+          import('../../features/schedule-owner/schedule-owner.routing.module').then(
+            (m) => m.SheduleOwnerRoutingModule,
+          ),
+      },
+      {
         path: 'user-management',
         loadChildren: () =>
           import('../../features/management/management.routing.module').then(
