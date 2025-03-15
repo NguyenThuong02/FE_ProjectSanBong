@@ -20,21 +20,21 @@ const routes: Routes = [
       {
         path: 'list-feilds',
         loadChildren: () =>
-          import('../../features/list-fields/list-fields.routing.module').then(
+          import('../../features/user/list-fields/list-fields.routing.module').then(
             (m) => m.ListFieldsRoutingModule,
           ),
       },
       {
         path: 'my-info',
         loadChildren: () =>
-          import('../../features/my-info/my-info.routing.module').then(
+          import('../../features/user/my-info/my-info.routing.module').then(
             (m) => m.MyInfoRoutingModule,
           ),
       },
       {
         path: 'changePassword',
         loadChildren: () =>
-          import('../../features/change-password/change-password.routing.module').then(
+          import('../../features/user/change-password/change-password.routing.module').then(
             (m) => m.ChangePasswordRoutingModule,
           ),
       },
@@ -48,35 +48,35 @@ const routes: Routes = [
       {
         path: 'facility',
         loadChildren: () =>
-          import('../../features/facility/facility.routing.module').then(
+          import('../../features/owner/facility/facility.routing.module').then(
             (m) => m.FacilityRoutingModule,
           ),
       },
       {
         path: 'concert',
         loadChildren: () =>
-          import('../../features/concert/concert.routing.module').then(
+          import('../../features/user/concert/concert.routing.module').then(
             (m) => m.ConcertRoutingModule,
           ),
       },
       {
         path: 'concert-by-owner',
         loadChildren: () =>
-          import('../../features/concert-by-owner/concert-by-owner.routing.module').then(
+          import('../../features/owner/concert-by-owner/concert-by-owner.routing.module').then(
             (m) => m.ConcertByOwnerRoutingModule,
           ),
       },
       {
         path: 'shedule-owner',
         loadChildren: () =>
-          import('../../features/schedule-owner/schedule-owner.routing.module').then(
+          import('../../features/owner/schedule-owner/schedule-owner.routing.module').then(
             (m) => m.SheduleOwnerRoutingModule,
           ),
       },
       {
         path: 'user-management',
         loadChildren: () =>
-          import('../../features/management/management.routing.module').then(
+          import('../../features/admin/management/management.routing.module').then(
             (m) => m.ManagementRoutingModule,
           ),
           canActivate: [RolesGuard],
@@ -84,7 +84,7 @@ const routes: Routes = [
       {
         path: 'setting',
         loadChildren: () =>
-          import('../../features/setting/setting.routing.module').then(
+          import('../../features/admin/setting/setting.routing.module').then(
             (m) => m.SettingRoutingModule,
           ),
       },
