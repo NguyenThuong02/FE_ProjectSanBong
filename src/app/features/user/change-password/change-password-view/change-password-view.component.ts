@@ -86,7 +86,7 @@ export class ChangePasswordViewComponent {
           'Xác thực thành công',
           'Đổi mật khẩu thành công!'
         );
-        this.router.navigate(['/home-page']);
+        // this.router.navigate(['/home-page']);
       },
       error: (err) => {
         this.notification.create(

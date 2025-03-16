@@ -22,14 +22,16 @@
                 <div *ngIf="!isLoading && listConcerts.length === 0" class="py-3 text-center">
                     <div>Không có loại sân</div>
                 </div>
-                <div *ngFor="let item of listConcerts"
-                  (click)="checkFeild(item)"
-                  class="w-full flex items-center justify-between border-b text-[16px] py-2 cursor-pointer hover:text-primary">
-                    <div class="flex items-center justify-start gap-2">
-                        <i *ngIf="selectedConcertId === item.id" class="fa-solid fa-hand-point-right text-primary"></i>
-                        <div [ngClass]="{'text-primary': selectedConcertId === item.id}" class="italic">{{item.name}}</div>
+                <div class="max-h-[400px] overflow-y-auto">
+                    <div *ngFor="let item of listConcerts"
+                      (click)="checkFeild(item)"
+                      class="w-full flex items-center justify-between border-b text-[16px] py-2 cursor-pointer hover:text-primary">
+                        <div class="flex items-center justify-start gap-2">
+                            <i *ngIf="selectedConcertId === item.id" class="fa-solid fa-hand-point-right text-primary"></i>
+                            <div [ngClass]="{'text-primary': selectedConcertId === item.id}" class="italic">{{item.name}}</div>
+                        </div>
+                        <div class="bg-[#4FC460] rounded-[50%] text-white h-[20px] w-[20px] p-[2px] flex items-center justify-center">{{item.count}}</div>
                     </div>
-                    <div class="bg-[#4FC460] rounded-[50%] text-white h-[20px] w-[20px] p-[2px] flex items-center justify-center">{{item.count}}</div>
                 </div>
             </div>
         </div>
@@ -41,32 +43,23 @@
             <div *ngIf="!isLoading && listEvents.length === 0" class="w-full flex justify-center my-8">
                 <div class="text-center">Không tìm thấy sân thể thao nào</div>
             </div>
-            <div *ngIf="!isLoading && listEvents.length > 0" class="w-full grid grid-cols-3 grid-rows-2 gap-[30px] mt-8">
-                <div *ngFor="let item of listEvents" class="flex-shrink-0 pb-2 flex flex-col grid-cols-1 shadow-shadow-timeword rounded-md">
-                    <div class="w-full h-[200px]">
-                        <img class="object-cover w-full h-full rounded-tl-md rounded-tr-md" [src]="item.image"/>
+            <div *ngIf="!isLoading && listEvents.length > 0" class="flex flex-col w-full items-start gap-4 mt-8 list-events">
+                <div *ngFor="let item of listEvents" class="flex flex-col w-full items-start p-2 shadow-shadow-timeword border bg-[#fcfbfb]">
+                    <div class="w-full text-[16px] font-semibold text-start mt-2">{{item?.name}}</div>
+                    <div class="w-full text-[15px] font-normal text-start mt-[2px]">Từ: <span class="italic font-medium">{{item?.startDate | date:'HH:mm dd/MM/yyyy'}}</span> 
+                        đến <span class="italic font-medium">{{item?.endDate | date:'HH:mm dd/MM/yyyy'}}</span></div>
+                    <div class="w-full text-[15px] font-normal text-start mt-[2px]">
+                        Địa chỉ: <span>24 Hoàng Quốc Việt, Nam Từ Liêm, Hà Nội.</span>
                     </div>
-                    <div class="flex flex-col items-start p-4">
-                        <div class="text-[#000] text-[18px] font-semibold">{{ item.name }}</div>
-                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1">
-                            <i class="fa-solid fa-location-dot text-[16px] w-[18px] h-[18px]"></i> 
-                            <span class="font-semibold">Địa chỉ: </span>{{ item.address }}
+                    <div class="w-full flex justify-start items-start gap-5 mt-[10px]">
+                        <div class="w-[260px] h-[180px]">
+                            <img class="object-cover w-full h-full" [src]="item.image"/>
                         </div>
-                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1">
-                            <i class="fa-solid fa-filter"></i>
-                            <span class="font-semibold">Thể loại: </span>{{ item.eventType }}
+                        <div class="flex-1 flex flex-col h-full justify-start items-start gap-5">
+                            <div *ngIf="item.description.length > 400" class="text-start text-[14px] font-normal">{{ item.description.substring(0, 400) + '...'}}</div>
+                            <div *ngIf="item.description.length <= 400" class="text-start text-[14px] font-normal">{{ item.description }}</div>
+                            <div (click)="viewDetail(item.id)" class="bg-[#DF6951] hover:scale-105 py-1 px-3 text-white cursor-pointer rounded-[6px] w-fit text-center">Xem chi tiết</div>
                         </div>
-                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1">
-                            <i class="fa-solid fa-clock text-[16px] w-[18px] h-[18px]"></i> 
-                            <span class="font-semibold">Ngày bắt đầu: </span>{{item?.startDate | date:'HH:mm dd/MM/yyyy'}}
-                        </div>
-                        <div class="text-[#7D7D7D] font-normal text-[15px] mt-2 flex justify-start items-center gap-1">
-                            <i class="fa-solid fa-clock-rotate-left text-[16px] w-[18px] h-[18px]"></i>
-                            <span class="font-semibold">Ngày kết thúc: </span>{{item?.endDate | date:'HH:mm dd/MM/yyyy'}}
-                        </div>
-                    </div>
-                    <div class="w-full flex justify-center">
-                        <div (click)="viewDetail(item.id)" class="bg-[#DF6951] hover:scale-105 py-2 px-4 text-white cursor-pointer rounded-lg w-[100px] text-center">Chi tiết</div>
                     </div>
                 </div>
             </div>

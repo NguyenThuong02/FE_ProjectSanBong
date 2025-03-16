@@ -26,7 +26,7 @@ import { ConcertService } from '../../../../core/api/concert.service';
 export class ConcertListComponent implements OnInit{
   nameConcertCheck: any = 'Sự kiện';
   selectedConcertId: any; 
-  pageSize = 6; 
+  pageSize = 5; // Changed from 6 to 5 events per page
   currentPage = 1;
   isLoading: boolean = false;
   searchTerm: string = '';
