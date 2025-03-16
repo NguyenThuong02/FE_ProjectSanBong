@@ -21,10 +21,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzModalModule} from 'ng-zorro-antd/modal';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { Router, RouterLink } from '@angular/router';
 import { rePassValidator } from '../../../../shared/validate/check-repass.directive';
 import { AccountService } from '../../../../core/api/account.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-change-password-view',
@@ -64,9 +64,9 @@ export class ChangePasswordViewComponent {
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private message: NzMessageService,
     private accountService: AccountService,
     private router: Router,
+    private notification: NzNotificationService
   ) {}
   ngOnInit(): void {
 
@@ -81,11 +81,19 @@ export class ChangePasswordViewComponent {
     };
     this.accountService.changePassword(body).subscribe({
       next: (res) => {
-        this.message.success("Đổi mật khẩu thành công!");
+        this.notification.create(
+          'success',
+          'Xác thực thành công',
+          'Đổi mật khẩu thành công!'
+        );
         this.router.navigate(['/home-page']);
       },
       error: (err) => {
-        this.message.error("Đổi mật khẩu thất bại!")
+        this.notification.create(
+          'error',
+          'Xác thực thành công',
+          'Đổi mật khẩu thất bại!'
+        );
       }
     })
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
@@ -8,11 +8,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalComponent, NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalModule} from 'ng-zorro-antd/modal';
 import { ManagermentService } from '../../../../core/api/managerment.service';
 import { phoneNumberValidator } from '../../../../shared/validate/check-phone-number.directive';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-management-add',
@@ -69,7 +69,7 @@ export class ManagementAddComponent implements OnInit {
   ]
   constructor(
       private fb: FormBuilder,
-      private message: NzMessageService,
+      private notification: NzNotificationService,
       private cdr: ChangeDetectorRef,
       private managermentService: ManagermentService,
       private route: ActivatedRoute,
@@ -114,7 +114,11 @@ export class ManagementAddComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.message.error('Lấy thông tin thất bại');
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Lấy thông tin thất bại!'
+        );
       },
     })
   }
@@ -125,17 +129,29 @@ export class ManagementAddComponent implements OnInit {
         next: (res) => {
           this.managermentService.changeRole(this.idUser, this.form.get('role')?.value).subscribe ({
             next: (res2) => {
-              this.message.success('Cập nhật thành công!')
+              this.notification.create(
+                'success',
+                'Thành công!',
+                'Cập nhật thành công!'
+              );
               this.cdr.detectChanges();
               this.router.navigate([`/user-management/list`]);
             },
             error: (err) => {
-              this.message.error('Cấp quyền thất bại');
+              this.notification.create(
+                'error',
+                'Thất bại!',
+                'Cấp quyền thất bại!'
+              );
             }
           })
         },
         error: (err) => {
-          this.message.error('Cập nhật thông tin thất bại!');
+          this.notification.create(
+            'error',
+            'Thất bại!',
+            'Cập nhật thông tin thất bại!'
+          );
         }
       })
     }
@@ -144,17 +160,29 @@ export class ManagementAddComponent implements OnInit {
         next: (res) => {
           this.managermentService.changeRole(this.idUser, this.form.get('role')?.value).subscribe ({
             next: (res2) => {
-              this.message.success('Cập nhật thành công!')
+              this.notification.create(
+                'success',
+                'Thành công!',
+                'Cập nhật thành công!'
+              );
               this.cdr.detectChanges();
               this.router.navigate([`/user-management/list`]);
             },
             error: (err) => {
-              this.message.error('Cấp quyền thất bại');
+              this.notification.create(
+                'error',
+                'Thất bại!',
+                'Cấp quyền thất bại!'
+              );
             }
           })
         },
         error: (err) => {
-          this.message.error('Cập nhật thông tin thất bại!');
+          this.notification.create(
+            'error',
+            'Thất bại!',
+            'Cập nhật thông tin thất bại!'
+          );
         }
       })
     }
@@ -185,10 +213,18 @@ export class ManagementAddComponent implements OnInit {
           this.identityCardUrl = response.filename;
           this.form.get('identityCardUrl')?.setValue(this.identityCardUrl);
         }
-        this.message.success('Upload thành công!');
+        this.notification.create(
+          'success',
+          'Thành công!',
+          'Upload thành công!'
+        );
       },
       (error) => {
-        this.message.error('Upload thất bại. Vui lòng thử lại!');
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Upload thất bại. Vui lòng thử lại!'
+        );
       }
     );
   }

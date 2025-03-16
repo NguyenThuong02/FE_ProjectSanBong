@@ -9,12 +9,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpEventType } from '@angular/common/http';
-import { formatDate } from '@angular/common';
 import { ConcertService } from '../../../../core/api/concert.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-concert-by-owner-add',
@@ -72,7 +71,7 @@ export class ConcertByOwnerAddComponent implements OnInit{
   
   constructor(
       private fb: FormBuilder,
-      private message: NzMessageService,
+      private notification: NzNotificationService,
       private cdr: ChangeDetectorRef,
       private concertService: ConcertService,
       private route: ActivatedRoute,
@@ -145,7 +144,11 @@ export class ConcertByOwnerAddComponent implements OnInit{
         }
       },
       error: (err) => {
-        this.message.error('Không thể lấy thông tin sự kiện!');
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Không thể lấy thông tin sự kiện!'
+        );
       }
     });
   }
@@ -235,12 +238,20 @@ export class ConcertByOwnerAddComponent implements OnInit{
             this.form.patchValue({
               imageUrl: response[0]
             });
-            this.message.success('Tải ảnh lên thành công!');
+            this.notification.create(
+              'success',
+              'Thành công!',
+              'Tải ảnh lên thành công!'
+            );
           }
         }
       },
       error: (err) => {
-        this.message.error('Tải ảnh lên thất bại!');
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Tải ảnh lên thất bại!'
+        );
         this.uploadProgress = 0;
         this.cdr.detectChanges();
       }
@@ -296,7 +307,11 @@ export class ConcertByOwnerAddComponent implements OnInit{
           control.markAsTouched();
         }
       });
-      this.message.warning('Vui lòng nhập đầy đủ thông tin bắt buộc!');
+      this.notification.create(
+        'warning',
+        'Lỗi!',
+        'Vui lòng nhập đầy đủ thông tin bắt buộc!'
+      );
       return;
     }
 
@@ -314,12 +329,20 @@ export class ConcertByOwnerAddComponent implements OnInit{
       };
       this.concertService.createEvent(body).subscribe({
         next: (res) => {
-          this.message.success('Tạo sự kiện mới thành công');
+          this.notification.create(
+            'success',
+            'Thành công!',
+            'Tạo sự kiện mới thành công!'
+          );
           this.cdr.detectChanges();
           this.router.navigate(['/concert-by-owner']);
         },
         error: (err) => {
-          this.message.error('Tạo sự kiện mới thất bại!');
+          this.notification.create(
+            'error',
+            'Thất bại!',
+            'Tạo sự kiện mới thất bại!'
+          );
           console.error('Error creating event:', err);
         }
       });
@@ -337,12 +360,20 @@ export class ConcertByOwnerAddComponent implements OnInit{
       };      
       this.concertService.updateEvent(body).subscribe({
         next: (res) => {
-          this.message.success('Cập nhật sự kiện thành công');
+          this.notification.create(
+            'success',
+            'Thành công!',
+            'Cập nhật sự kiện thành công'
+          );
           this.cdr.detectChanges();
           this.router.navigate(['/concert-by-owner']);
         },
         error: (err) => {
-          this.message.error('Cập nhật sự kiện thất bại!');
+          this.notification.create(
+            'error',
+            'Thất bại!',
+            'Cập nhật sự kiện thất bại!'
+          );
           console.error('Error updating event:', err);
         }
       });

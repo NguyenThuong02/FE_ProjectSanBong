@@ -4,9 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
 import { ConcertService } from '../../../../../core/api/concert.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-popup-delete',
@@ -31,19 +31,27 @@ export class PopupDeleteComponent {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private message: NzMessageService,
+    private notification: NzNotificationService,
     private concertService: ConcertService,
   ) {}
 
   handleOk(): void {
     this.concertService.deleteEvent(this.eventItem.id).subscribe({
       next: (res) => {
-        this.message.success('Xoá thành công!');
+        this.notification.create(
+          'success',
+          'Thành công!',
+          'Xoá thành công!'
+        );
         this.changeVisibleDelete.emit({ visible: false, isSuccess: true });
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.message.error('Xoá không thành công !')
+        this.notification.create(
+          'error',
+          'Thành công!',
+          'Xoá không thành công!'
+        );
       },
     })
   }

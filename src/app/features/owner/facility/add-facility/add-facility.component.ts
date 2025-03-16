@@ -13,6 +13,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FacilityService } from '../../../../core/api/facility.service';
 import { HttpClient, HttpEventType } from '@angular/common/http';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-add-facility',
@@ -68,7 +69,7 @@ export class AddFacilityComponent implements OnInit {
   
   constructor(
       private fb: FormBuilder,
-      private message: NzMessageService,
+      private notification: NzNotificationService,
       private cdr: ChangeDetectorRef,
       private facilityService: FacilityService,
       private route: ActivatedRoute,
@@ -119,7 +120,11 @@ export class AddFacilityComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.message.error('Không thể lấy thông tin sân!');
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Không thể lấy thông tin sân!'
+        );
       }
     });
   }
@@ -170,13 +175,20 @@ export class AddFacilityComponent implements OnInit {
             this.form.patchValue({
               imageUrl: response[0]
             });
-            console.log("OK: ", this.form.get('imageUrl')?.value);
-            this.message.success('Tải ảnh lên thành công!');
+            this.notification.create(
+              'success',
+              'Thành công!',
+              'Tải ảnh lên thành công!'
+            );
           }
         }
       },
       error: (err) => {
-        this.message.error('Tải ảnh lên thất bại!');
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Tải ảnh lên thất bại!'
+        );
         this.uploadProgress = 0;
         this.cdr.detectChanges();
       }
@@ -192,7 +204,11 @@ export class AddFacilityComponent implements OnInit {
           control.markAsTouched();
         }
       });
-      this.message.warning('Vui lòng nhập đầy đủ thông tin bắt buộc!');
+      this.notification.create(
+        'warning',
+        'Lỗi!',
+        'Vui lòng nhập đầy đủ thông tin bắt buộc!'
+      );
       return;
     }
         
@@ -208,12 +224,20 @@ export class AddFacilityComponent implements OnInit {
       };
       this.facilityService.createFacility(body).subscribe({
         next: (res) => {
-          this.message.success('Tạo sân mới thành công');
+          this.notification.create(
+            'success',
+            'Thành công!',
+            'Tạo sân mới thành công!'
+          );
           this.cdr.detectChanges();
           this.router.navigate(['/facility/list']);
         },
         error: (err) => {
-          this.message.error('Tạo sân mới thất bại!');
+          this.notification.create(
+            'error',
+            'Thất bại!',
+            'Tạo sân mới thất bại!'
+          );
         }
       });
     } else {
@@ -230,12 +254,20 @@ export class AddFacilityComponent implements OnInit {
       };
       this.facilityService.updateFacility(body).subscribe({
         next: (res) => {
-          this.message.success('Cập nhật sân thành công');
+          this.notification.create(
+            'success',
+            'Thành công!',
+            'Cập nhật sân thành công!'
+          );
           this.cdr.detectChanges();
           this.router.navigate(['/facility/list']);
         },
         error: (err) => {
-          this.message.error('Cập nhật sân thất bại!');
+          this.notification.create(
+            'error',
+            'Thất bại!',
+            'Cập nhật sân thất bại!'
+          );
         }
       });
     }

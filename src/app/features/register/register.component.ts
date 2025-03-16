@@ -26,9 +26,9 @@ import { phoneNumberValidator } from '../../shared/validate/check-phone-number.d
 import { rePassValidator } from '../../shared/validate/check-repass.directive';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { AccountService } from '../../core/api/account.service';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-register',
@@ -101,7 +101,7 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private message: NzMessageService,
+    private notification: NzNotificationService,
     private accountService: AccountService,
     private router: Router,
   ) {}
@@ -121,7 +121,11 @@ export class RegisterComponent implements OnInit {
     };
     this.accountService.register(body).subscribe({
       next: (res) => {
-        this.message.success("Đăng ký tài khoản thành công!");
+        this.notification.create(
+          'success',
+          'Xác thực thành công',
+          'Đăng ký tài khoản thành công!'
+        );
         this.router.navigate(['/login']);
       },
       error: (err) => {

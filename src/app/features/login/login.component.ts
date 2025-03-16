@@ -26,9 +26,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { SocialLoginModule, FacebookLoginProvider, SocialAuthService, SocialAuthServiceConfig, SocialUser } from '@abacritt/angularx-social-login';
 import { NzSelectSizeType } from 'ng-zorro-antd/select';
 import { NgOtpInputConfig, NgOtpInputModule } from  'ng-otp-input';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { AccountService } from '../../core/api/account.service';
-
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -143,8 +142,8 @@ export class LoginComponent implements OnInit {
     private OAuthService: OAuthService,
     private authService: SocialAuthService,
     private http: HttpClient,
-    private message: NzMessageService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private notification: NzNotificationService
   ) {
     window.addEventListener('storage', (event) => {
       // The `key` is `null` if the event was caused by `.clear()`
@@ -180,8 +179,11 @@ export class LoginComponent implements OnInit {
 
     const requiresLogin = localStorage.getItem('requiresLogin');
     if (requiresLogin === 'true') {
-      // Hiển thị thông báo
-      this.message.warning("Vui Lòng đăng nhập");
+      this.notification.create(
+        'warning',
+        'Yêu cầu đăng nhập',
+        'Bạn cần đăng nhập trước khi đặt lịch'
+      );
       // Xóa flag để không hiển thị lại thông báo
       localStorage.removeItem('requiresLogin');
     }
@@ -304,13 +306,21 @@ export class LoginComponent implements OnInit {
     }
     this.isConfirmLoading = true;
     this.accountService.checkEmail(body).subscribe(res => {
-      this.message.success("Xác thực email thành công!")
+      this.notification.create(
+        'success',
+        'Xác thực thành công',
+        'Xác thực email thành công!'
+      );
       this.timer(2);
       this.step = 'otpVerification';
       this.isConfirmLoading = false;
     }, 
     (err) =>{
-      this.message.error("Xác thực email không thành công!")
+      this.notification.create(
+        'error',
+        'Xác thực thất bại',
+        'Xác thực email không thành công!'
+      );
       this.isConfirmLoading = false;
     })
   }
@@ -321,7 +331,11 @@ export class LoginComponent implements OnInit {
       otp: this.ngOtpInputRef.currentVal
     }
     if(this.ngOtpInputRef.currentVal === null || this.ngOtpInputRef.currentVal.length !== 6){
-      this.message.error("Nhập đầy đủ mã OTP!")
+      this.notification.create(
+        'warning',
+        'Thông báo lỗi',
+        'Vui lòng nhập đầy đủ mã OTP!'
+      );
       return;
     } else {
       this.isConfirmLoading = true;
@@ -330,7 +344,11 @@ export class LoginComponent implements OnInit {
         this.isConfirmLoading = false;
       }, (err) => {
         this.isConfirmLoading = false;
-        this.message.error("Mã OTP không hợp lệ!")
+        this.notification.create(
+          'error',
+          'Xác thực thất bại',
+          'Xác thực OTP không thành công!'
+        );
       })
     }
   }
@@ -344,11 +362,19 @@ export class LoginComponent implements OnInit {
     this.isConfirmLoading = true;
     this.accountService.forgotPassword(body).subscribe(res => {
       this.isConfirmLoading = false;
-      this.message.success('Đổi mật khẩu thành công!')
+      this.notification.create(
+        'success',
+        'Xác thực thành công',
+        'Đổi mật khẩu thành công!'
+      );
       this.step = 'login';
     }, (err) => {
       this.isConfirmLoading = false;
-      this.message.error('Đổi mật khẩu thất bại');
+      this.notification.create(
+        'error',
+        'Xác thực thất bại',
+        'Đổi mật khẩu không thành công!'
+      );
     })
   }
 }

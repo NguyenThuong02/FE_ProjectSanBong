@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ShareTableModule } from '../../../../shared/components/share-table/share-table.module';
 import { Router, RouterModule } from '@angular/router';
@@ -12,9 +12,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { AccountDisableComponent } from './account-disable/account-disable.component';
 import { AccountService } from '../../../../core/api/account.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { PagiComponent } from '../../../../shared/components/pagi/pagi.component';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-management-list',
@@ -58,7 +58,7 @@ export class ManagementListComponent implements OnInit{
     private router: Router,
     private managermentService: ManagermentService,
     private accountService: AccountService,
-    private message: NzMessageService,
+    private notification: NzNotificationService,
   ){}
   
   ngOnInit(): void {
@@ -99,7 +99,11 @@ export class ManagementListComponent implements OnInit{
         next: (res) => {
           this.viewListUser();
           this.cdr.detectChanges();
-          this.message.success('Active account successfully!');
+          this.notification.create(
+            'success',
+            'Xác thực thành công',
+            'Active account successfully!'
+          );
         },
       })
     }

@@ -4,9 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
 import { AccountService } from '../../../../../core/api/account.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-account-disable',
@@ -32,23 +32,27 @@ export class AccountDisableComponent {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private message: NzMessageService,
+    private notification: NzNotificationService,
     private accountService: AccountService
   ) {}
 
   handleOk(): void {
     this.accountService.disableAccount(this.idManagement).subscribe({
       next: (res) => {
-        this.message.success('Disable account successfully!');
+        this.notification.create(
+          'success',
+          'Xác thực thành công!',
+          'Vô hiệu hoá tài khoản thành công!'
+        );
         this.changeVisibleDelete.emit({ visible: false, isSuccess: true });
         this.cdr.detectChanges();
       },
       error: (err) => {
-        if (err.error.message.includes('User has voted in an active vote')) {
-          this.message.error('Người dùng đang trong cuộc bầu cử, không thể vô hiệu hoá');
-        } else {
-          this.message.error(`Lỗi: ${err.error.message}`);
-        }
+        this.notification.create(
+          'error',
+          'Xác thực thất bại!',
+          'Vô hiệu hoá tài khoản thất bại!'
+        );
       },
     })
   }
