@@ -67,7 +67,7 @@ export class MainComponent implements OnInit, OnChanges {
   viewDetailUnit = false;
   width = 280;
   userName: string;
-  role: string;
+  role: any;
   _store = inject(Store);
   isUserMenuVisible: boolean = false;
   pageTitle = 'Danh sách tài khoản';
@@ -195,12 +195,26 @@ export class MainComponent implements OnInit, OnChanges {
     this.nzContextMenuService.close();
   }
 
+  // handleLogout() {
+  //   this.isUserMenuVisible = false;
+  //   this.authService.logout();
+  //   this.authService2.signOut();
+  //   this.cdr.detectChanges();
+  //   window.location.reload();
+  // }
   handleLogout() {
     this.isUserMenuVisible = false;
-    this.authService.logout();
-    this.authService2.signOut();
-    this.cdr.detectChanges();
-    window.location.reload();
+    // Xóa thông tin lưu trữ trong localStorage (bao gồm redirectUrl nếu có)
+    localStorage.removeItem('redirectUrl');
+    this.router.navigate(['/home-page']).then(() => {
+      this.authService.logout();
+      if (this.authService2) {
+        this.authService2.signOut();
+      }
+      this.role = null;
+      this.canActive = false;
+      this.cdr.detectChanges();
+    });
   }
 
   stopPrevenDefault($event: any) {
