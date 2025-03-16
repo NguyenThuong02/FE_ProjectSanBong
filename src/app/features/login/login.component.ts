@@ -24,10 +24,7 @@ import { HttpClient } from '@angular/common/http';
 import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { SocialLoginModule, FacebookLoginProvider, SocialAuthService, SocialAuthServiceConfig, SocialUser } from '@abacritt/angularx-social-login';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzModalModule } from 'ng-zorro-antd/modal';
-import { NzSelectModule, NzSelectSizeType } from 'ng-zorro-antd/select';
-import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzSelectSizeType } from 'ng-zorro-antd/select';
 import { NgOtpInputConfig, NgOtpInputModule } from  'ng-otp-input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { AccountService } from '../../core/api/account.service';
@@ -180,6 +177,14 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/']); 
       }
     });
+
+    const requiresLogin = localStorage.getItem('requiresLogin');
+    if (requiresLogin === 'true') {
+      // Hiển thị thông báo
+      this.message.warning("Vui Lòng đăng nhập");
+      // Xóa flag để không hiển thị lại thông báo
+      localStorage.removeItem('requiresLogin');
+    }
   }
 
   login() {
@@ -215,7 +220,14 @@ export class LoginComponent implements OnInit {
       .then((res) => {
         this.isLoading = false;
         this.OAuthService.setupAutomaticSilentRefresh();
-        this.router.navigate(['/']);
+        const redirectUrl = localStorage.getItem('redirectUrl');
+        if (redirectUrl) {
+          // Xóa URL đã lưu
+          // localStorage.removeItem('redirectUrl');
+          this.router.navigate([redirectUrl]);
+        } else {
+          this.router.navigate(['/']);
+        }
       })
       .catch((err) => {
         this.isLoading = false;

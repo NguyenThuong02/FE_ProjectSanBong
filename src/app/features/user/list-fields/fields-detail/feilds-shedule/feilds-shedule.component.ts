@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 interface TimeSlot {
   id: number;
@@ -187,7 +188,9 @@ export class FeildsSheduleComponent implements OnInit{
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router,   // Thêm Router vào đây
+    private oauthService: OAuthService 
   ) {
     this.bookingForm = this.fb.group({
       title: ['', Validators.required],
@@ -398,8 +401,18 @@ export class FeildsSheduleComponent implements OnInit{
     );
   }
   
-  // Mở modal để xem chi tiết và đặt lịch
   selectSlot(slot: TimeSlot): void {
+    if (!this.oauthService.hasValidAccessToken()) {
+      // Lưu URL hiện tại vào localStorage
+      localStorage.setItem('redirectUrl', window.location.pathname);
+      // Thêm flag thông báo cần hiển thị
+      localStorage.setItem('requiresLogin', 'true');
+      // Chuyển hướng đến trang đăng nhập
+      this.router.navigate(['/login']);
+      return;
+    }
+    
+    // Nếu đã đăng nhập, tiếp tục xử lý như trước
     this.selectedSlot = slot;
     this.bookingForm.patchValue({
       title: slot.title || '',

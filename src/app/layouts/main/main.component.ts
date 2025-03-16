@@ -115,13 +115,18 @@ export class MainComponent implements OnInit, OnChanges {
     this.role = JSON.parse(
       localStorage.getItem('id_token_claims_obj') || '{}',
     )?.role;
+    const redirectUrl = localStorage.getItem('redirectUrl');
     if(this.role) {
       if(this.role[0] === 'Administrator'){
         this.canActive = true;
         this.router.navigate(['/user-management']);
       } else if(this.role[0] === 'User') {
         this.canActive = false;
-        this.router.navigate(['/home-page']);
+        if(redirectUrl) {
+          this.router.navigate([redirectUrl]);
+        } else {
+          this.router.navigate(['/home-page']);
+        }
       } else if(this.role[0] === 'FacilityOwner') {
         this.canActive = true;
         this.router.navigate(['/facility']);
