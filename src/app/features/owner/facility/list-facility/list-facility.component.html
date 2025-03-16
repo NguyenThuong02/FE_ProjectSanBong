@@ -10,16 +10,15 @@
         </div>
     </div>
     <div>
-      <div [style.height]=" maxheight ? maxheight:'450px'"
+      <div [style.height]=" maxheight ? maxheight:'550px'"
       class="mt-[27px] w-full min-w-full overflow-x-auto overflow-y-auto">
       <table class="text-[13px] font-normal w-full relative">
-        <thead class="border-b-[#96E6A1] border-b *:py-4 *:text-center  font-medium sticky top-0 ">
+        <thead class="border-b-[#96E6A1] border-b *:py-4 *:text-center bg-white z-2  font-medium sticky top-0 ">
             <th class="px-1">#</th>
             <th class="">Môn thể thao</th>
-            <th class="">Tên sân</th>
+            <th><div class="text-left">Tên sân</div></th>
             <th class="">Ảnh</th>
-            <th class="">Giá</th>
-            <th class="">Địa chỉ</th>
+            <th><div class="text-left">Địa chỉ</div></th>
             <th class=""></th>
         </thead>
         <div class="w-full" *ngIf="isLoading; else data">
@@ -43,16 +42,13 @@
                 {{item?.facilityType}}
               </td>
               <td >
-                {{item?.name}}
+                <div class="text-left">{{item?.name}}</div>
               </td>
               <td >
                 <div class="flex justify-center"><img class="object-cover w-[100px] h-[60px]" [src]="item.image"/></div>
               </td>
-              <td >
-                {{item?.price}}
-              </td>
               <td> 
-                {{item?.address}}
+                <div class="text-left">{{item?.address}}</div>
               </td>
               <td class="relative">
                 <i class="fa-solid fa-ellipsis-vertical cursor-pointer p-4 hover:scale-105 hover:text-primary" (click)="toggleMenu(item.id)"></i>

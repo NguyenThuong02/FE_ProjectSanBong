@@ -91,7 +91,7 @@ export class ChangePasswordViewComponent {
       error: (err) => {
         this.notification.create(
           'error',
-          'Xác thực thành công',
+          'Xác thực thất bại',
           'Đổi mật khẩu thất bại!'
         );
       }

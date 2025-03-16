@@ -135,6 +135,6 @@ export class ScheduleOwnerListComponent implements OnInit{
   }
 
   viewDetail(id: any) {
-    this.router.navigate([`/list-feilds/detail/${id}`]);
+    this.router.navigate([`/shedule-owner/book/${id}`]);
   }
 }

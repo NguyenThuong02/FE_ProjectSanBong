@@ -1,1 +1,111 @@
-<p>schedule-owner-book works!</p>
+<div class="mt-[100px] w-full p-5 mb-[-100px]">
+    <div class="flex items-center justify-start gap-2 text-[16px]">
+        <div class="cursor-pointer hover:scale-105 hover:text-primary" [routerLink]="['/home-page']">Trang chủ</div>
+        <div>/</div>
+        <div class="cursor-pointer hover:scale-105 hover:text-primary" [routerLink]="['/list-feilds']">Sân thể thao</div>
+        <div>/</div>
+        <div class="text-primary">Chi tiết</div>
+    </div>
+    <div class="flex items-start gap-5 mt-7">
+        <div class="w-[25%] flex flex-col items-center">
+            <img class="object-cover w-full h-[200px]" [src]="selectedField.image"/>
+            <div class="w-full flex flex-col items-start justify-start gap-3 mt-5">
+                <div class="text-[22px] font-semibold">{{selectedField.name}}</div>
+                <div class="text-[14px] leading-[120%] font-semibold">Địa chỉ: 
+                    <span class="font-normal">{{selectedField.address}}</span>
+                </div>
+                <div class="text-[14px] leading-[120%] font-semibold">Đã đặt: 
+                    <span class="font-normal">{{getCountByStatus('BOOKED')}}/{{getTotalSlots()}}</span>
+                </div>
+                <div class="text-[14px] leading-[120%] font-semibold">Còn trống: 
+                    <span class="font-normal">{{getCountByStatus('AVAILABLE')}}/{{getTotalSlots()}}</span>
+                </div>
+                <div class="text-[14px] leading-[120%] font-semibold">Đóng: 
+                    <span class="font-normal">{{getCountByStatus('CLOSED')}}/{{getTotalSlots()}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="w-[75%]">
+            <div class="mb-5">
+                <h3 class="text-lg font-bold mb-2">Lịch sân</h3>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 bg-green-500 rounded"></div>
+                        <span>Còn trống</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 bg-red-500 rounded"></div>
+                        <span>Đã đặt</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 bg-gray-500 rounded"></div>
+                        <span>Đóng cửa</span>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4 mb-4">
+                    <button class="px-3 py-1 border rounded" [class.bg-primary]="currentWeekIndex === 0" (click)="showWeek(0)">Tuần này</button>
+                    <button class="px-3 py-1 border rounded" [class.bg-primary]="currentWeekIndex === 1" (click)="showWeek(1)">Tuần sau</button>
+                    <button class="px-3 py-1 border rounded" [class.bg-primary]="currentWeekIndex === 2" (click)="showWeek(2)">2 tuần sau</button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-8 gap-2 border rounded overflow-hidden">
+                <!-- Header -->
+                <div class="p-2 bg-gray-100 font-medium text-center">Giờ</div>
+                <div *ngFor="let day of currentWeekDays" class="p-2 bg-gray-100 font-medium text-center">
+                    <div>{{formatDate(day)}}</div>
+                    <div class="text-xs">{{getDayName(day)}}</div>
+                </div>
+                
+                <!-- Time slots -->
+                <ng-container *ngFor="let time of timeSlots">
+                    <div class="p-2 border-t text-center">{{time}}</div>
+                    <div *ngFor="let day of currentWeekDays" 
+                         class="p-2 border-t border-l cursor-pointer text-center" 
+                         [ngClass]="getSlotClass(day, time)"
+                         (click)="openEditModal(day, time)">
+                        <div *ngIf="getSlotStatus(day, time) === 'BOOKED'">Đã đặt</div>
+                        <div *ngIf="getSlotStatus(day, time) === 'AVAILABLE'">Trống</div>
+                        <div *ngIf="getSlotStatus(day, time) === 'CLOSED'">Đóng cửa</div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal chỉnh sửa trạng thái -->
+<div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-[500px] max-w-full">
+        <h3 class="text-xl font-bold mb-4">Chỉnh sửa lịch sân</h3>
+        <div class="mb-4">
+            <p><span class="font-semibold">Ngày:</span> {{formatDate(selectedSlot.date)}}</p>
+            <p><span class="font-semibold">Giờ:</span> {{selectedSlot.time}}</p>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block mb-2">Trạng thái:</label>
+            <select [(ngModel)]="selectedSlot.status" class="w-full p-2 border rounded">
+                <option value="AVAILABLE">Còn trống</option>
+                <option value="BOOKED">Đã đặt</option>
+                <option value="CLOSED">Đóng cửa</option>
+            </select>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block mb-2">Giá tiền:</label>
+            <input type="number" [(ngModel)]="selectedSlot.price" class="w-full p-2 border rounded" />
+        </div>
+        
+        <div class="mb-6">
+            <label class="block mb-2">Mô tả:</label>
+            <textarea [(ngModel)]="selectedSlot.description" class="w-full p-2 border rounded h-24"></textarea>
+        </div>
+        
+        <div class="flex justify-end gap-3">
+            <button class="px-4 py-2 border rounded hover:bg-gray-100" (click)="closeModal()">Hủy</button>
+            <button class="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark" (click)="saveSlotChanges()">Lưu thay đổi</button>
+        </div>
+    </div>
+</div>

@@ -230,19 +230,39 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   updatePageTitle() {
+    const currentUrl = this.router.url;
+    const dynamicRoutePatterns = [
+      { pattern: /^\/facility\/edit\/[0-9a-f-]+$/, title: 'Chi tiết sân' },
+      { pattern: /^\/facility\/view\/[0-9a-f-]+$/, title: 'Xem chi tiết sân' },
+      { pattern: /^\/concert-by-owner\/edit\/[0-9a-f-]+$/, title: 'Chi tiết sự kiện' },
+      { pattern: /^\/concert-by-owner\/view\/[0-9a-f-]+$/, title: 'Xem chi tiết sự kiện' },
+      { pattern: /^\/shedule-owner\/edit\/[0-9a-f-]+$/, title: 'Chi tiết lịch sân' },
+      { pattern: /^\/shedule-owner\/view\/[0-9a-f-]+$/, title: 'Xem chi tiết lịch sân' },
+      { pattern: /^\/user-management\/edit\/[0-9a-f-]+$/, title: 'Chi tiết tài khoản' },
+      { pattern: /^\/shedule-owner\/book\/[0-9a-f-]+$/, title: 'Chi tiết lịch sân' },
+    ];
+    for (const route of dynamicRoutePatterns) {
+      if (route.pattern.test(currentUrl)) {
+        this.pageTitle = route.title;
+        return;
+      }
+    }
     const routeTitles: { [key: string]: string } = {
       '/user-management': 'Danh sách tài khoản',
       '/setting': 'Cài đặt',
       '/facility/list': 'Quản lý sân',
+      '/facility': 'Quản lý sân',
       '/facility/add': 'Tạo sân mới',
-      '/facility/edit': 'Chỉnh sửa sân',
       '/concert-by-owner': 'Quản lý sự kiện',
+      '/concert-by-owner/add': 'Tạo sự kiện mới',
       '/shedule-owner': 'Quản lý lịch sân',
+      '/shedule-owner/add': 'Tạo lịch sân mới',
       '/home-page': 'Trang chủ',
       '/list-feilds': 'Danh sách sân',
-      '/my-info': 'Thông tin cá nhân'
+      '/concert': 'Danh sách sự kiện',
+      '/my-info': 'Thông tin cá nhân',
+      '/changePassword': 'Đổi mật khẩu'
     };
-    const currentUrl = this.router.url;
     this.pageTitle = routeTitles[currentUrl] || 'Danh sách tài khoản';
   }
 }
