@@ -29,6 +29,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { AccountService } from '../../core/api/account.service';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { HttpErrorResponse } from '@angular/common/http';
+import { passWordValidator } from '../../shared/validate/check-password.directive';
 
 @Component({
   selector: 'app-register',
@@ -59,7 +61,10 @@ export class RegisterComponent implements OnInit {
   hideRePass: boolean = true;
   avatarUrl: string | null = null;
   identityCardUrl: string | null = null;
-
+  
+  // Thêm các biến để quản lý lỗi từ API
+  emailError: string | null = null;
+  phoneError: string | null = null;
 
   listGender = [
     {
@@ -87,7 +92,7 @@ export class RegisterComponent implements OnInit {
     username: [null, Validators.required],
     email: [null, Validators.email],
     cellPhone: [null, [phoneNumberValidator()]],
-    password: [null, [Validators.required, Validators.minLength(6)]],
+    password: [null, [Validators.required, passWordValidator()]],
     passwordConfirm: [null, [Validators.required]]
   }, { validators: this.matchPasswords });
 
@@ -97,7 +102,6 @@ export class RegisterComponent implements OnInit {
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
   
-
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
@@ -105,12 +109,22 @@ export class RegisterComponent implements OnInit {
     private accountService: AccountService,
     private router: Router,
   ) {}
+  
   ngOnInit(): void {
-
+    // Reset các lỗi khi component được khởi tạo
+    this.resetApiErrors();
   }
   
+  // Hàm reset lỗi API
+  resetApiErrors(): void {
+    this.emailError = null;
+    this.phoneError = null;
+  }
 
   handleOk(): void {
+    // Reset các lỗi trước khi gửi request
+    this.resetApiErrors();
+    
     const body = {
       userName: this.form.get('username')?.value,
       fullName: this.form.get('fullName')?.value,
@@ -119,6 +133,7 @@ export class RegisterComponent implements OnInit {
       password: this.form.get('password')?.value,
       rePassword: this.form.get('passwordConfirm')?.value
     };
+    
     this.accountService.register(body).subscribe({
       next: (res) => {
         this.notification.create(
@@ -128,10 +143,20 @@ export class RegisterComponent implements OnInit {
         );
         this.router.navigate(['/login']);
       },
-      error: (err) => {
-
+      error: (err: HttpErrorResponse) => {
+        const errorMessage = err.error || err || '';
+        console.log('vvv: ', err);
+        if (errorMessage.includes('Duplicate entry') && errorMessage.includes('CellPhone')) {
+          this.phoneError = 'Số điện thoại đã được đăng ký';
+          this.form.get('cellPhone')?.markAsTouched();
+        }
+        if (errorMessage.includes('Duplicate entry') && errorMessage.includes('Email')) {
+          this.emailError = 'Email đã được đăng ký';
+          this.form.get('email')?.markAsTouched();
+        }
+        this.cdr.detectChanges();
       }
-    })
+    });
   }
 
   updateValidateRepass(e: any) {
@@ -151,6 +176,7 @@ export class RegisterComponent implements OnInit {
       this.hidePass = true;
     }
   }
+  
   showRePass(e: any) {
     const inputPass = document.querySelector(
       '#inputRePassChangePassword',

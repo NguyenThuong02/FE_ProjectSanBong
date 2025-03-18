@@ -24,14 +24,27 @@
                         <span class="text-white">Email</span>
                         <div>
                             <input class="h-[40px] w-full rounded-[5px] px-[10px] py-[8px] outline-none border-none" formControlName="email" />
+                            <!-- Hiển thị lỗi validate email -->
+                            <span *ngIf="form.get('email')?.invalid && form.get('email')?.touched && !emailError" class="text-red-500 text-sh">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Email không hợp lệ.
+                            </span>
+                            <!-- Hiển thị lỗi email đã tồn tại từ API -->
+                            <span *ngIf="emailError" class="text-red-500 text-sh">
+                                <i class="fa-solid fa-triangle-exclamation"></i> {{emailError}}
+                            </span>
                         </div>
                     </div>
                     <div class="flex flex-col flex-1 w-full gap-[6px]">
                         <span class="text-white">Số điện thoại</span>
                         <div>
                             <input class="h-[40px] w-full rounded-[5px] px-[10px] py-[8px] outline-none border-none" formControlName="cellPhone" />
-                            <span *ngIf="form.get('cellPhone')?.invalid && form.get('cellPhone')?.touched" class="text-red-500 text-sh">
+                            <!-- Hiển thị lỗi validate số điện thoại -->
+                            <span *ngIf="form.get('cellPhone')?.invalid && form.get('cellPhone')?.touched && !phoneError" class="text-red-500 text-sh">
                                 <i class="fa-solid fa-triangle-exclamation"></i> Số điện thoại không hợp lệ.
+                            </span>
+                            <!-- Hiển thị lỗi số điện thoại đã tồn tại từ API -->
+                            <span *ngIf="phoneError" class="text-red-500 text-sh">
+                                <i class="fa-solid fa-triangle-exclamation"></i> {{phoneError}}
                             </span>
                         </div>
                     </div>
@@ -44,6 +57,9 @@
                             <i *ngIf="!hidePass" class="fa-solid fa-eye-slash absolute right-[6px] top-[50%] translate-y-[-50%] cursor-pointer"
                                 (click)="showPass($event)"></i>
                         </div>
+                        <div *ngIf="(form.get('password')?.errors?.['passWordCheck']||form.get('password')?.errors?.['required']||form.get('password')?.errors?.['passwordInvalid'])&& (form.get('password')?.dirty || form.get('password')?.touched)" class="text-red-500">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.
+                        </div>
                     </div>
                     <div class="flex flex-col flex-1 w-full gap-[6px]">
                         <span class="text-white">Nhập lại mật khẩu</span>
@@ -53,9 +69,9 @@
                                 (click)="showRePass($event)"></i>
                             <i *ngIf="!hideRePass" class="fa-solid fa-eye-slash absolute right-[6px] top-[50%] translate-y-[-50%] cursor-pointer"
                                 (click)="showRePass($event)"></i>
-                            <div *ngIf="form.hasError('passwordMismatch') && form.get('passwordConfirm')?.touched" class="text-red-500">
-                                <i class="fa-solid fa-triangle-exclamation"></i> Mật khẩu nhập lại không khớp
-                            </div>
+                        </div>
+                        <div *ngIf="form.hasError('passwordMismatch') && form.get('passwordConfirm')?.touched" class="text-red-500">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Mật khẩu nhập lại không khớp
                         </div>
                     </div>
                 </form>
@@ -68,4 +84,3 @@
         </div>
     </div>
 </div>
-<div></div>

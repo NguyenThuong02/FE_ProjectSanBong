@@ -67,7 +67,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 1,
       status: 'available',
-      date: '2025-03-02',
+      date: '2025-03-18',
       startTime: '07:00',
       endTime: '08:00',
       note: ''
@@ -75,7 +75,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 2,
       status: 'booked',
-      date: '2025-03-02',
+      date: '2025-03-017',
       startTime: '08:00',
       endTime: '09:00',
       note: 'Đặt bởi anh Minh - SĐT: 0912345678'
@@ -83,7 +83,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 3,
       status: 'booked',
-      date: '2025-03-02',
+      date: '2025-03-17',
       startTime: '09:00',
       endTime: '10:00',
       note: 'Đội 11 người, có thuê trọng tài riêng'
@@ -91,7 +91,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 4,
       status: 'closed',
-      date: '2025-03-02',
+      date: '2025-03-18',
       startTime: '10:00',
       endTime: '11:00',
       note: 'Bảo trì hệ thống đèn chiếu sáng'
@@ -99,7 +99,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 5,
       status: 'available',
-      date: '2025-03-02',
+      date: '2025-03-19',
       startTime: '11:00',
       endTime: '12:00',
       note: ''
@@ -107,7 +107,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 6,
       status: 'booked',
-      date: '2025-03-02',
+      date: '2025-03-20',
       startTime: '12:00',
       endTime: '13:00',
       note: 'Đặt trước 3 ngày, đã đặt cọc 50%'
@@ -115,7 +115,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 7,
       status: 'booked',
-      date: '2025-03-02',
+      date: '2025-03-19',
       startTime: '13:00',
       endTime: '14:00',
       note: 'Cần chuẩn bị phòng thay đồ cho 22 người'
@@ -123,7 +123,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 8,
       status: 'available',
-      date: '2025-03-02',
+      date: '2025-03-18',
       startTime: '14:00',
       endTime: '15:00',
       note: ''
@@ -131,7 +131,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 9,
       status: 'available',
-      date: '2025-03-03',
+      date: '2025-03-18',
       startTime: '07:00',
       endTime: '08:00',
       note: ''
@@ -139,7 +139,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 10,
       status: 'booked',
-      date: '2025-03-03',
+      date: '2025-03-20',
       startTime: '08:00',
       endTime: '09:00',
       note: 'Yêu cầu 2 bình nước lớn và khăn lạnh'
@@ -147,7 +147,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 11,
       status: 'booked',
-      date: '2025-03-03',
+      date: '2025-03-22',
       startTime: '09:00',
       endTime: '10:00',
       note: 'Đã thanh toán đầy đủ, cần hóa đơn VAT'
@@ -155,7 +155,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 12,
       status: 'booked',
-      date: '2025-03-03',
+      date: '2025-03-18',
       startTime: '10:00',
       endTime: '11:00',
       note: 'Trận đấu giao hữu giữa hai công ty'
@@ -163,7 +163,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 13,
       status: 'closed',
-      date: '2025-03-03',
+      date: '2025-03-19',
       startTime: '11:00',
       endTime: '12:00',
       note: 'Bảo dưỡng định kỳ'
@@ -171,7 +171,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 14,
       status: 'available',
-      date: '2025-03-03',
+      date: '2025-03-20',
       startTime: '12:00',
       endTime: '13:00',
       note: ''
@@ -179,7 +179,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 15,
       status: 'available',
-      date: '2025-03-03',
+      date: '2025-03-22',
       startTime: '13:00',
       endTime: '14:00',
       note: ''
