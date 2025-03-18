@@ -1,7 +1,7 @@
     <!-- Banner -->
     <div class="w-full relative mt-[100px]">
         <img class="object-cover w-full h-full"  src="../../../assets/img/bannerHomePage.png"/>
-        <div class="absolute bottom-[50px] left-[100px]">
+        <!-- <div class="absolute bottom-[50px] left-[100px]">
             <div class="text-white w-[500px] text-[50px] font-semibold">Hệ thống hỗ trợ tìm sân nhanh</div>
             <div class="flex w-fit items-center bg-primaryBG rounded-md">
                 <form [formGroup]="form" class="w-full p-2 flex items-center gap-4 text-white">
@@ -28,12 +28,37 @@
                     <div (click)="search()" class="bg-[#4FC460] rounded-[10px] text-white px-[12px] py-[7px] cursor-pointer hover:scale-105">Tìm kiếm</div>
                 </form>
             </div>
-        </div>
+        </div> -->
     </div>
     <!-- Sân thể thao -->
     <div class="w-full">
+        <div class="flex w-fit mx-auto items-center bg-primaryBG rounded-md mt-[12px]">
+            <form [formGroup]="form" class="w-full p-3 flex items-center gap-5 font-medium">
+                <div class="flex items-center gap-1">
+                    Loại sân:
+                    <div class="w-fit">
+                        <nz-select class="w-fit" formControlName="type" nzPlaceHolder="Chọn loại sân">
+                            <nz-option *ngFor="let item of listType" [nzValue]="item.value" [nzLabel]="item.label"></nz-option>
+                        </nz-select>  
+                    </div>
+                </div>
+                <div class="flex items-center gap-1">
+                    Khung giờ:
+                    <div>
+                        <input class="border-none !outline-none !outline-transparent h-[32px] text-[#000] bg-white w-[140px] px-2 rounded-lg" formControlName="time" placeholder="12:30, 02/03/2025" />
+                    </div>
+                </div>
+                <div class="flex items-center gap-1">
+                    Địa chỉ:
+                    <div>
+                        <input class="border-none !outline-none !outline-transparent h-[32px] text-[#000] bg-white w-[200px] px-2 rounded-lg" formControlName="address" placeholder="Nhập địa chỉ" />
+                    </div>
+                </div>
+                <div (click)="search()" class="bg-[#4FC460] rounded-[10px] text-white px-[12px] py-[7px] cursor-pointer hover:scale-105">Tìm kiếm</div>
+            </form>
+        </div>
         <div class="text-center text-[#181E4B] text-[32px] font-[montserrat] font-semibold my-5">Sân thể thao</div>
-        <div class="relative flex items-center w-full gap-[20px]">
+        <div class="relative flex items-center justify-center w-full gap-[20px]">
             <div *ngIf="listSanBong.length > 4" (click)="scrollLeft()" class="ml-4">
                 <i class="fa-solid fa-circle-arrow-left text-[30px] text-primary cursor-pointer hover:scale-105"></i>
             </div>

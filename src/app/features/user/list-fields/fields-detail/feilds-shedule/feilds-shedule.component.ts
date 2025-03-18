@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { PopupNeedLoginComponent } from '../popup-need-login/popup-need-login.component';
 
 interface TimeSlot {
   id: number;
@@ -32,6 +33,7 @@ interface FixedDataSlot {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    PopupNeedLoginComponent,
   ],
   templateUrl: './feilds-shedule.component.html',
   styleUrl: './feilds-shedule.component.scss'
@@ -46,7 +48,8 @@ export class FeildsSheduleComponent implements OnInit{
   maxWeeks: number = 3; // Tuần hiện tại + 2 tuần tiếp theo
   currentWeekIndex: number = 0; // 0: tuần hiện tại, 1: tuần tiếp theo, 2: tuần sau nữa
   isLoading: boolean = false;
-  
+  isVisible: boolean = false;
+
   // Tên các ngày trong tuần
   dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
   
@@ -408,7 +411,8 @@ export class FeildsSheduleComponent implements OnInit{
       // Thêm flag thông báo cần hiển thị
       localStorage.setItem('requiresLogin', 'true');
       // Chuyển hướng đến trang đăng nhập
-      this.router.navigate(['/login']);
+      // this.router.navigate(['/login']);
+      this.isVisible = true;
       return;
     }
     
@@ -541,5 +545,9 @@ export class FeildsSheduleComponent implements OnInit{
 
   formatDate(date: Date): string {
     return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+  }
+
+  handleChangeVisible(data: any) {
+    this.isVisible = data.visible;
   }
 }
