@@ -1,1 +1,46 @@
-<p>modal-book works!</p>
+<nz-modal nzWidth="800px" [(nzVisible)]="isVisibleBook" nzCentered [nzContent]="modalContent"
+    [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()" class="rounded-xl">
+
+    <ng-template #modalContent>
+        <form [formGroup]="form" class="flex flex-col gap-[10px] w-full">
+            <div class="text-center !text-[20px] font-semibold">Đặt lịch sân</div>
+            <div class="flex w-full gap-[10px]">
+                <div class="w-[50%] flex flex-col border p-2">
+                    <div>Khách hàng</div>
+                    <div></div>
+                </div>
+                <div class="w-[50%] flex flex-col border p-2">
+                    <div>Chủ sân</div>
+                    <div></div>
+                </div>
+            </div>
+            <div class="w-full border flex items-center p-2">
+                <div class="w-[40%] flex flex-col">
+                    <div>Tên sân</div>
+                    <div></div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div>Ngày đặt</div>
+                    <div></div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div>Khung giờ</div>
+                    <div></div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div>Giá sân</div>
+                    <div></div>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template #modalFooter>
+        <div class="flex justify-center gap-9">
+            <button class="px-5 py-2 bg-[#969696] text-[#fff] font-medium rounded-lg" nz-button nzType="default" (click)="handleCancel()">Hủy</button>
+            <button nz-button nzType="primary"
+            class="!bg-[#14b82e] px-5 py-2 text-[#fff] font-medium rounded-lg"
+            (click)="handleOk()">Đồng ý</button>
+        </div>
+    </ng-template>
+</nz-modal>

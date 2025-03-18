@@ -7,7 +7,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
 
 @Component({
-  selector: 'app-modal-detail',
+  selector: 'app-modal-close',
   standalone: true,
   imports: [
     FormsModule,
@@ -19,12 +19,12 @@ import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
     MatSelectModule,
     ReactiveFormsModule,
   ],
-  templateUrl: './modal-detail.component.html',
-  styleUrl: './modal-detail.component.scss'
+  templateUrl: './modal-close.component.html',
+  styleUrl: './modal-close.component.scss'
 })
-export class ModalDetailComponent {
-  @Input() isVisibleDetail!: boolean;
-  @Output() changeVisibleDetail = new EventEmitter<any>();
+export class ModalCloseComponent {
+  @Input() isVisibleClosed!: boolean;
+  @Output() changeVisibleClosed = new EventEmitter<any>();
 
   constructor(
 
@@ -36,6 +36,6 @@ export class ModalDetailComponent {
 
 
   handleCancel(): void {
-    this.changeVisibleDetail.emit(false);
+    this.changeVisibleClosed.emit(false);
   }
 }

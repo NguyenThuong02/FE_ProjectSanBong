@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { PopupNeedLoginComponent } from '../popup-need-login/popup-need-login.component';
+import { ModalBookComponent } from '../modal-book/modal-book.component';
+import { ModalDetailComponent } from '../modal-detail/modal-detail.component';
+import { ModalCloseComponent } from '../modal-close/modal-close.component';
 
 interface TimeSlot {
   id: number;
@@ -34,6 +37,9 @@ interface FixedDataSlot {
     FormsModule,
     ReactiveFormsModule,
     PopupNeedLoginComponent,
+    ModalBookComponent,
+    ModalDetailComponent,
+    ModalCloseComponent
   ],
   templateUrl: './feilds-shedule.component.html',
   styleUrl: './feilds-shedule.component.scss'
@@ -49,8 +55,11 @@ export class FeildsSheduleComponent implements OnInit{
   currentWeekIndex: number = 0; // 0: tuần hiện tại, 1: tuần tiếp theo, 2: tuần sau nữa
   isLoading: boolean = false;
   isVisible: boolean = false;
-
-  // Tên các ngày trong tuần
+  isVisibleBook: boolean = false;
+  isVisibleDetail: boolean = false;
+  isVisibleClosed: boolean = false;
+  slot: any;
+  @Input() detailInfo: any;
   dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
   
   statusColorMap = {
@@ -226,7 +235,7 @@ export class FeildsSheduleComponent implements OnInit{
   // Tạo các mốc thời gian trong ngày
   generateTimeRanges(): void {
     // Tạo các khung giờ từ 7:00 đến 21:00
-    for (let hour = 7; hour <= 21; hour++) {
+    for (let hour = 6; hour <= 21; hour++) {
       this.timeRanges.push({
         hour,
         label: `${hour}:00 - ${hour + 1}:00`
@@ -415,133 +424,100 @@ export class FeildsSheduleComponent implements OnInit{
       this.isVisible = true;
       return;
     }
-    
+    this.slot = slot;
     // Nếu đã đăng nhập, tiếp tục xử lý như trước
-    this.selectedSlot = slot;
-    this.bookingForm.patchValue({
-      title: slot.title || '',
-      description: slot.description || '',
-      action: 'book'
-    });
-    
-    if (slot.status !== 'available') {
-      this.bookingForm.get('action')?.disable();
-    } else {
-      this.bookingForm.get('action')?.enable();
+    if(slot.status === 'available'){
+      this.isVisibleBook = true;
+    } else if (slot.status === 'booked') {
+      this.isVisibleDetail = true;
+    } else if (slot.status === 'closed') {
+      this.isVisibleClosed = true;
     }
   }
   
-  // Đóng modal
-  closeModal(): void {
-    this.selectedSlot = null;
-    this.bookingForm.reset({action: 'book'});
-  }
-
-  async submitBooking(): Promise<void> {
-    if (this.bookingForm.valid && this.selectedSlot) {
-      const { title, description, action } = this.bookingForm.value;
-      
-      try {
-        if (action === 'book') {
-          await this.bookTimeSlot(this.selectedSlot.id, title, description);
-        } else {
-          await this.closeTimeSlot(this.selectedSlot.id, description);
-        }
+  // ----- Chức năng ------
+  // async bookTimeSlot(id: number, title: string, description: string): Promise<void> {
+  //   this.isLoading = true;
+  //   try {
+  //     // Cập nhật trạng thái slot trong dữ liệu hiện tại
+  //     const slot = this.timeSlots.find(slot => slot.id === id);
+  //     if (slot && slot.status === 'available') {
+  //       slot.status = 'booked';
+  //       slot.title = title;
+  //       slot.description = description;
+  //       // Cập nhật vào dữ liệu cố định nếu slot hiện tại có trong dữ liệu cố định
+  //       const dateString = this.formatDateForComparison(slot.startTime);
+  //       const hourString = slot.startTime.getHours().toString().padStart(2, '0') + ':00';
         
-        this.selectedSlot = null;
-        this.bookingForm.reset({action: 'book'});
-      } catch (error) {
-        console.error('Lỗi khi đặt/đóng lịch:', error);
-        alert('Có lỗi xảy ra. Vui lòng thử lại sau.');
-      }
-    }
-  }
+  //       const fixedSlot = this.fixedFieldData.find(s => 
+  //         s.date === dateString && s.startTime === hourString
+  //       );
+  //       if (fixedSlot) {
+  //         fixedSlot.status = 'booked';
+  //         fixedSlot.note = description;
+  //       } else {
+  //         // Thêm mới vào dữ liệu cố định nếu chưa có
+  //         this.fixedFieldData.push({
+  //           id: id,
+  //           status: 'booked',
+  //           date: dateString,
+  //           startTime: hourString,
+  //           endTime: (slot.startTime.getHours() + 1).toString().padStart(2, '0') + ':00',
+  //           note: description
+  //         });
+  //       }
+  //       alert('Đặt lịch thành công!');
+  //     } else {
+  //       alert('Không thể đặt lịch này.');
+  //     }
+  //   } finally {
+  //     this.isLoading = false;
+  //   }
+  // }
 
-  async bookTimeSlot(id: number, title: string, description: string): Promise<void> {
-    this.isLoading = true;
+  // ----- Chức năng đóng lịch
+  // async closeTimeSlot(id: number, reason: string): Promise<void> {
+  //   this.isLoading = true;
     
-    try {
-      // Cập nhật trạng thái slot trong dữ liệu hiện tại
-      const slot = this.timeSlots.find(slot => slot.id === id);
-      if (slot && slot.status === 'available') {
-        slot.status = 'booked';
-        slot.title = title;
-        slot.description = description;
+  //   try {
+  //     // Cập nhật trạng thái slot trong dữ liệu hiện tại
+  //     const slot = this.timeSlots.find(slot => slot.id === id);
+  //     if (slot && slot.status === 'available') {
+  //       slot.status = 'closed';
+  //       slot.title = 'Đã đóng';
+  //       slot.description = reason;
         
-        // Cập nhật vào dữ liệu cố định nếu slot hiện tại có trong dữ liệu cố định
-        const dateString = this.formatDateForComparison(slot.startTime);
-        const hourString = slot.startTime.getHours().toString().padStart(2, '0') + ':00';
+  //       // Cập nhật vào dữ liệu cố định nếu slot hiện tại có trong dữ liệu cố định
+  //       const dateString = this.formatDateForComparison(slot.startTime);
+  //       const hourString = slot.startTime.getHours().toString().padStart(2, '0') + ':00';
         
-        const fixedSlot = this.fixedFieldData.find(s => 
-          s.date === dateString && s.startTime === hourString
-        );
+  //       const fixedSlot = this.fixedFieldData.find(s => 
+  //         s.date === dateString && s.startTime === hourString
+  //       );
         
-        if (fixedSlot) {
-          fixedSlot.status = 'booked';
-          fixedSlot.note = description;
-        } else {
-          // Thêm mới vào dữ liệu cố định nếu chưa có
-          this.fixedFieldData.push({
-            id: id,
-            status: 'booked',
-            date: dateString,
-            startTime: hourString,
-            endTime: (slot.startTime.getHours() + 1).toString().padStart(2, '0') + ':00',
-            note: description
-          });
-        }
+  //       if (fixedSlot) {
+  //         fixedSlot.status = 'closed';
+  //         fixedSlot.note = reason;
+  //       } else {
+  //         // Thêm mới vào dữ liệu cố định nếu chưa có
+  //         this.fixedFieldData.push({
+  //           id: id,
+  //           status: 'closed',
+  //           date: dateString,
+  //           startTime: hourString,
+  //           endTime: (slot.startTime.getHours() + 1).toString().padStart(2, '0') + ':00',
+  //           note: reason
+  //         });
+  //       }
         
-        alert('Đặt lịch thành công!');
-      } else {
-        alert('Không thể đặt lịch này.');
-      }
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  async closeTimeSlot(id: number, reason: string): Promise<void> {
-    this.isLoading = true;
-    
-    try {
-      // Cập nhật trạng thái slot trong dữ liệu hiện tại
-      const slot = this.timeSlots.find(slot => slot.id === id);
-      if (slot && slot.status === 'available') {
-        slot.status = 'closed';
-        slot.title = 'Đã đóng';
-        slot.description = reason;
-        
-        // Cập nhật vào dữ liệu cố định nếu slot hiện tại có trong dữ liệu cố định
-        const dateString = this.formatDateForComparison(slot.startTime);
-        const hourString = slot.startTime.getHours().toString().padStart(2, '0') + ':00';
-        
-        const fixedSlot = this.fixedFieldData.find(s => 
-          s.date === dateString && s.startTime === hourString
-        );
-        
-        if (fixedSlot) {
-          fixedSlot.status = 'closed';
-          fixedSlot.note = reason;
-        } else {
-          // Thêm mới vào dữ liệu cố định nếu chưa có
-          this.fixedFieldData.push({
-            id: id,
-            status: 'closed',
-            date: dateString,
-            startTime: hourString,
-            endTime: (slot.startTime.getHours() + 1).toString().padStart(2, '0') + ':00',
-            note: reason
-          });
-        }
-        
-        alert('Đã đóng lịch!');
-      } else {
-        alert('Không thể đóng lịch này.');
-      }
-    } finally {
-      this.isLoading = false;
-    }
-  }
+  //       alert('Đã đóng lịch!');
+  //     } else {
+  //       alert('Không thể đóng lịch này.');
+  //     }
+  //   } finally {
+  //     this.isLoading = false;
+  //   }
+  // }
 
   formatDate(date: Date): string {
     return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
@@ -549,5 +525,17 @@ export class FeildsSheduleComponent implements OnInit{
 
   handleChangeVisible(data: any) {
     this.isVisible = data.visible;
+  }
+
+  handleChangeVisibleBook(data: any) {
+    this.isVisibleBook = data.visible;
+  }
+
+  handleChangeVisibleDetail(data: any) {
+    this.isVisibleDetail = data.visible;
+  }
+
+  handleChangeVisibleClosed(data: any) {
+    this.isVisibleClosed = data.visible;
   }
 }
