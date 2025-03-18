@@ -1,35 +1,58 @@
-<nz-modal nzWidth="800px" [(nzVisible)]="isVisibleBook" nzCentered [nzContent]="modalContent"
+<nz-modal nzWidth="950px" [(nzVisible)]="isVisibleBook" nzCentered [nzContent]="modalContent"
     [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()" class="rounded-xl">
 
     <ng-template #modalContent>
         <form [formGroup]="form" class="flex flex-col gap-[10px] w-full">
             <div class="text-center !text-[20px] font-semibold">Đặt lịch sân</div>
             <div class="flex w-full gap-[10px]">
-                <div class="w-[50%] flex flex-col border p-2">
-                    <div>Khách hàng</div>
-                    <div></div>
+                <div class="w-[50%] flex flex-col border">
+                    <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Khách hàng</div>
+                    <div class="flex flex-col items-start w-full">
+                        <input class="h-[40px] w-full px-[10px] py-[8px] outline-none border-none" placeholder="Nhập họ tên người đặt" formControlName="nameCustomer" />
+                        <div class="w-full">
+                            <input class="h-[40px] w-full px-[10px] py-[8px] outline-none border-none" placeholder="Nhập số điện thoại người đặt" formControlName="cellPhone" />
+                            <!-- <span *ngIf="form.get('cellPhone')?.invalid && form.get('cellPhone')?.touched && !phoneError" class="text-red-500 text-sh">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Số điện thoại không hợp lệ.
+                            </span> -->
+                        </div>
+                    </div>
                 </div>
-                <div class="w-[50%] flex flex-col border p-2">
-                    <div>Chủ sân</div>
-                    <div></div>
+                <div class="w-[50%] flex flex-col border">
+                    <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Chủ sân</div>
+                    <div class="flex flex-col items-start w-full">
+                        <div class="h-[40px] w-full px-[10px] py-[8px] text-[16px] text-[#434657] font-medium">
+                            Nguyễn Thanh Thưởng
+                        </div>
+                        <div class="h-[40px] w-full px-[10px] py-[8px] text-[#82869E]">0981973347</div>
+                    </div>
                 </div>
             </div>
-            <div class="w-full border flex items-center p-2">
-                <div class="w-[40%] flex flex-col">
-                    <div>Tên sân</div>
-                    <div></div>
+            <div class="w-full border flex items-center">
+                <div class="w-[30%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Tên sân</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657] font-medium">
+                        {{detailInfo.name}}
+                    </div>
+                </div>
+                <div class="w-[15%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Ngày đặt</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
+                        {{ slot.date}}
+                    </div>
+                </div>
+                <div class="w-[15%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Khung giờ</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
+                        {{ slot.startTime | date:'HH:mm' }} - {{ slot.endTime | date:'HH:mm' }}
+                    </div>
                 </div>
                 <div class="w-[20%] flex flex-col">
-                    <div>Ngày đặt</div>
-                    <div></div>
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Giá sân</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">100.000 (VND)</div>
                 </div>
                 <div class="w-[20%] flex flex-col">
-                    <div>Khung giờ</div>
-                    <div></div>
-                </div>
-                <div class="w-[20%] flex flex-col">
-                    <div>Giá sân</div>
-                    <div></div>
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Cọc (30% giá sân)</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">30.000 (VND)</div>
                 </div>
             </div>
         </form>

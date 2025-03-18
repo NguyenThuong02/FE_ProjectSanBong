@@ -87,7 +87,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 2,
       status: 'booked',
-      date: '2025-03-017',
+      date: '2025-03-17',
       startTime: '08:00',
       endTime: '09:00',
       note: 'Đặt bởi anh Minh - SĐT: 0912345678'
@@ -424,7 +424,13 @@ export class FeildsSheduleComponent implements OnInit{
       this.isVisible = true;
       return;
     }
-    this.slot = slot;
+    // this.slot = slot;
+    const formattedSlot = {
+      ...slot,
+      date: this.formatDateForDisplay(slot.startTime) // Add this line to include a formatted date
+    };
+    
+    this.slot = formattedSlot;
     // Nếu đã đăng nhập, tiếp tục xử lý như trước
     if(slot.status === 'available'){
       this.isVisibleBook = true;
@@ -433,6 +439,10 @@ export class FeildsSheduleComponent implements OnInit{
     } else if (slot.status === 'closed') {
       this.isVisibleClosed = true;
     }
+  }
+
+  formatDateForDisplay(date: Date): string {
+    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
   
   // ----- Chức năng ------
