@@ -8,12 +8,24 @@
                 <div class="w-[50%] flex flex-col border">
                     <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Khách hàng</div>
                     <div class="flex flex-col items-start w-full">
-                        <input class="h-[40px] w-full px-[10px] py-[8px] outline-none border-none" placeholder="Nhập họ tên người đặt" formControlName="nameCustomer" />
-                        <div class="w-full">
+                        <div class="w-full flex flex-col">
+                            <input class="h-[40px] w-full px-[10px] py-[8px] outline-none border-none" placeholder="Nhập họ tên người đặt" formControlName="nameCustomer" />
+                            <span *ngIf="form.get('nameCustomer')?.invalid && form.get('nameCustomer')?.touched" class="text-red-500 text-sm px-[10px]">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Vui lòng nhập họ tên.
+                            </span>
+                        </div>
+                        <div class="w-full flex flex-col">
                             <input class="h-[40px] w-full px-[10px] py-[8px] outline-none border-none" placeholder="Nhập số điện thoại người đặt" formControlName="cellPhone" />
-                            <!-- <span *ngIf="form.get('cellPhone')?.invalid && form.get('cellPhone')?.touched && !phoneError" class="text-red-500 text-sh">
-                                <i class="fa-solid fa-triangle-exclamation"></i> Số điện thoại không hợp lệ.
-                            </span> -->
+                            <ng-container *ngIf="form.get('cellPhone')?.touched">
+                                <span *ngIf="form.get('cellPhone')?.hasError('required'); else invalidPhone" class="text-red-500 text-sm px-[10px]">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Vui lòng nhập số điện thoại.
+                                </span>
+                                <ng-template #invalidPhone>
+                                    <span *ngIf="form.get('cellPhone')?.invalid" class="text-red-500 text-sm px-[10px]">
+                                        <i class="fa-solid fa-triangle-exclamation"></i> Số điện thoại không hợp lệ.
+                                    </span>
+                                </ng-template>
+                            </ng-container>
                         </div>
                     </div>
                 </div>
@@ -54,6 +66,59 @@
                     <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Cọc (30% giá sân)</div>
                     <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">30.000 (VND)</div>
                 </div>
+            </div>
+            <div class="w-full flex flex-col border">
+                <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Địa chỉ</div>
+                <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
+                    {{detailInfo.address}}
+                </div>
+            </div>
+            <!-- Phương thức thanh toán -->
+            <div class="w-full flex flex-col border">
+                <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Phương thức thanh toán</div>
+                <div class="p-[10px]">
+                    <div class="flex items-center mb-2">
+                        <input 
+                            type="radio" 
+                            id="cash" 
+                            name="paymentMethod"
+                            formControlName="paymentMethod" 
+                            value="cash" 
+                            class="mr-2"
+                        >
+                        <label for="cash" class="text-[15px] text-[#434657] flex justify-start items-center gap-[6px]">
+                            <img class="object-cover h-[26px] w-[26px]"  src="../../../../../../assets/img/CODbank.jpg"/>
+                            Thanh toán bằng tiền mặt
+                        </label>
+                    </div>
+                    <div class="flex items-center">
+                        <input 
+                            type="radio" 
+                            id="vnpay" 
+                            name="paymentMethod"
+                            formControlName="paymentMethod" 
+                            value="vnpay" 
+                            class="mr-2"
+                        >
+                        <label for="vnpay" class="text-[15px] text-[#434657] flex justify-start items-center gap-[6px]">
+                            <img class="object-cover h-[26px] w-[26px]"  src="../../../../../../assets/img/vnpayBank.png"/>
+                            Thanh toán qua VNPay
+                        </label>
+                    </div>
+                    <span *ngIf="form.get('paymentMethod')?.invalid && form.get('paymentMethod')?.touched" class="text-red-500 text-sm">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Vui lòng chọn phương thức thanh toán.
+                    </span>
+                </div>
+            </div>
+            <div class="w-full flex flex-col border">
+                <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Ghi chú</div>
+                <textarea
+                    id="description" 
+                    formControlName="description"
+                    placeholder="Nhập ghi chú"
+                    class="w-full outline-none px-[10px] py-[8px]"
+                    rows="3"
+              ></textarea>
             </div>
         </form>
     </ng-template>
