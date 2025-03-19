@@ -24,16 +24,13 @@ import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
 })
 export class ModalCloseComponent {
   @Input() isVisibleClosed!: boolean;
+  @Input() slot: any;
+  @Input() detailInfo: any;
   @Output() changeVisibleClosed = new EventEmitter<any>();
 
   constructor(
 
   ) {}
-
-  handleOk(): void {
-    
-  }
-
 
   handleCancel(): void {
     this.changeVisibleClosed.emit(false);

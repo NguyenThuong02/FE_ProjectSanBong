@@ -103,7 +103,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 4,
       status: 'closed',
-      date: '2025-03-18',
+      date: '2025-03-20',
       startTime: '10:00',
       endTime: '11:00',
       note: 'Bảo trì hệ thống đèn chiếu sáng'
@@ -150,7 +150,7 @@ export class FeildsSheduleComponent implements OnInit{
     },
     {
       id: 10,
-      status: 'booked',
+      status: 'closed',
       date: '2025-03-20',
       startTime: '08:00',
       endTime: '09:00',
@@ -175,7 +175,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 13,
       status: 'closed',
-      date: '2025-03-19',
+      date: '2025-03-21',
       startTime: '11:00',
       endTime: '12:00',
       note: 'Bảo dưỡng định kỳ'

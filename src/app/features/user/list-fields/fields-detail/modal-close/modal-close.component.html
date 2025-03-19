@@ -1,16 +1,54 @@
-<nz-modal nzWidth="400px" [(nzVisible)]="isVisibleClosed" nzCentered [nzContent]="modalContent"
+<nz-modal nzWidth="600px" [(nzVisible)]="isVisibleClosed" nzCentered [nzContent]="modalContent"
     [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()" class="rounded-xl">
 
     <ng-template #modalContent>
-        Closed
+        <div class="flex w-full flex-col gap-[10px]">
+            <div class="text-center !text-[20px] font-semibold">Lịch đang đóng</div>
+            <div class="w-[100%] flex flex-col border">
+                <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Chủ sân</div>
+                <div class="flex flex-col items-start w-full">
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[16px] text-[#434657] font-medium">
+                        Nguyễn Thanh Thưởng
+                    </div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[#82869E]">0981973347</div>
+                </div>
+            </div>
+            <div class="w-full border flex items-center">
+                <div class="w-[40%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Tên sân</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657] font-medium">
+                        {{detailInfo.name}}
+                    </div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Ngày</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
+                        {{ slot.date}}
+                    </div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Khung giờ</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
+                        {{ slot.startTime | date:'HH:mm' }} - {{ slot.endTime | date:'HH:mm' }}
+                    </div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px] text-center">Trạng thái</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657] text-center">Đóng cửa</div>
+                </div>
+            </div>
+            <div class="w-full border flex flex-col">
+                <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Lý do đóng</div>
+                <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657] font-medium">
+                    {{slot.description }}
+                </div>
+            </div>
+        </div>
     </ng-template>
 
     <ng-template #modalFooter>
         <div class="flex justify-center gap-9">
-            <button class="px-5 py-2 bg-[#969696] text-[#fff] font-medium rounded-lg" nz-button nzType="default" (click)="handleCancel()">Hủy</button>
-            <button nz-button nzType="primary"
-            class="!bg-[#14b82e] px-5 py-2 text-[#fff] font-medium rounded-lg"
-            (click)="handleOk()">Đồng ý</button>
+            <button class="px-6 py-[6px] w-[120px] bg-[#969696] text-[#fff] font-medium rounded-lg text-center" nz-button nzType="default" (click)="handleCancel()">Đóng</button>
         </div>
     </ng-template>
 </nz-modal>

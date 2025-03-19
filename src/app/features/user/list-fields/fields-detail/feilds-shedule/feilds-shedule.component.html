@@ -72,5 +72,5 @@
   
 <app-modal-book [isVisibleBook]="isVisibleBook" [slot]="slot" [detailInfo]="detailInfo" (changeVisibleBook)="handleChangeVisibleBook($event)"></app-modal-book>
 <app-modal-detail [isVisibleDetail]="isVisibleDetail" (changeVisibleDetail)="handleChangeVisibleDetail($event)"></app-modal-detail>
-<app-modal-close [isVisibleClosed]="isVisibleClosed" (changeVisibleClosed)="handleChangeVisibleClosed($event)"></app-modal-close>
+<app-modal-close [isVisibleClosed]="isVisibleClosed" [slot]="slot" [detailInfo]="detailInfo" (changeVisibleClosed)="handleChangeVisibleClosed($event)"></app-modal-close>
 <app-popup-need-login [isVisible]="isVisible" (changeVisibleDelete)="handleChangeVisible($event)"></app-popup-need-login>
