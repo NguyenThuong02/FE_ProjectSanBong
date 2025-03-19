@@ -1,16 +1,138 @@
-<nz-modal nzWidth="400px" [(nzVisible)]="isVisibleDetail" nzCentered [nzContent]="modalContent"
+<nz-modal nzWidth="950px" [(nzVisible)]="isVisibleDetail" nzCentered [nzContent]="modalContent"
     [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()" class="rounded-xl">
 
     <ng-template #modalContent>
-        Detail 
+        <form [formGroup]="form" class="flex flex-col gap-[10px] w-full">
+            <div class="text-center !text-[20px] font-semibold">Thông tin lịch đã đặt</div>
+            <div class="flex w-full gap-[10px]">
+                <div class="w-[50%] flex flex-col border">
+                    <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Khách hàng</div>
+                    <div class="flex flex-col items-start w-full">
+                        <div class="w-full flex flex-col">
+                            <input class="h-[40px] w-full px-[10px] py-[8px] outline-none border-none" placeholder="Nhập họ tên người đặt" formControlName="nameCustomer" />
+                            <span *ngIf="form.get('nameCustomer')?.invalid && form.get('nameCustomer')?.touched" class="text-red-500 text-sm px-[10px]">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Vui lòng nhập họ tên.
+                            </span>
+                        </div>
+                        <div class="w-full flex flex-col">
+                            <input class="h-[40px] w-full px-[10px] py-[8px] outline-none border-none" placeholder="Nhập số điện thoại người đặt" formControlName="cellPhone" />
+                            <ng-container *ngIf="form.get('cellPhone')?.touched">
+                                <span *ngIf="form.get('cellPhone')?.hasError('required'); else invalidPhone" class="text-red-500 text-sm px-[10px]">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Vui lòng nhập số điện thoại.
+                                </span>
+                                <ng-template #invalidPhone>
+                                    <span *ngIf="form.get('cellPhone')?.invalid" class="text-red-500 text-sm px-[10px]">
+                                        <i class="fa-solid fa-triangle-exclamation"></i> Số điện thoại không hợp lệ.
+                                    </span>
+                                </ng-template>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-[50%] flex flex-col border">
+                    <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Chủ sân</div>
+                    <div class="flex flex-col items-start w-full">
+                        <div class="h-[40px] w-full px-[10px] py-[8px] text-[16px] text-[#434657] font-medium">
+                            Nguyễn Thanh Thưởng
+                        </div>
+                        <div class="h-[40px] w-full px-[10px] py-[8px] text-[#82869E]">0981973347</div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full border flex items-center">
+                <div class="w-[30%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Tên sân</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657] font-medium">
+                        {{detailInfo.name}}
+                    </div>
+                </div>
+                <div class="w-[15%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Ngày đặt</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
+                        {{ slot.date}}
+                    </div>
+                </div>
+                <div class="w-[15%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Khung giờ</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
+                        {{ slot.startTime | date:'HH:mm' }} - {{ slot.endTime | date:'HH:mm' }}
+                    </div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Giá sân</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">100.000 (VND)</div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Cọc (30% giá sân)</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">30.000 (VND)</div>
+                </div>
+            </div>
+            <div class="w-full flex flex-col border">
+                <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Địa chỉ</div>
+                <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
+                    {{detailInfo.address}}
+                </div>
+            </div>
+            <!-- Phương thức thanh toán -->
+            <div class="w-full flex flex-col border">
+                <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Phương thức thanh toán</div>
+                <div class="p-[10px]">
+                    <div class="flex items-center mb-2">
+                        <input 
+                            type="radio" 
+                            id="cash" 
+                            name="paymentMethod"
+                            formControlName="paymentMethod" 
+                            value="cash" 
+                            class="mr-2"
+                        >
+                        <label for="cash" class="text-[15px] text-[#434657] flex justify-start items-center gap-[6px]">
+                            <img class="object-cover h-[26px] w-[26px]"  src="../../../../../../assets/img/CODbank.jpg"/>
+                            Thanh toán bằng tiền mặt
+                        </label>
+                    </div>
+                    <div class="flex items-center">
+                        <input 
+                            type="radio" 
+                            id="vnpay" 
+                            name="paymentMethod"
+                            formControlName="paymentMethod" 
+                            value="vnpay" 
+                            class="mr-2"
+                        >
+                        <label for="vnpay" class="text-[15px] text-[#434657] flex justify-start items-center gap-[6px]">
+                            <img class="object-cover h-[26px] w-[26px]"  src="../../../../../../assets/img/vnpayBank.png"/>
+                            Thanh toán qua VNPay
+                        </label>
+                    </div>
+                    <span *ngIf="form.get('paymentMethod')?.invalid && form.get('paymentMethod')?.touched" class="text-red-500 text-sm">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Vui lòng chọn phương thức thanh toán.
+                    </span>
+                </div>
+            </div>
+            <div class="w-full flex flex-col border">
+                <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Ghi chú</div>
+                <textarea
+                    id="description" 
+                    formControlName="description"
+                    placeholder="Nhập ghi chú"
+                    class="w-full outline-none px-[10px] py-[8px]"
+                    rows="3"
+              ></textarea>
+            </div>
+            <div class="w-full flex items-center justify-center gap-[20px] mt-[10px]">
+                <div class="px-6 py-2 border rounded-lg cursor-pointer">Sửa đơn</div>
+                <div class="px-6 py-2 border rounded-lg cursor-pointer">Huỷ đơn</div>
+            </div>
+        </form>
     </ng-template>
 
     <ng-template #modalFooter>
         <div class="flex justify-center gap-9">
-            <button class="px-5 py-2 bg-[#969696] text-[#fff] font-medium rounded-lg" nz-button nzType="default" (click)="handleCancel()">Hủy</button>
-            <button nz-button nzType="primary"
+            <button class="px-6 py-2 w-[120px] bg-[#969696] text-[#fff] font-medium rounded-lg" nz-button nzType="default" (click)="handleCancel()">Quay lại</button>
+            <!-- <button nz-button nzType="primary"
             class="!bg-[#14b82e] px-5 py-2 text-[#fff] font-medium rounded-lg"
-            (click)="handleOk()">Đồng ý</button>
+            (click)="handleOk()">Đồng ý</button> -->
         </div>
     </ng-template>
 </nz-modal>

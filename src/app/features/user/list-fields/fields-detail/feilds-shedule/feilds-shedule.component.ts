@@ -15,7 +15,8 @@ interface TimeSlot {
   week: number; 
   startTime: Date;
   endTime: Date;
-  status: 'available' | 'booked' | 'closed';
+  status: 'available' | 'booked' | 'closed' | 'user-booked';
+  bookedBy?: string;
   title?: string;
   description?: string;
 }
@@ -23,6 +24,7 @@ interface TimeSlot {
 interface FixedDataSlot {
   id: number;
   status: 'available' | 'booked' | 'closed';
+  bookedBy?: string;
   date: string;
   startTime: string;
   endTime: string;
@@ -59,19 +61,22 @@ export class FeildsSheduleComponent implements OnInit{
   isVisibleDetail: boolean = false;
   isVisibleClosed: boolean = false;
   slot: any;
+  currentUserId: string = '';
   @Input() detailInfo: any;
   dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
   
   statusColorMap = {
     'available': '#fff',
-    'booked': 'bg-red-200',
-    'closed': 'bg-blue-200'
+    'booked': 'bg-blue-100',
+    'closed': 'bg-gray-100',
+    'user-booked': 'bg-yellow-100'
   };
   
   statusTextMap = {
     'available': 'Trống',
     'booked': 'Hết chỗ',
-    'closed': 'Đã đóng'
+    'closed': 'Đã đóng',
+    'user-booked': 'Đã đặt'
   };
 
   // Dữ liệu cố định
@@ -79,7 +84,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 1,
       status: 'available',
-      date: '2025-03-18',
+      date: '2025-03-20',
       startTime: '07:00',
       endTime: '08:00',
       note: ''
@@ -87,7 +92,8 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 2,
       status: 'booked',
-      date: '2025-03-17',
+      bookedBy: '7c5e5a7a-3e85-4c4b-adf9-cc64ad277798',
+      date: '2025-03-24',
       startTime: '08:00',
       endTime: '09:00',
       note: 'Đặt bởi anh Minh - SĐT: 0912345678'
@@ -95,7 +101,8 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 3,
       status: 'booked',
-      date: '2025-03-17',
+      bookedBy: '7c5e5a7a-3e85-4c4b-adf9-cc64ad277798',
+      date: '2025-03-24',
       startTime: '09:00',
       endTime: '10:00',
       note: 'Đội 11 người, có thuê trọng tài riêng'
@@ -119,6 +126,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 6,
       status: 'booked',
+      bookedBy: '7c5e5a7a-3e85-4c4b-adf9-cc64ad277798',
       date: '2025-03-20',
       startTime: '12:00',
       endTime: '13:00',
@@ -127,7 +135,8 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 7,
       status: 'booked',
-      date: '2025-03-19',
+      bookedBy: '70d4518e-9aec-443a-992f-8b9b4ea61cd0', // Giả sử đây là lịch của người dùng hiện tại
+      date: '2025-03-20',
       startTime: '13:00',
       endTime: '14:00',
       note: 'Cần chuẩn bị phòng thay đồ cho 22 người'
@@ -135,7 +144,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 8,
       status: 'available',
-      date: '2025-03-18',
+      date: '2025-03-21',
       startTime: '14:00',
       endTime: '15:00',
       note: ''
@@ -143,7 +152,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 9,
       status: 'available',
-      date: '2025-03-18',
+      date: '2025-03-22',
       startTime: '07:00',
       endTime: '08:00',
       note: ''
@@ -151,7 +160,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 10,
       status: 'closed',
-      date: '2025-03-20',
+      date: '2025-03-23',
       startTime: '08:00',
       endTime: '09:00',
       note: 'Yêu cầu 2 bình nước lớn và khăn lạnh'
@@ -159,6 +168,7 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 11,
       status: 'booked',
+      bookedBy: '70d4518e-9aec-443a-992f-8b9b4ea61cd0', // Giả sử đây là lịch của người dùng hiện tại
       date: '2025-03-22',
       startTime: '09:00',
       endTime: '10:00',
@@ -167,7 +177,8 @@ export class FeildsSheduleComponent implements OnInit{
     {
       id: 12,
       status: 'booked',
-      date: '2025-03-18',
+      bookedBy: '7c5e5a7a-3e85-4c4b-adf9-cc64ad277798',
+      date: '2025-03-24',
       startTime: '10:00',
       endTime: '11:00',
       note: 'Trận đấu giao hữu giữa hai công ty'
@@ -201,7 +212,7 @@ export class FeildsSheduleComponent implements OnInit{
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private router: Router,   // Thêm Router vào đây
+    private router: Router,   
     private oauthService: OAuthService 
   ) {
     this.bookingForm = this.fb.group({
@@ -218,11 +229,28 @@ export class FeildsSheduleComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    // Lấy ID người dùng hiện tại (nếu đã đăng nhập)
+    if (this.isLoggedIn()) {
+      this.getCurrentUserId();
+    }
+    
     // Khởi tạo các ngày trong tuần
     this.generateWeekDays();
     
     // Tải dữ liệu cho tuần hiện tại
     this.fetchTimeSlots();
+  }
+  
+  // Kiểm tra xem người dùng đã đăng nhập chưa
+  isLoggedIn(): boolean {
+    return this.oauthService.hasValidAccessToken();
+  }
+  
+  // Lấy ID người dùng hiện tại từ token
+  getCurrentUserId(): void {
+    this.currentUserId = JSON.parse(
+      localStorage.getItem('id_token_claims_obj') || '{}',
+    )?.sub;
   }
   
   // Thiết lập ngày bắt đầu là ngày hiện tại
@@ -313,6 +341,7 @@ export class FeildsSheduleComponent implements OnInit{
   // Chuyển đổi dữ liệu cố định thành TimeSlot
   convertFixedDataToTimeSlots(): void {
     const slots: TimeSlot[] = [];
+    const isUserLoggedIn = this.isLoggedIn();
     
     // Lặp qua mỗi ngày trong tuần
     for (let dayIndex = 0; dayIndex < this.weekDays.length; dayIndex++) {
@@ -365,16 +394,25 @@ export class FeildsSheduleComponent implements OnInit{
           endTime.setHours(hour + 1, 0, 0, 0);
           
           if (matchingSlot) {
-            // Nếu tìm thấy slot phù hợp, sử dụng dữ liệu từ đó
+            // Xử lý trạng thái dựa vào việc người dùng đã đăng nhập hay chưa
+            let status: any = matchingSlot.status;
+            
+            // Nếu đã đăng nhập, kiểm tra xem có phải slot do người dùng đặt không
+            if (isUserLoggedIn && matchingSlot.status === 'booked' && matchingSlot.bookedBy === this.currentUserId) {
+              status = 'user-booked';
+            }
+            
             slots.push({
               id: matchingSlot.id,
               day: dayIndex,
               week: this.currentWeekIndex,
               startTime,
               endTime,
-              status: matchingSlot.status,
+              status: status,
+              bookedBy: matchingSlot.bookedBy,
               title: matchingSlot.status !== 'available' ? 
-                  (matchingSlot.status === 'booked' ? 'Đã đặt' : 'Đã đóng') : '',
+                  (status === 'user-booked' ? 'Đã đặt' : 
+                   matchingSlot.status === 'booked' ? 'Hết chỗ' : 'Đã đóng') : '',
               description: matchingSlot.note
             });
           } else {
@@ -397,6 +435,23 @@ export class FeildsSheduleComponent implements OnInit{
     this.timeSlots = slots;
   }
   
+  // Lấy class CSS cho slot dựa vào trạng thái
+  getSlotClass(dayIndex: number, timeHour: number): string {
+    const slot = this.getSlot(dayIndex, timeHour);
+    if (slot) {
+      if (slot.status === 'available') return '';
+      if (slot.status === 'booked') return 'bg-blue-100';
+      if (slot.status === 'closed') return 'bg-gray-100';
+      if (slot.status === 'user-booked') return 'bg-yellow-100';
+    }
+    return '';
+  }
+  
+  // Lấy text hiển thị cho trạng thái slot
+  getSlotStatusText(slot: TimeSlot): string {
+    return this.statusTextMap[slot.status];
+  }
+  
   // Format ngày để so sánh với dữ liệu cố định
   formatDateForComparison(date: Date): string {
     const year = date.getFullYear();
@@ -414,28 +469,32 @@ export class FeildsSheduleComponent implements OnInit{
   }
   
   selectSlot(slot: TimeSlot): void {
-    if (!this.oauthService.hasValidAccessToken()) {
+    if (!this.isLoggedIn()) {
       // Lưu URL hiện tại vào localStorage
       localStorage.setItem('redirectUrl', window.location.pathname);
       // Thêm flag thông báo cần hiển thị
       localStorage.setItem('requiresLogin', 'true');
-      // Chuyển hướng đến trang đăng nhập
-      // this.router.navigate(['/login']);
       this.isVisible = true;
       return;
     }
-    // this.slot = slot;
+    
+    // Định dạng thông tin slot
     const formattedSlot = {
       ...slot,
-      date: this.formatDateForDisplay(slot.startTime) // Add this line to include a formatted date
+      date: this.formatDateForDisplay(slot.startTime)
     };
     
     this.slot = formattedSlot;
-    // Nếu đã đăng nhập, tiếp tục xử lý như trước
-    if(slot.status === 'available'){
+    
+    // Xử lý dựa vào trạng thái của slot
+    if (slot.status === 'available') {
       this.isVisibleBook = true;
-    } else if (slot.status === 'booked') {
+    } else if (slot.status === 'user-booked') {
+      // Nếu là slot đã đặt bởi người dùng hiện tại
       this.isVisibleDetail = true;
+    } else if (slot.status === 'booked') {
+      // Nếu là slot đã đặt bởi người khác
+      // this.isVisibleDetail = true;
     } else if (slot.status === 'closed') {
       this.isVisibleClosed = true;
     }
@@ -445,90 +504,6 @@ export class FeildsSheduleComponent implements OnInit{
     return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
   
-  // ----- Chức năng ------
-  // async bookTimeSlot(id: number, title: string, description: string): Promise<void> {
-  //   this.isLoading = true;
-  //   try {
-  //     // Cập nhật trạng thái slot trong dữ liệu hiện tại
-  //     const slot = this.timeSlots.find(slot => slot.id === id);
-  //     if (slot && slot.status === 'available') {
-  //       slot.status = 'booked';
-  //       slot.title = title;
-  //       slot.description = description;
-  //       // Cập nhật vào dữ liệu cố định nếu slot hiện tại có trong dữ liệu cố định
-  //       const dateString = this.formatDateForComparison(slot.startTime);
-  //       const hourString = slot.startTime.getHours().toString().padStart(2, '0') + ':00';
-        
-  //       const fixedSlot = this.fixedFieldData.find(s => 
-  //         s.date === dateString && s.startTime === hourString
-  //       );
-  //       if (fixedSlot) {
-  //         fixedSlot.status = 'booked';
-  //         fixedSlot.note = description;
-  //       } else {
-  //         // Thêm mới vào dữ liệu cố định nếu chưa có
-  //         this.fixedFieldData.push({
-  //           id: id,
-  //           status: 'booked',
-  //           date: dateString,
-  //           startTime: hourString,
-  //           endTime: (slot.startTime.getHours() + 1).toString().padStart(2, '0') + ':00',
-  //           note: description
-  //         });
-  //       }
-  //       alert('Đặt lịch thành công!');
-  //     } else {
-  //       alert('Không thể đặt lịch này.');
-  //     }
-  //   } finally {
-  //     this.isLoading = false;
-  //   }
-  // }
-
-  // ----- Chức năng đóng lịch
-  // async closeTimeSlot(id: number, reason: string): Promise<void> {
-  //   this.isLoading = true;
-    
-  //   try {
-  //     // Cập nhật trạng thái slot trong dữ liệu hiện tại
-  //     const slot = this.timeSlots.find(slot => slot.id === id);
-  //     if (slot && slot.status === 'available') {
-  //       slot.status = 'closed';
-  //       slot.title = 'Đã đóng';
-  //       slot.description = reason;
-        
-  //       // Cập nhật vào dữ liệu cố định nếu slot hiện tại có trong dữ liệu cố định
-  //       const dateString = this.formatDateForComparison(slot.startTime);
-  //       const hourString = slot.startTime.getHours().toString().padStart(2, '0') + ':00';
-        
-  //       const fixedSlot = this.fixedFieldData.find(s => 
-  //         s.date === dateString && s.startTime === hourString
-  //       );
-        
-  //       if (fixedSlot) {
-  //         fixedSlot.status = 'closed';
-  //         fixedSlot.note = reason;
-  //       } else {
-  //         // Thêm mới vào dữ liệu cố định nếu chưa có
-  //         this.fixedFieldData.push({
-  //           id: id,
-  //           status: 'closed',
-  //           date: dateString,
-  //           startTime: hourString,
-  //           endTime: (slot.startTime.getHours() + 1).toString().padStart(2, '0') + ':00',
-  //           note: reason
-  //         });
-  //       }
-        
-  //       alert('Đã đóng lịch!');
-  //     } else {
-  //       alert('Không thể đóng lịch này.');
-  //     }
-  //   } finally {
-  //     this.isLoading = false;
-  //   }
-  // }
-
   formatDate(date: Date): string {
     return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
   }
