@@ -1,0 +1,33 @@
+<div class="map-container flex items-start h-full w-full mt-[100px] mb-[-120px] relative">
+    <!-- Danh sách sân bóng -->
+    <div class="flex flex-col gap-3 w-[35%] max-h-[calc(100vh-100px)] overflow-auto p-4 bg-white relative">
+        <div *ngFor="let item of listContact" 
+             class="flex flex-col justify-start p-3 rounded-xl border cursor-pointer shadow-sm hover:bg-gray-50"
+             (click)="goToLocation(item.lat, item.lng)">
+            <div class="text-red-500 font-semibold text-[18px] uppercase">{{ item.name }}</div>
+            <div class="flex flex-col justify-start w-full gap-2">
+                <div class="flex items-center justify-start gap-1">
+                    <i class="fa-solid fa-location-dot"></i>
+                    {{ item.address }}
+                </div>
+                <div class="flex items-center justify-start gap-1">
+                    <i class="fa-solid fa-user"></i>
+                    {{ item.nameOwner }}
+                </div>
+                <div class="flex items-center justify-start gap-1">
+                    <i class="fa-solid fa-phone"></i>
+                    {{ item.phone }}
+                </div>
+                <div class="flex items-center justify-start gap-1">
+                    <i class="fa-solid fa-envelope"></i>
+                    {{ item.email }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bản đồ -->
+    <div class="w-[65%] h-[calc(100vh-100px)] relative">
+        <div id="map" class="h-full w-full"></div>
+    </div>
+</div>

@@ -32,6 +32,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'contact',
+        loadChildren: () =>
+          import('../../features/info-contact/info-contact.routing.module').then(
+            (m) => m.InfoContactRoutingModule,
+          ),
+      },
+      {
         path: 'changePassword',
         loadChildren: () =>
           import('../../features/user/change-password/change-password.routing.module').then(
