@@ -13,13 +13,6 @@ const routes: Routes = [
                 redirectTo:'',
                 pathMatch:'full',
             },
-            // {
-            //     path: '',
-            //     loadComponent: () =>
-            //       import('./my-info-view/my-info-view.component').then(
-            //         (m) => m.MyInfoViewComponent
-            //       ),        
-            // },
             {
                 path:"**",
                 redirectTo:'/',

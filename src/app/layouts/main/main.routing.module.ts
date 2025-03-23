@@ -39,6 +39,20 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'history',
+        loadChildren: () =>
+          import('../../features/history-booking/history-booking.routing.module').then(
+            (m) => m.HistoryBoookingRoutingModule,
+          ),
+      },
+      {
+        path: 'price',
+        loadChildren: () =>
+          import('../../features/owner/price-manager/price-manager.routing.module').then(
+            (m) => m.PriceManagerRoutingModule,
+          ),
+      },
+      {
         path: 'changePassword',
         loadChildren: () =>
           import('../../features/user/change-password/change-password.routing.module').then(

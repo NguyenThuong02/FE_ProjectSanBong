@@ -1,0 +1,58 @@
+:host {
+  nz-rate {
+    font-size: 28px;
+  }
+
+  .text-primary {
+    color: #14b82e;
+  }
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+.text-red-600 {
+  color: #dc2626;
+}
+
+.text-orange-500 {
+  color: #f97316;
+}
+
+.text-yellow-500 {
+  color: #eab308;
+}
+
+.text-green-500 {
+  color: #22c55e;
+}
+
+.text-green-600 {
+  color: #16a34a;
+}
+
+::ng-deep .ant-rate-star.ant-rate-star-full .ant-rate-star-second {
+  color: #fadb14;
+}
+
+::ng-deep .ant-rate-star.ant-rate-star-half .ant-rate-star-first {
+  color: #fadb14;
+}
+
+button {
+  transition: all 0.2s ease-in-out;
+
+  &:hover:not([disabled]) {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+}
+
+::ng-deep .large-stars {
+  scale: 1.8;
+
+  .ant-rate-star:hover {
+    transform: scale(1.1);
+  }
+}

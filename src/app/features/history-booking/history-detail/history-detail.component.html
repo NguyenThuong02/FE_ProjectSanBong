@@ -1,0 +1,46 @@
+<div class="mt-[100px] w-full p-5 mb-[-100px]">
+    <div class="flex items-center justify-start gap-2 text-[16px]">
+        <div class="cursor-pointer hover:scale-105 hover:text-primary" [routerLink]="['/home-page']">Trang chủ</div>
+        <div>/</div>
+        <div class="cursor-pointer hover:scale-105 hover:text-primary" [routerLink]="['/history']">Lịch sử đặt sân</div>
+        <div>/</div>
+        <div class="text-primary">Chi tiết</div>
+    </div>
+    <div class="w-full mt-7 flex flex-col items-start">
+        <div class="flex items-start gap-[20px] w-full border">
+            <img [src]="historyDetail.image" alt="image" class="w-[250px] h-[170px] object-cover">
+            <div class="flex-1 flex flex-col items-start justify-start py-2">
+                <div class="font-semibold text-[22px] mb-2">{{historyDetail.name}}</div>
+                <div class="w-full text-[15px] mb-1">Địa chỉ: {{historyDetail.address}}</div>
+                <div class="w-full text-[15px] mb-1">Lịch: {{historyDetail.scheduleDate}}</div>
+                <div class="w-full text-[15px] mb-1">Giá tiền: <span class="text-red-500 font-medium text-[15px]">{{historyDetail.price}} VND</span></div>
+                <div class="w-full text-[15px] mb-1">Trạng thái: 
+                    <span class="font-semibold" [ngClass]="{'text-[#DF0404]': historyDetail.status === 0, 'text-[#008767]': historyDetail.status === 1}">
+                        {{historyDetail.status === 0 ? 'Đã cọc' : 'Hoàn thành'}}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="w-full flex flex-col border">
+            <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Chủ sân</div>
+            <div class="flex items-center justify-between w-full">
+                <div class="h-[40px] w-full px-[10px] py-[8px] text-[16px] font-medium">
+                    {{historyDetail.nameOwner}}
+                </div>
+                <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] ">Liên hệ: {{historyDetail.cellPhone}}</div>
+            </div>
+        </div>
+        <div class="w-full flex flex-col border-b border-x">
+            <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Đặt lịch vào lúc</div>
+            <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] ">{{historyDetail.bookingDate}}</div>
+        </div>
+        <div class="w-full flex flex-col border-b border-x">
+            <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Ghi chú của người dùng</div>
+            <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] ">{{historyDetail.description}}</div>
+        </div>
+        <div class="w-full flex flex-col border-b border-x">
+            <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Đã thanh toán</div>
+            <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-primary font-semibold">{{historyDetail.deposit}} VND</div>
+        </div>
+    </div>
+</div>

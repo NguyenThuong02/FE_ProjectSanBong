@@ -1,0 +1,39 @@
+<nz-modal nzWidth="500px" [(nzVisible)]="isVisibleRate" nzCentered [nzContent]="modalContent"
+    [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()" class="rounded-xl">
+
+    <ng-template #modalContent>
+        <div class="flex w-full flex-col gap-[10px]">
+            <div class="text-center !text-[20px] font-medium">Bạn nghĩ sao về sân <span class="text-primary">{{item?.name}}</span> ?</div>
+            
+            <form [formGroup]="rateForm">
+                <div class="w-full flex flex-col mb-4">
+                    <div class="flex justify-center mb-2">
+                        <nz-rate class="large-stars" formControlName="rating" [nzAllowHalf]="true"></nz-rate>
+                    </div>
+                    <div class="text-center text-sm font-medium mb-4" [ngClass]="getRatingClass()">
+                        {{ getRatingText() }}
+                    </div>
+                    
+                    <div class="text-[15px] font-medium">Đánh giá:</div>
+                    <textarea
+                        id="description" 
+                        formControlName="description"
+                        placeholder="Viết đánh giá của bạn"
+                        class="w-full border outline-none px-[10px] py-[8px]"
+                        rows="4"
+                    ></textarea>
+                </div>
+            </form>
+        </div>
+    </ng-template>
+
+    <ng-template #modalFooter>
+        <div class="flex justify-center gap-9">
+            <button class="px-5 py-2 bg-[#969696] text-[#fff] font-medium rounded-lg text-center" 
+                    nz-button nzType="default" (click)="handleCancel()">Để sau</button>
+            <button nz-button nzType="primary"
+                    class="!bg-[#14b82e] px-5 py-2 text-[#fff] font-medium rounded-lg"
+                    (click)="submitRating()">Đánh giá</button>
+        </div>
+    </ng-template>
+</nz-modal>

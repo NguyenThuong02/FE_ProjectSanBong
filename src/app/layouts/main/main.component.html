@@ -32,6 +32,10 @@
           <i class="fa-regular fa-calendar-days"></i>
           <span class="ml-3">Quản lý lịch sân</span>
         </li>
+        <li nz-menu-item [routerLink]="['/', 'price']" nzMatchRouter class="menu-item">
+          <i class="fa-solid fa-comments-dollar"></i>
+          <span class="ml-3">Quản lý giá</span>
+        </li>
         <li nz-menu-item [routerLink]="['/', 'setting']" nzMatchRouter class="menu-item">
           <i class="fa-solid fa-gear"></i>
           <span class="ml-3">Cài đặt</span>
@@ -89,7 +93,7 @@
                 <div [routerLink]="['/home-page']" class="text-primary italic text-[18px] hover:underline cursor-pointer">Trang chủ</div>
                 <div [routerLink]="['/list-feilds']" class="text-primary italic text-[18px] hover:underline cursor-pointer">Danh sách sân</div>
                 <div [routerLink]="['/concert']" class="text-primary italic text-[18px] hover:underline cursor-pointer">Sự kiện</div>
-                <div *ngIf="this.role" class="text-primary italic text-[18px] hover:underline cursor-pointer">Lịch sử đặt sân</div>
+                <div [routerLink]="['/history']" *ngIf="this.role" class="text-primary italic text-[18px] hover:underline cursor-pointer">Lịch sử đặt sân</div>
                 <div [routerLink]="['/contact']" class="text-primary italic text-[18px] hover:underline cursor-pointer">Liên hệ</div>
             </div>
             <div *ngIf="!this.role" class="flex items-center justify-between gap-[20px]">
