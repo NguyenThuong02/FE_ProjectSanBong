@@ -4,7 +4,7 @@
           <i class="fa-solid fa-magnifying-glass absolute left-[12px] top-[50%] translate-y-[-50%]"></i>
           <input (input)="onSearch($event)" class="h-[40px] bg-[#f1f1f1] outline-none border-[2px] border-primary w-full pr-2 pl-8 rounded-xl" placeholder="Tìm kiếm tên sân" />
         </div>
-        <div [routerLink]="['/facility/add']" class="px-[12px] py-[8px] rounded-[6px] flex items-center justify-center gap-1 border border-primary text-primary cursor-pointer hover:bg-primary hover:text-[#fff]" >
+        <div [routerLink]="['/price/add']" class="px-[12px] py-[8px] rounded-[6px] flex items-center justify-center gap-1 border border-primary text-primary cursor-pointer hover:bg-primary hover:text-[#fff]" >
             <i class="fa-solid fa-circle-plus"></i>
             Thêm giá mới
         </div>
@@ -13,12 +13,12 @@
       <div class="mt-[27px] w-full min-w-full overflow-x-auto overflow-y-auto">
       <table class="text-[13px] font-normal w-full relative">
         <thead class="border-b-[#96E6A1] border-b *:py-4 *:text-center bg-white z-2  font-medium sticky top-0 ">
-            <th class="px-1">#</th>
+            <th class="px-3">#</th>
             <th><div class="text-left">Sân</div></th>
-            <th class="">Môn thể thao</th>
             <th class=""><div class="text-left">Giá tiền</div></th>
             <th>Khung giờ</th>
-            <th class="">Giá cọc</th>
+            <th>Ngày</th>
+            <th class=""><div class="text-center">Giá cọc</div></th>
             <th class="">Thao tác</th>
         </thead>
         <div class="w-full" *ngIf="isLoading; else data">
@@ -35,23 +35,26 @@
         <ng-template #data>
           <tbody> 
             <tr class="*:py-4 *:text-center border-b border px-2 h-[60px]" *ngFor="let item of listFacility; let index = index">
-              <td class="px-1">
+              <td class="px-3">
                 {{index + 1}}
               </td>
               <td >
-                <div class="text-left flex items-center justify-start gap-1 font-semibold">
+                <div class="text-left flex items-center justify-start gap-2 font-semibold">
                   <img class="object-cover w-[100px] h-[60px]" [src]="item.image"/>
                    {{item?.name}}
                 </div>
-              </td>
-              <td>
-                {{item?.facilityType}}
               </td>
               <td >
                 <div class="flex text-left text-primary font-medium">300.000 VND</div>
               </td>
               <td> 
-                <div class="text-left">{{item?.address}}</div>
+                <div class="text-center">08:00 - 10:00</div>
+              </td>
+              <td> 
+                <div class="text-center">20/03/2025 - 24/03/2025</div>
+              </td>
+              <td>
+                <div class="flex justify-center text-red-500 font-medium">100.000 VND</div>
               </td>
               <td class="relative">
                 <i class="fa-solid fa-ellipsis-vertical cursor-pointer p-4 hover:scale-105 hover:text-primary" (click)="toggleMenu(item.id)"></i>
@@ -66,9 +69,11 @@
         </ng-template>                   
       </table>
       </div>
-      <div class="float-right w-fit pb-6">
+      <div class="float-right w-fit mt-5">
         <app-pagi [totalCount]="totalCount" [page]="params.page" [pageSize]="params.pageSize"
           (PageEvent)="changePage($event)" (PageSizeEvent)="changePageSize($event)"></app-pagi>
       </div>
     </div>
 </div>
+
+<app-popup-delete [isVisible]="isVisible" [eventItem]="item" (changeVisibleDelete)="handleChangeVisible($event)"></app-popup-delete>

@@ -11,6 +11,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { PagiComponent } from '../../../../shared/components/pagi/pagi.component';
 import { FacilityService } from '../../../../core/api/facility.service';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { PopupDeleteComponent } from './popup-delete/popup-delete.component';
 
 @Component({
   selector: 'app-list-price',
@@ -25,7 +26,8 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
     NzIconModule,
     NzSpinModule,
     TranslateModule,
-    PagiComponent
+    PagiComponent,
+    PopupDeleteComponent
   ],
   templateUrl: './list-price.component.html',
   styleUrl: './list-price.component.scss'
@@ -37,7 +39,7 @@ export class ListPriceComponent implements OnInit {
   public selectedFacilityId: number | null = null;
   searchTerms = new Subject<string>();
   searchText: string = '';
-  facilityItem: any;
+  item: any;
   maxheight: string = '';
   public params = {
     page: 1,
@@ -104,7 +106,7 @@ export class ListPriceComponent implements OnInit {
   }
 
   openDeletePopup(item?: any) {
-    this.facilityItem = item;
+    this.item = item;
     this.isVisible = true;
   }
   
@@ -112,7 +114,7 @@ export class ListPriceComponent implements OnInit {
   handleChangeVisible(data: any) {
     this.isVisible = data.visible;
     if (data.isSuccess == true) {
-      this.viewListFacility();
+      // this.viewListFacility();
     }
   }
 }

@@ -19,13 +19,13 @@ const routes: Routes = [
                     (m) => m.ListPriceComponent
                   ),        
             },
-            // {
-            //     path: ':id',
-            //     loadComponent: () =>
-            //       import('../history-booking/history-detail/history-detail.component').then(
-            //         (m) => m.HistoryDetailComponent
-            //       ),        
-            // },
+            {
+                path: 'add',
+                loadComponent: () =>
+                  import('../price-manager/add-price/add-price.component').then(
+                    (m) => m.AddPriceComponent
+                  ),        
+            },
             {
                 path:"**",
                 redirectTo:'/',

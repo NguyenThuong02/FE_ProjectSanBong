@@ -1,0 +1,118 @@
+<div class="w-full mt-[100px] px-5 mb-[-250px]">
+    <div class="flex items-center justify-start gap-2 text-[16px]">
+        <div class="cursor-pointer hover:scale-105 hover:text-primary" [routerLink]="['/price']">Quản lý giá tiền</div>
+        <div>/</div>
+        <div *ngIf="!isEdit" class="text-primary">Tạo giá tiền mới</div>
+        <div *ngIf="isEdit" class="text-primary">Cập nhật giá tiền</div>
+    </div>
+    <div class="flex-1 pt-8 rounded-lg overflow-y-auto">
+        <form class="flex flex-col gap-2 mt-4 p-[1px] " [formGroup]="form">
+            <div class="flex w-full gap-9">
+                <div class=" flex flex-col flex-1">
+                    <span class="mb-[6px]">Chọn sân</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <mat-select placeholder="Chọn sân của bạn" formControlName="name">
+                            <mat-option *ngFor="let item of listFacility" [value]="item.value">
+                              {{ item.label }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error
+                            *ngIf="form.get('name')?.errors?.['required']&& (form.get('name')?.dirty || form.get('name')?.touched)"
+                            class="text-red-600">
+                            Vui lòng nhập đầy đủ thông tin
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <span class="mb-[6px]">Khung giờ</span>
+                    <div class="flex w-full gap-6">
+                        <mat-form-field class="custom-input flex-1" appearance="outline">
+                            <mat-select placeholder="Từ khung giờ" formControlName="timeStart">
+                                <mat-option *ngFor="let item of listTime" [value]="item.value">
+                                  {{ item.label }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error
+                                *ngIf="form.get('timeStart')?.errors?.['required']&& (form.get('timeStart')?.dirty || form.get('timeStart')?.touched)"
+                                class="text-red-600">
+                                Vui lòng nhập đầy đủ thông tin
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="custom-input flex-1" appearance="outline">
+                            <mat-select placeholder="Đến khung giờ" formControlName="timeEnd">
+                                <mat-option *ngFor="let item of listTime" [value]="item.value">
+                                  {{ item.label }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error
+                                *ngIf="form.get('timeEnd')?.errors?.['required']&& (form.get('timeEnd')?.dirty || form.get('timeEnd')?.touched)"
+                                class="text-red-600">
+                                Vui lòng nhập đầy đủ thông tin
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="flex w-full gap-9">
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Từ ngày</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput [matDatepicker]="startDatePicker" placeholder="Chọn ngày bắt đầu" formControlName="startDate">
+                        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startDatePicker></mat-datepicker>
+                        <mat-error
+                            *ngIf="form.get('startDate')?.errors?.['required'] && (form.get('startDate')?.dirty || form.get('startDate')?.touched)"
+                            class="text-red-600">
+                            Vui lòng chọn ngày bắt đầu!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <span class="mb-1">Đến ngày</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput [matDatepicker]="endDatePicker" placeholder="Chọn ngày kết thúc" formControlName="endDate">
+                        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #endDatePicker></mat-datepicker>
+                        <mat-error
+                            *ngIf="form.get('endDate')?.errors?.['required'] && (form.get('endDate')?.dirty || form.get('endDate')?.touched)"
+                            class="text-red-600">
+                            Vui lòng chọn ngày kết thúc!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex w-full gap-9">
+                <div class="flex flex-col flex-1">
+                    <span class="mb-[6px]">Giá tiền</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <input matInput placeholder="Nhập giá tiền gốc" formControlName="price" />
+                        <mat-error
+                            *ngIf="form.get('price')?.errors?.['required']&& (form.get('price')?.dirty || form.get('price')?.touched)"
+                            class="text-red-600">
+                            Vui lòng nhập đầy đủ thông tin!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="flex flex-col flex-1">
+                    <span class="mb-[6px]">Giá cọc (30% giá tiền gốc)</span>
+                    <mat-form-field class="custom-input " appearance="outline">
+                        <input matInput placeholder="Nhập giá tiền cọc" formControlName="deposit" />
+                        <mat-error
+                            *ngIf="form.get('deposit')?.errors?.['required']&& (form.get('deposit')?.dirty || form.get('deposit')?.touched)"
+                            class="text-red-600">
+                            Vui lòng nhập đầy đủ thông tin!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+        <div class="flex justify-center items-center mt-[80px] gap-4">
+            <div [routerLink]="['/facility/list']" class="rounded-lg px-3 py-2 font-semibold text-white bg-[#BAC1CC] cursor-pointer">
+                Huỷ bỏ
+            </div>
+            <div (click)="handleSubmit()" class="rounded-lg px-3 py-2 font-semibold text-white bg-[#22B14C] cursor-pointer">
+                {{isEdit ? 'Chỉnh sửa' : 'Thêm mới'}}
+            </div>
+        </div>
+    </div>
+</div>
