@@ -9,7 +9,7 @@ export const authCodeFlowConfig: Partial<any> = {
   responseType: 'code',
   silentRefreshRedirectUri:
     window.location.origin + '/assets/silent-refresh.html',
-  dummyClientSecret: '$,Zf.EXS@quyb}DYC8{@i]P{!?*J=k',
+  dummyClientSecret: 'MySuperSecretPassword',
   scope: 'offline_access roles profile openid',
   // customQueryParams: {
   //   grant_type: 'code',
