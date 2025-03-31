@@ -117,7 +117,7 @@ export class MainComponent implements OnInit, OnChanges {
     )?.role;
     const redirectUrl = localStorage.getItem('redirectUrl');
     if(this.role) {
-      if(this.role[0] === 'Administrator'){
+      if(this.role[0] === 'Admin'){
         this.canActive = true;
         this.router.navigate(['/user-management']);
       } else if(this.role[0] === 'User') {

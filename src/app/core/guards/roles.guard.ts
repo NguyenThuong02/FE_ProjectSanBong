@@ -10,7 +10,7 @@ export class RolesGuard implements CanActivate {
   canActivate(): boolean {
     const userRole = JSON.parse(localStorage.getItem('id_token_claims_obj') || '{}')?.role;
     
-    if (userRole && userRole[0] === 'Administrator') {
+    if (userRole && userRole[0] === 'Admin') {
       return true;
     }
 

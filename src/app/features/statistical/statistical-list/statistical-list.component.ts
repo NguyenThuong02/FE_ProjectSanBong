@@ -64,7 +64,7 @@ export class StatisticalListComponent implements OnInit {
     this.role = JSON.parse(
       localStorage.getItem('id_token_claims_obj') || '{}',
     )?.role;
-    if(this.role[0] === 'Administrator'){
+    if(this.role[0] === 'Admin'){
       this.canActive = true;
       this.viewVoteforAdmin();
       this.viewListUser();

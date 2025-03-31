@@ -5,7 +5,7 @@
     <div class="relative w-full h-[70px]">
       <img class="object-cover w-full h-full"  src="../../../assets/img/logoSB.png"/>
     </div>
-    <div *ngIf="this.role[0] === 'Administrator'" class="mt-5">
+    <div *ngIf="this.role[0] === 'Admin'" class="mt-5">
       <ul nz-menu [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed" class="border-none">
         <li nz-menu-item [routerLink]="['/', 'user-management']" nzMatchRouter class="menu-item">
           <i class="fa-solid fa-users"></i>

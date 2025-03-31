@@ -216,8 +216,8 @@ export class LoginComponent implements OnInit {
       });
     this.OAuthService.initImplicitFlow();
     this.OAuthService.fetchTokenUsingPasswordFlowAndLoadUserProfile(
-      this.formLogin.get('userName')?.value || 'administrator',
-      this.formLogin.get('password')?.value || 'Administrator1',
+      this.formLogin.get('userName')?.value || 'admin',
+      this.formLogin.get('password')?.value || 'Admin123!',
     )
       .then((res) => {
         this.isLoading = false;
