@@ -90,14 +90,14 @@
                     <div class="flex items-center justify-start gap-4">
                         <div 
                           class="py-2 px-3 rounded-lg border cursor-pointer"
-                          [ngClass]="{'text-[#00B087] border-[#00B087] bg-activeBg': form.get('status')?.value === 'Active', 
-                                     'text-[#00B087] border-[#00B087]': form.get('status')?.value !== 'Active'}"
-                          (click)="changeStatus('Active')">Active</div>
+                          [ngClass]="{'text-[#00B087] border-[#00B087] bg-activeBg': form.get('status')?.value === true, 
+                                     'text-[#00B087] border-[#00B087]': form.get('status')?.value !== true}"
+                          (click)="changeStatus(true)">Active</div>
                         <div 
                           class="py-2 px-3 rounded-lg border cursor-pointer"
-                          [ngClass]="{'text-[#DF0404] border-[#DF0404] bg-inActiveBg': form.get('status')?.value === 'Disable', 
-                                     'text-[#DF0404] border-[#DF0404]': form.get('status')?.value !== 'Disable'}"
-                          (click)="changeStatus('Disable')">Inactive</div>
+                          [ngClass]="{'text-[#DF0404] border-[#DF0404] bg-inActiveBg': form.get('status')?.value === false, 
+                                     'text-[#DF0404] border-[#DF0404]': form.get('status')?.value !== false}"
+                          (click)="changeStatus(false)">Inactive</div>
                     </div>
                 </div>
                 <div class="flex flex-col flex-1">

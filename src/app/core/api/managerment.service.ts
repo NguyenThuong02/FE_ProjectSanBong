@@ -22,19 +22,19 @@ export class ManagermentService {
   }
 
   changeRole(id: any, role?: any): Observable<any> {
-    return this.http.post(this.apiUrl + `/admin/update-account/${id}?role=${role}`, {});
+    return this.http.post(this.apiUrl + `/api/user/update-account/${id}?role=${role}`, {});
   }
 
   disableAccount(id?: any): Observable<any> {
-    return this.http.post(this.apiUrl + `/admin/disable-account/${id}`, {});
+    return this.http.post(this.apiUrl + `/api/user/disable-account/${id}`, {});
   }
 
   activeAccount(id?: any): Observable<any> {
-    return this.http.post(this.apiUrl + `/admin/active-account/${id}`, {});
+    return this.http.post(this.apiUrl + `/api-user/active-account/${id}`, {});
   }
 
   getUserById(id?: any): Observable<any> {
-    return this.http.get(this.apiUrl + `/api/user/get-user/${id}`);
+    return this.http.get(this.apiUrl + `/api/user/get-user-by-id/${id}`);
   }
 
   uploadImage(formData: FormData): Observable<{ filename: string }> {

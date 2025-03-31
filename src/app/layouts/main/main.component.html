@@ -18,7 +18,7 @@
       </ul>
     </div>
     <!-- Chủ sân -->
-    <div *ngIf="this.role[0] === 'FacilityOwner'" class="mt-5">
+    <div *ngIf="this.role[0] === 'Owner'" class="mt-5">
       <ul nz-menu [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed" class="border-none">
         <li nz-menu-item [routerLink]="['/', 'facility']" nzMatchRouter class="menu-item">
           <i class="fa-solid fa-volleyball"></i>

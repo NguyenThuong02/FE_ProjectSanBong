@@ -32,13 +32,13 @@
           <tbody> 
             <tr class="*:py-4 *:text-center border-b border px-2 h-[60px]" *ngFor="let item of listUserManagements; let index = index">
               <td (click)="viewDetail(item?.id)" class="px-2 hover:text-primary hover:scale-105 cursor-pointer">
-                {{item?.fullname}}
+                {{item?.fullName}}
               </td>
               <td (click)="viewDetail(item?.id)" class="px-2 hover:text-primary hover:scale-105 cursor-pointer">
-                {{item?.userName}}
+                {{item?.username}}
               </td>
               <td >
-                {{item?.cellPhone}}
+                {{item?.phone}}
               </td>
               <td >
                 {{item?.email}}
@@ -46,10 +46,10 @@
               <td >
                 {{item?.role}}
               </td>
-              <td class="flex justify-center" (click)="openDisablePopup(item?.id, item?.userName, item?.status)"> 
+              <td class="flex justify-center" (click)="openDisablePopup(item?.id, item?.username, item?.isActive)"> 
                 <div class="w-fit px-2 py-[8px] cursor-pointer flex items-center border border-solid justify-center rounded-lg leading-[100%]"
-                [ngClass]="{'bg-green-500 border-[#00B087] text-[#008767]': item.status === 'Active', 'bg-[#FFC5C5] border-[#DF0404] text-[#DF0404]': item.status === 'Disable'}">
-                  {{item.status === 'Active' ? 'Hoạt động' : 'Vô hiệu hoá'}}
+                [ngClass]="{'bg-green-500 border-[#00B087] text-[#008767]': item.isActive === true, 'bg-[#FFC5C5] border-[#DF0404] text-[#DF0404]': item.isActive === false}">
+                  {{item.isActive === true ? 'Hoạt động' : 'Vô hiệu hoá'}}
                 </div>
               </td>
             </tr>

@@ -120,14 +120,14 @@ export class MainComponent implements OnInit, OnChanges {
       if(this.role[0] === 'Admin'){
         this.canActive = true;
         this.router.navigate(['/user-management']);
-      } else if(this.role[0] === 'User') {
+      } else if(this.role[0] === 'Customer') {
         this.canActive = false;
         if(redirectUrl) {
           this.router.navigate([redirectUrl]);
         } else {
           this.router.navigate(['/home-page']);
         }
-      } else if(this.role[0] === 'FacilityOwner') {
+      } else if(this.role[0] === 'Owner') {
         this.canActive = true;
         this.router.navigate(['/facility']);
       }

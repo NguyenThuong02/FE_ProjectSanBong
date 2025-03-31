@@ -49,21 +49,21 @@ export class ManagementAddComponent implements OnInit {
   avatarPreview:string = "../../../assets/img/Logo-Hoc-Vien-Ky-Thuat-Mat-Ma-ACTVN.webp"
   public listGender: any = [
     {
-      value: true,
+      value: 1,
       label: 'Nam',
     },
     {
-      value: false,
+      value: 2,
       label: 'Nữ',
     },
   ];
   public listRole: any = [
     {
-      value: 'User',
+      value: 'Customer',
       label: 'Khách hàng',
     },
     {
-      value: 'FacilityOwner',
+      value: 'Owner',
       label: 'Chủ sân',
     }
   ]
@@ -102,14 +102,14 @@ export class ManagementAddComponent implements OnInit {
     this.managermentService.getUserById(this.idUser).subscribe({
       next: (res) => {
         this.form.patchValue({
-          fullName: res.fullname,
-          userName: res.userName,
+          fullName: res.fullName,
+          userName: res.username,
           email: res.email,
           gender: res.gender,
-          phoneNumber: res.cellPhone,
+          phoneNumber: res.phone,
           dob: res.birthday,
           role: res.role,
-          status: res.status,
+          status: res.isActive,
         });
         this.cdr.detectChanges();
       },
@@ -124,7 +124,7 @@ export class ManagementAddComponent implements OnInit {
   }
 
   handleSubmit(): void {
-    if(this.form.get('status')?.value === 'Active'){
+    if(this.form.get('status')?.value === true){
       this.managermentService.activeAccount(this.idUser).subscribe ({
         next: (res) => {
           this.managermentService.changeRole(this.idUser, this.form.get('role')?.value).subscribe ({
@@ -155,7 +155,7 @@ export class ManagementAddComponent implements OnInit {
         }
       })
     }
-    if(this.form.get('status')?.value === 'Disable'){
+    if(this.form.get('status')?.value === false){
       this.managermentService.disableAccount(this.idUser).subscribe ({
         next: (res) => {
           this.managermentService.changeRole(this.idUser, this.form.get('role')?.value).subscribe ({
@@ -188,7 +188,7 @@ export class ManagementAddComponent implements OnInit {
     }
 }
 
-  changeStatus(status: string): void {
+  changeStatus(status: any): void {
     this.form.get('status')?.setValue(status);
   }
 

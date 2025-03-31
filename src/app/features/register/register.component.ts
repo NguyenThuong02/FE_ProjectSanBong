@@ -128,10 +128,10 @@ export class RegisterComponent implements OnInit {
     const body = {
       userName: this.form.get('username')?.value,
       fullName: this.form.get('fullName')?.value,
-      cellPhone: this.form.get('cellPhone')?.value,
+      phone: this.form.get('cellPhone')?.value,
       email: this.form.get('email')?.value,
       password: this.form.get('password')?.value,
-      rePassword: this.form.get('passwordConfirm')?.value
+      confirmPassword: this.form.get('passwordConfirm')?.value
     };
     
     this.accountService.register(body).subscribe({
@@ -144,13 +144,13 @@ export class RegisterComponent implements OnInit {
         this.router.navigate(['/login']);
       },
       error: (err: HttpErrorResponse) => {
-        const errorMessage = err.error || err || '';
-        console.log('vvv: ', err);
-        if (errorMessage.includes('Duplicate entry') && errorMessage.includes('CellPhone')) {
+        const errorMessage = err.error.message || err || '';
+        console.log('vvv: ', err.error.message);
+        if (errorMessage.includes('is already taken') && errorMessage.includes('CellPhone')) {
           this.phoneError = 'Số điện thoại đã được đăng ký';
           this.form.get('cellPhone')?.markAsTouched();
         }
-        if (errorMessage.includes('Duplicate entry') && errorMessage.includes('Email')) {
+        if (errorMessage.includes('is already taken')) {
           this.emailError = 'Email đã được đăng ký';
           this.form.get('email')?.markAsTouched();
         }

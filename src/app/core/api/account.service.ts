@@ -13,7 +13,7 @@ export class AccountService {
   constructor(private http: HttpClient) { }
 
   register(body: any): Observable<any> {
-    return this.http.post(this.apiUrl + '/api/user/register', body);
+    return this.http.post(this.apiUrl + '/api/auth/register', body);
   }
 
   getViewInfo(): Observable<any> {
@@ -37,11 +37,11 @@ export class AccountService {
   }
 
   disableAccount(id?: any): Observable<any> {
-    return this.http.post(this.apiUrl + `/admin/disable-account/${id}`, {});
+    return this.http.post(this.apiUrl + `/api/user/disable-account/${id}`, {});
   }
 
   activeAccount(id?: any): Observable<any> {
-    return this.http.post(this.apiUrl + `/admin/active-account/${id}`, {});
+    return this.http.post(this.apiUrl + `/api/user/active-account/${id}`, {});
   }
 
   changePassword(body: any): Observable<any> {

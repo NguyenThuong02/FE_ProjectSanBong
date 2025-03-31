@@ -69,8 +69,8 @@ export class ManagementListComponent implements OnInit{
     this.isLoading = true;
     this.managermentService.getAllManagement(this.params.page, this.params.pageSize).subscribe(res => {
       this.isLoading = false;
-      this.listUserManagements = res.data;
-      this.totalCount = res.totalItems;
+      this.listUserManagements = res.users;
+      this.totalCount = res.totalCount;
     })
   }
 
@@ -91,10 +91,10 @@ export class ManagementListComponent implements OnInit{
 
   openDisablePopup(id?: string, name?: any, status?: any) {
     this.idManagement = id;
-    if(status === 'Active') {
+    if(status === true) {
       this.isVisible = true;
       this.nameManagement = name;
-    } else if (status === 'Disable') {
+    } else if (status === false) {
       this.accountService.activeAccount(this.idManagement).subscribe({
         next: (res) => {
           this.viewListUser();
