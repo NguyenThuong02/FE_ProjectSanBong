@@ -54,7 +54,7 @@ export class FieldsDetailComponent implements OnInit {
 
     this.facilityService.getFacilityById(this.idFacility).subscribe({
       next: (res) => {
-        this.selectedField = res.data;
+        this.selectedField = res;
       },
       error: (err) => {
         this.message.error('Không thể lấy thông tin sân!');

@@ -94,7 +94,6 @@ export class AddFacilityComponent implements OnInit {
     name: [null, Validators.required],
     type: ['Football', Validators.required],
     address: [null, Validators.required],
-    price: [null, Validators.required],
     description: [null],
     imageUrl: [null],
     imageName: [null]
@@ -106,16 +105,15 @@ export class AddFacilityComponent implements OnInit {
     this.facilityService.getFacilityById(this.idFacility).subscribe({
       next: (res) => {
         this.form.patchValue({
-          name: res.data.name,
-          type: res.data.facilityType,
-          address: res.data.address,
-          price: res.data.price,
-          description: res.data.description,
-          imageUrl: res.data.image
+          name: res.name,
+          type: res.facilityType,
+          address: res.address,
+          description: res.description,
+          imageUrl: res.imageUrl
         });
         
-        if (res.data.image) {
-          this.imagePreview = res.data.image;
+        if (res.imageUrl) {
+          this.imagePreview = res.imageUrl;
           // this.selectedFileName = res.data.imageName || this.extractFileNameFromUrl(res.data.imageUrl);
         }
       },
@@ -218,8 +216,7 @@ export class AddFacilityComponent implements OnInit {
         address: this.form.get('address')?.value,
         description: this.form.get('description')?.value,
         facilityType: this.form.get('type')?.value,
-        price: this.form.get('price')?.value,
-        image: this.form.get('imageUrl')?.value,
+        imageUrl: this.form.get('imageUrl')?.value,
         status: 1
       };
       this.facilityService.createFacility(body).subscribe({
@@ -243,13 +240,11 @@ export class AddFacilityComponent implements OnInit {
     } else {
       const body = {
         id: this.idFacility,
-        ownerId: this.idOwner,
         name: this.form.get('name')?.value,
         address: this.form.get('address')?.value,
         description: this.form.get('description')?.value,
         facilityType: this.form.get('type')?.value,
-        price: this.form.get('price')?.value,
-        image: this.form.get('imageUrl')?.value,
+        imageUrl: this.form.get('imageUrl')?.value,
         status: 1
       };
       this.facilityService.updateFacility(body).subscribe({

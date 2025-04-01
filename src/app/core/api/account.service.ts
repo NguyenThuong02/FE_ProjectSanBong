@@ -41,7 +41,7 @@ export class AccountService {
   }
 
   activeAccount(id?: any): Observable<any> {
-    return this.http.put(this.apiUrl + `/api/user/active-account/${id}`, {});
+    return this.http.post(this.apiUrl + `/api/user/active-account/${id}`, {});
   }
 
   changePassword(body: any): Observable<any> {
