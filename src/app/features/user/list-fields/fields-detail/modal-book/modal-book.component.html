@@ -99,6 +99,7 @@
                             formControlName="paymentMethod" 
                             value="vnpay" 
                             class="mr-2"
+                            (change)="onPaymentMethodChange($event)"
                         >
                         <label for="vnpay" class="text-[15px] text-[#434657] flex justify-start items-center gap-[6px]">
                             <img class="object-cover h-[26px] w-[26px]"  src="../../../../../../assets/img/vnpayBank.png"/>
@@ -129,6 +130,56 @@
             <button nz-button nzType="primary"
             class="!bg-[#14b82e] px-5 py-2 text-[#fff] font-medium rounded-lg"
             (click)="handleOk()">Đồng ý</button>
+        </div>
+    </ng-template>
+</nz-modal>
+
+<!-- VNPay Payment Modal -->
+<nz-modal
+    [(nzVisible)]="isVNPayModalVisible"
+    nzTitle="Thanh toán qua VNPay"
+    nzCentered
+    [nzFooter]="vnpayFooter"
+    (nzOnCancel)="handleVNPayCancel()"
+    nzWidth="600px"
+    class="rounded-[20px]"
+>
+    <ng-container *nzModalContent>
+        <div class="flex flex-col items-center p-4">
+            <img src="../../../../../../assets/img/vnpayBank.png" alt="VNPay Logo" class="h-16 mb-4">
+            <div class="text-center mb-4">
+                <h3 class="text-lg font-semibold">Quét mã QR để thanh toán</h3>
+                <p class="text-gray-500">Sử dụng ứng dụng ngân hàng hoặc ví điện tử để quét mã</p>
+            </div>
+            <div class="border p-4 rounded-lg mb-4">
+                <!-- Placeholder for QR code - in a real app, this would be dynamically generated -->
+                <img src="../../../../../../assets/img/QRVnpay.jpg" alt="QR Code" class="h-48 w-48 object-cover">
+            </div>
+            <div class="w-full border-t pt-4">
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-600">Số tiền:</span>
+                    <span class="font-semibold">30.000 VND</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-600">Mã đơn hàng:</span>
+                    <span class="font-semibold">#40309</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Thời gian:</span>
+                    <span class="font-semibold">20/04/2025</span>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #vnpayFooter>
+        <div class="flex justify-center gap-4">
+            <button nz-button nzType="default" (click)="handleVNPayCancel()" class="px-5 py-2 bg-[#969696] text-white font-medium rounded-lg">
+                Hủy
+            </button>
+            <button nz-button nzType="primary" class="!bg-[#14b82e] px-5 py-2 text-white font-medium rounded-lg">
+                Xác nhận đã thanh toán
+            </button>
         </div>
     </ng-template>
 </nz-modal>

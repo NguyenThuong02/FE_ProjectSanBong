@@ -25,6 +25,7 @@ import { phoneNumberValidator } from '../../../../../shared/validate/check-phone
   styleUrl: './modal-book.component.scss'
 })
 export class ModalBookComponent {
+  isVNPayModalVisible = false;
   @Input() isVisibleBook!: boolean;
   @Input() slot: any;
   @Input() detailInfo: any;
@@ -66,6 +67,13 @@ export class ModalBookComponent {
     this.changeVisibleBook.emit(false);
   }
 
+  onPaymentMethodChange(event: Event){
+    this.isVNPayModalVisible = true;
+  }
+
+  handleVNPayCancel(){
+    this.isVNPayModalVisible = false;
+  }
 
   handleCancel(): void {
     this.form.reset({
