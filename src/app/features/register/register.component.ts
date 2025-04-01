@@ -144,13 +144,13 @@ export class RegisterComponent implements OnInit {
         this.router.navigate(['/login']);
       },
       error: (err: HttpErrorResponse) => {
-        const errorMessage = err.error.message || err || '';
-        console.log('vvv: ', err.error.message);
-        if (errorMessage.includes('is already taken') && errorMessage.includes('CellPhone')) {
+        const errorMessage = err.error || err || '';
+        console.log('vvv: ', err.error);
+        if (errorMessage.includes('Duplicate entry') && errorMessage.includes('CellPhone')) {
           this.phoneError = 'Số điện thoại đã được đăng ký';
           this.form.get('cellPhone')?.markAsTouched();
         }
-        if (errorMessage.includes('is already taken')) {
+        if (errorMessage.includes('Duplicate entry')) {
           this.emailError = 'Email đã được đăng ký';
           this.form.get('email')?.markAsTouched();
         }
