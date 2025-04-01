@@ -30,7 +30,7 @@ export class ManagermentService {
   }
 
   activeAccount(id?: any): Observable<any> {
-    return this.http.post(this.apiUrl + `/api-user/active-account/${id}`, {});
+    return this.http.post(this.apiUrl + `/api/user/active-account/${id}`, {});
   }
 
   getUserById(id?: any): Observable<any> {

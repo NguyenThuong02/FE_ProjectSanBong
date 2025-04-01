@@ -75,9 +75,9 @@ export class ChangePasswordViewComponent {
 
   handleOk(): void {
     const body = {
-      oldPassword: this.form.get('password')?.value,
-      newPassword: this.form.get('passwordNew')?.value,
-      comfirmedPassword: this.form.get('passwordConfirm')?.value
+      oldPassword: this.form.get('password')?.value.trim(),
+      newPassword: this.form.get('passwordNew')?.value.trim(),
+      comfirmedPassword: this.form.get('passwordConfirm')?.value.trim()
     };
     this.accountService.changePassword(body).subscribe({
       next: (res) => {

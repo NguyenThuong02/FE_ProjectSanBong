@@ -25,15 +25,15 @@ export class AccountService {
   }
 
   forgotPassword(body: any): Observable<any> {
-    return this.http.post(this.apiUrl + '/api/user/forgot-password', body);
+    return this.http.post(this.apiUrl + '/reset-password', body);
   }
 
   checkEmail(body: any): Observable<any> {
-    return this.http.post(this.apiUrl + '/api/user/send-otp', body);
+    return this.http.post(this.apiUrl + '/send-otp', body);
   }
 
   checkOTP(body: any): Observable<any> {
-    return this.http.post(this.apiUrl + '/api/user/verify-otp', body);
+    return this.http.post(this.apiUrl + '/verify-otp', body);
   }
 
   disableAccount(id?: any): Observable<any> {
@@ -41,7 +41,7 @@ export class AccountService {
   }
 
   activeAccount(id?: any): Observable<any> {
-    return this.http.post(this.apiUrl + `/api/user/active-account/${id}`, {});
+    return this.http.put(this.apiUrl + `/api/user/active-account/${id}`, {});
   }
 
   changePassword(body: any): Observable<any> {
