@@ -20,6 +20,10 @@
     <!-- Chủ sân -->
     <div *ngIf="this.role[0] === 'Owner'" class="mt-5">
       <ul nz-menu [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed" class="border-none">
+        <li nz-menu-item [routerLink]="['/', 'statistical']" nzMatchRouter class="menu-item">
+          <i class="fa-solid fa-chart-simple"></i>
+          <span class="ml-3">Thống kê</span>
+        </li>
         <li nz-menu-item [routerLink]="['/', 'facility']" nzMatchRouter class="menu-item">
           <i class="fa-solid fa-volleyball"></i>
           <span class="ml-3">Quản lý sân</span>

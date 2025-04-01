@@ -36,14 +36,14 @@ export type ChartOptions = {
 })
 export class ChartColumnsComponent implements OnChanges {
   @ViewChild("chart") chart: ChartComponent;
-  @Input() listDetailVote: any;
+  @Input() listData: any;
   public chartOptions: Partial<ChartOptions>;
 
   constructor() {
     this.chartOptions = {
       series: [
         {
-          name: "Số lượng phiếu bầu",
+          name: "Số lượng đơn tháng",
           data: []
         }
       ],
@@ -104,11 +104,11 @@ export class ChartColumnsComponent implements OnChanges {
         }
       },
       fill: {
-        colors: ["#01579B"],
+        colors: ["#FFB30F"],
         type: "solid"
       },
       yaxis: {
-        max: 12,
+        max: 100,
         axisBorder: {
           show: false
         },
@@ -123,7 +123,7 @@ export class ChartColumnsComponent implements OnChanges {
         }
       },
       title: {
-        text: "Biểu đồ cột thống kê số lượng phiếu bầu cử",
+        text: "Biểu đồ cột thống kê số đơn tháng",
         floating: true,
         offsetY: 330,
         align: "center",
@@ -134,19 +134,19 @@ export class ChartColumnsComponent implements OnChanges {
     };
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['listDetailVote'] && this.listDetailVote) {
-      const candidateNames = this.listDetailVote.map((candidate: any) => candidate.fullName);
-      const totalBallots = this.listDetailVote.map((candidate: any) => candidate.totalBallot);
+    if (changes['listData'] && this.listData) {
+      const nameOrder = this.listData.map((item: any) => item.name);
+      const total = this.listData.map((item: any) => item.total);
       this.chartOptions = {
         ...this.chartOptions,
         xaxis: {
           ...this.chartOptions?.xaxis,
-          categories: candidateNames,
+          categories: nameOrder,
         },
         series: [
           {
             ...this.chartOptions?.series,
-            data: totalBallots,
+            data: total,
           },
         ],
       };
