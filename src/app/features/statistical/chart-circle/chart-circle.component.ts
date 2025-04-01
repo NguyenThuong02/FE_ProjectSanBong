@@ -29,7 +29,7 @@ export type ChartOptions = {
 })
 export class ChartCircleComponent implements OnChanges {
   @ViewChild("chart") chart: ChartComponent;
-  @Input() listDetailVote: any;
+  @Input() listData: any;
   public chartOptions: Partial<ChartOptions>;
 
   constructor() {
@@ -77,12 +77,12 @@ export class ChartCircleComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['listDetailVote'] && this.listDetailVote) {
+    if (changes['listData'] && this.listData) {
       // Truy xuất danh sách fullName và thiết lập labels
-      const labels = this.listDetailVote.map((candidate: any) => candidate.fullName);
+      const labels = this.listData.map((item: any) => item.name);
 
       // Tạo series giả định (ví dụ: số phiếu bầu)
-      const series = this.listDetailVote.map((candidate: any) => candidate.totalBallot);
+      const series = this.listData.map((item: any) => item.total);
 
       // Tạo mảng màu sắc ngẫu nhiên tương ứng
       const colors = labels.map(() => this.getRandomColor());

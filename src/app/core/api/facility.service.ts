@@ -17,7 +17,7 @@ export class FacilityService {
   }
 
   getAllFacilityOwner(page: number, pageSize: number, name: string = ''): Observable<any> {
-    let url = this.apiUrl + `/api/facility/get-all-facility-by-owner?page=${page}&pageSize=${pageSize}`;
+    let url = this.apiUrl + `/api/facility/get-facilities-by-owner?page=${page}&pageSize=${pageSize}`;
     if (name && name.trim() !== '') {
       url += `&name=${name}`;
     }
@@ -26,7 +26,7 @@ export class FacilityService {
   }
 
   getAllFacility(page: number, pageSize: number, name: string = ''): Observable<any> {
-    let url = this.apiUrl + `/api/facility/get-all-facility?page=${page}&pageSize=${pageSize}`;
+    let url = this.apiUrl + `/api/facility/get-all-facilities?page=${page}&pageSize=${pageSize}`;
     if (name && name.trim() !== '') {
       url += `&name=${name}`;
     }

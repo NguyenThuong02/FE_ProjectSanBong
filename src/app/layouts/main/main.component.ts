@@ -129,7 +129,7 @@ export class MainComponent implements OnInit, OnChanges {
         }
       } else if(this.role[0] === 'Owner') {
         this.canActive = true;
-        this.router.navigate(['/facility']);
+        this.router.navigate(['/statistical']);
       }
     } else {
       this.canActive = false;
@@ -250,6 +250,7 @@ export class MainComponent implements OnInit, OnChanges {
     }
     const routeTitles: { [key: string]: string } = {
       '/user-management': 'Danh sách tài khoản',
+      '/statistical/list': 'Thống kê',
       '/setting': 'Cài đặt',
       '/facility/list': 'Quản lý sân',
       '/facility': 'Quản lý sân',
