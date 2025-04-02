@@ -45,7 +45,7 @@
         <div *ngIf="!isLoading && listSanBong.length > 0" class="w-full grid grid-cols-3 gap-[30px] mt-8">
             <div *ngFor="let item of listSanBong" class="flex-shrink-0 pb-2 flex flex-col grid-cols-1 shadow-shadow-timeword rounded-md">
                 <div class="w-full h-[200px]">
-                    <img class="object-cover w-full h-full rounded-tl-md rounded-tr-md" [src]="item.image"/>
+                    <img class="object-cover w-full h-full rounded-tl-md rounded-tr-md" [src]="item.imageUrl"/>
                 </div>
                 <div class="flex flex-col items-start p-4">
                     <div class="text-[#000] text-[18px] font-semibold">{{ item.name }}</div>

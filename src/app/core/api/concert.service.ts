@@ -21,18 +21,18 @@ export class ConcertService {
   }
   
   getAllEventOwner(page: number, pageSize: number, name: string = ''): Observable<any> {
-    let url = this.apiUrl + `/api/event/get-event-by-owner?page=${page}&pageSize=${pageSize}`;
+    let url = this.apiUrl + `/api/event/get-events-by-owner?pageNumber=${page}&pageSize=${pageSize}`;
     if (name && name.trim() !== '') {
-      url += `&name=${name}`;
+      url += `&title=${name}`;
     }
     
     return this.http.get(url);
   }
   
   getAllEvent(page: number, pageSize: number, name: string = ''): Observable<any> {
-    let url = this.apiUrl + `/api/event/get-all-event?page=${page}&pageSize=${pageSize}`;
+    let url = this.apiUrl + `/api/event/get-all-events?pageNumber=${page}&pageSize=${pageSize}`;
     if (name && name.trim() !== '') {
-      url += `&name=${name}`;
+      url += `&title=${name}`;
     }
     
     return this.http.get(url);

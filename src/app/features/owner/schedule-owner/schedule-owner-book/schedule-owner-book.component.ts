@@ -32,10 +32,9 @@ export class ScheduleOwnerBookComponent {
   // Schedule data
   scheduleData: ScheduleSlot[] = [];
   timeSlots: string[] = [
-    '06:00-07:00', '07:00-08:00', '08:00-09:00', '09:00-10:00',
-    '10:00-11:00', '11:00-12:00', '12:00-13:00', '13:00-14:00',
-    '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00',
-    '18:00-19:00', '19:00-20:00', '20:00-21:00', '21:00-22:00'
+    '05:00-06:30', '06:30-08:00', '08:00-09:30', '09:30-11:00',
+    '11:00-12:30', '12:30-14:00', '14:00-15:30', '15:30-17:00',
+    '17:00-18:30', '18:30-20:00', '20:00-21:30', '21:30-23:00'
   ];
   
   // Week navigation
@@ -71,7 +70,7 @@ export class ScheduleOwnerBookComponent {
 
     this.facilityService.getFacilityById(this.idFacility).subscribe({
       next: (res) => {
-        this.selectedField = res.data;
+        this.selectedField = res;
         // After loading field data, load schedule data
         this.loadScheduleData();
       },
