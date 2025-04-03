@@ -7,6 +7,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
 import { ConcertService } from '../../../../../core/api/concert.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { PriceService } from '../../../../../core/api/price.service';
 
 @Component({
   selector: 'app-popup-delete',
@@ -26,17 +27,17 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 })
 export class PopupDeleteComponent {
   @Input() isVisible!: boolean;
-  @Input() eventItem?: any;
+  @Input() item?: any;
   @Output() changeVisibleDelete = new EventEmitter<any>();
 
   constructor(
     private cdr: ChangeDetectorRef,
     private notification: NzNotificationService,
-    private concertService: ConcertService,
+    private priceService: PriceService,
   ) {}
 
   handleOk(): void {
-    this.concertService.deleteEvent(this.eventItem.id).subscribe({
+    this.priceService.deletePrice(this.item.id).subscribe({
       next: (res) => {
         this.notification.create(
           'success',

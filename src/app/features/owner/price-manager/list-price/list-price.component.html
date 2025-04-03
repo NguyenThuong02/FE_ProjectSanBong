@@ -10,15 +10,16 @@
         </div>
     </div>
     <div>
-      <div class="mt-[27px] w-full min-w-full overflow-x-auto overflow-y-auto">
+      <div class="mt-[27px] w-full">
       <table class="text-[13px] font-normal w-full relative">
         <thead class="border-b-[#96E6A1] border-b *:py-4 *:text-center bg-white z-2  font-medium sticky top-0 ">
             <th class="px-3">#</th>
             <th><div class="text-left">Sân</div></th>
-            <th class=""><div class="text-left">Giá tiền</div></th>
+            <th class=""><div class="text-left">Giá tiền gốc</div></th>
             <th>Khung giờ</th>
             <th>Ngày</th>
-            <th class=""><div class="text-center">Giá cọc</div></th>
+            <th class=""><div class="text-center">Hệ số</div></th>
+            <th class=""><div class="text-center">Giá tiền cuối</div></th>
             <th class="">Thao tác</th>
         </thead>
         <div class="w-full" *ngIf="isLoading; else data">
@@ -26,7 +27,7 @@
             <nz-spin class="inline-block w-full text-center" nzSize="large" ></nz-spin>
           </div>
         </div>  
-        <div class="w-full" *ngIf="listFacility.length == 0">
+        <div class="w-full" *ngIf="listPrice.length == 0">
           <div class="flex flex-col items-center justify-center absolute mt-[100px] !w-[100%]">
             <span nz-icon nzType="exclamation-circle" nzTheme="outline" class="text-[20px]"></span>
             <div class="text-myText font-[500] text-[14px] mt-[10px]">Danh sách trống</div>
@@ -34,31 +35,33 @@
         </div>  
         <ng-template #data>
           <tbody> 
-            <tr class="*:py-4 *:text-center border-b border px-2 h-[60px]" *ngFor="let item of listFacility; let index = index">
+            <tr class="*:py-4 *:text-center border-b border px-2 h-[60px]" *ngFor="let item of listPrice; let index = index">
               <td class="px-3">
                 {{index + 1}}
               </td>
               <td >
                 <div class="text-left flex items-center justify-start gap-2 font-semibold">
-                  <img class="object-cover w-[100px] h-[60px]" [src]="item.image"/>
-                   {{item?.name}}
+                   {{item?.facilityName}}
                 </div>
               </td>
               <td >
-                <div class="flex text-left text-primary font-medium">300.000 VND</div>
+                <div class="flex text-left text-primary font-medium">{{item?.basePrice}}</div>
               </td>
               <td> 
-                <div class="text-center">08:00 - 10:00</div>
+                <div class="text-center">{{item.startTime.substring(0, 5)}} - {{item.endTime.substring(0, 5)}}</div>
               </td>
               <td> 
-                <div class="text-center">20/03/2025 - 24/03/2025</div>
+                <div class="text-center">{{item.startDate | date:'dd/MM/yyyy'}} - {{item.endDate | date:'dd/MM/yyyy'}}</div>
               </td>
               <td>
-                <div class="flex justify-center text-red-500 font-medium">100.000 VND</div>
+                <div class="flex justify-center text-red-500 font-medium">{{item?.coefficient}}</div>
+              </td>
+              <td >
+                <div class="flex justify-center text-primary font-medium">{{item?.finalPrice}}</div>
               </td>
               <td class="relative">
                 <i class="fa-solid fa-ellipsis-vertical cursor-pointer p-4 hover:scale-105 hover:text-primary" (click)="toggleMenu(item.id)"></i>
-                <div *ngIf="selectedFacilityId === item.id" class="absolute right-0 mt-1 w-[120px] bg-white border rounded-lg shadow-lg z-10">
+                <div *ngIf="selectedPriceId === item.id" class="absolute right-0 mt-1 w-[120px] bg-white border rounded-lg shadow-lg z-10">
                   <div class="p-2 cursor-pointer hover:bg-gray-200" (click)="viewDetail(item.id)">Xem chi tiết</div>
                   <div (click)="openDeletePopup(item)"
                   class="p-2 cursor-pointer hover:bg-gray-200 text-red-500">Xoá</div>
@@ -76,4 +79,4 @@
     </div>
 </div>
 
-<app-popup-delete [isVisible]="isVisible" [eventItem]="item" (changeVisibleDelete)="handleChangeVisible($event)"></app-popup-delete>
+<app-popup-delete [isVisible]="isVisible" [item]="item" (changeVisibleDelete)="handleChangeVisible($event)"></app-popup-delete>

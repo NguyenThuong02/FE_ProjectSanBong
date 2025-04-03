@@ -27,6 +27,13 @@ const routes: Routes = [
                   ),        
             },
             {
+                path: 'detail/:id',
+                loadComponent: () =>
+                  import('../price-manager/add-price/add-price.component').then(
+                    (m) => m.AddPriceComponent
+                  ),        
+            },
+            {
                 path:"**",
                 redirectTo:'/',
             },
