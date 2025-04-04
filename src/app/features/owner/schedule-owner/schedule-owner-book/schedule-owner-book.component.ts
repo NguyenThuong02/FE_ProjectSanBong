@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FacilityService } from '../../../../core/api/facility.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { BookService } from '../../../../core/api/book.service';
 
 interface ScheduleSlot {
   date: Date;
@@ -55,6 +56,7 @@ export class ScheduleOwnerBookComponent {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private facilityService: FacilityService,
+    private bookService: BookService,
     private notification: NzNotificationService
   ){}
 
@@ -67,8 +69,7 @@ export class ScheduleOwnerBookComponent {
 
   getViewInfo(): void {
     if (!this.idFacility) return;
-
-    this.facilityService.getFacilityById(this.idFacility).subscribe({
+    this.bookService.getCalendarId(this.idFacility).subscribe({
       next: (res) => {
         this.selectedField = res;
         // After loading field data, load schedule data
