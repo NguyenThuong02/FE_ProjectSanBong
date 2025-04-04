@@ -15,4 +15,17 @@ export class BookService {
   getCalendarId(id?: any): Observable<any> {
     return this.http.get(this.apiUrl + `/api/booking/calendar/` + id);
   }
+
+  getSlotDetail(id?: any, date?: any, startTime?: any, endTime?: any): Observable<any> {
+    return this.http.get(this.apiUrl + `/api/booking/calendar/slot-detail
+      ?slotId=${id}
+      &date=${date}
+      &startTime=${startTime}
+      &endTime=${endTime}
+      `);
+  }
+
+  getAllManagement(page: number, pageSize: number): Observable<any> {
+    return this.http.get(this.apiUrl + `/api/user/get-all-users?page=${page}&pageSize=${pageSize}`);
+  }
 }
