@@ -9,9 +9,10 @@ import { BookService } from '../../../../core/api/book.service';
 interface ScheduleSlot {
   date: Date;
   time: string;
-  status: 'AVAILABLE' | 'BOOKED' | 'CLOSED';
+  status: 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE';
   price: number;
   description: string;
+  slotId?: string;
 }
 
 @Component({
@@ -29,6 +30,7 @@ interface ScheduleSlot {
 export class ScheduleOwnerBookComponent {
   idFacility: any;
   selectedField: any = {};
+  apiCalendarData: any[] = [];
   
   // Schedule data
   scheduleData: ScheduleSlot[] = [];
@@ -72,6 +74,7 @@ export class ScheduleOwnerBookComponent {
     this.bookService.getCalendarId(this.idFacility).subscribe({
       next: (res) => {
         this.selectedField = res;
+        this.apiCalendarData = res.calendar || [];
         // After loading field data, load schedule data
         this.loadScheduleData();
       },
@@ -108,33 +111,54 @@ export class ScheduleOwnerBookComponent {
     }
   }
 
-  // Load schedule data from API
   loadScheduleData(): void {
-    // In real implementation, you would fetch data from backend
-    // For now, we'll just use the initialized data
-    
-    // Example of API call:
-    /*
-    this.facilityService.getSchedule(this.idFacility).subscribe({
-      next: (res) => {
-        // Map response data to scheduleData
-        this.scheduleData = res.data.map(item => ({
-          date: new Date(item.date),
-          time: item.time,
-          status: item.status,
-          price: item.price,
-          description: item.description
-        }));
-      },
-      error: (err) => {
-        this.notification.create(
-          'error',
-          'Thất bại!',
-          'Không thể lấy thông tin lịch!'
-        );
+    this.scheduleData = [];
+    if (this.apiCalendarData.length > 0) {
+      for (const slot of this.apiCalendarData) {
+        const startDate = new Date(slot.startDate);
+        const startTime = slot.startTime;
+        const endTime = slot.endTime;
+        const timeSlot = `${startTime}-${endTime}`;
+        this.scheduleData.push({
+          date: startDate,
+          time: timeSlot,
+          status: slot.status === 0 ? 'AVAILABLE' : 'BOOKED', 
+          price: slot.finalPrice,
+          description: slot.note || '',
+          slotId: slot.slotId
+        });
       }
-    });
-    */
+    }
+    this.generateMissingSlots();
+  }
+  
+  generateMissingSlots(): void {
+    const today = new Date();
+
+    for (let week = 0; week < 3; week++) {
+      for (let day = 0; day < 7; day++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() + (week * 7) + day);
+        
+        for (let time of this.timeSlots) {
+          // Check if this slot exists in scheduleData
+          const exists = this.scheduleData.some(s => 
+            this.isSameDay(s.date, date) && s.time === time
+          );
+          
+          // If not exists, add as NOT_AVAILABLE
+          if (!exists) {
+            this.scheduleData.push({
+              date: new Date(date),
+              time: time,
+              status: 'NOT_AVAILABLE',
+              price: 0,
+              description: 'Chưa tạo giá tiền'
+            });
+          }
+        }
+      }
+    }
   }
 
   // Generate days for a specific week
@@ -142,15 +166,15 @@ export class ScheduleOwnerBookComponent {
     this.currentWeekDays = [];
     const today = new Date();
     
-    // Find the first day of the week (Sunday)
+    // Start from today instead of finding Sunday
     const firstDay = new Date(today);
-    const day = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
-    firstDay.setDate(today.getDate() - day); // Go to Sunday
     
     // Add weekIndex weeks
-    firstDay.setDate(firstDay.getDate() + (weekIndex * 7));
+    if (weekIndex > 0) {
+      firstDay.setDate(firstDay.getDate() + (weekIndex * 7));
+    }
     
-    // Generate 7 days from Sunday
+    // Generate 7 days starting from today
     for (let i = 0; i < 7; i++) {
       const nextDay = new Date(firstDay);
       nextDay.setDate(firstDay.getDate() + i);
@@ -165,11 +189,16 @@ export class ScheduleOwnerBookComponent {
   }
 
   // Get slot status
-  getSlotStatus(date: Date, time: string): 'AVAILABLE' | 'BOOKED' | 'CLOSED' {
+  getSlotStatus(date: Date, time: string): 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE' {
     const slot = this.scheduleData.find(s => 
       this.isSameDay(s.date, date) && s.time === time
     );
-    return slot ? slot.status : 'AVAILABLE';
+    
+    if (!slot) {
+      return 'NOT_AVAILABLE';
+    }
+    
+    return slot.status;
   }
 
   // Get CSS class based on slot status
@@ -179,6 +208,7 @@ export class ScheduleOwnerBookComponent {
       case 'AVAILABLE': return 'bg-green-100 hover:bg-green-200';
       case 'BOOKED': return 'bg-red-100 hover:bg-red-200';
       case 'CLOSED': return 'bg-gray-100 hover:bg-gray-200';
+      case 'NOT_AVAILABLE': return 'bg-yellow-100 hover:bg-yellow-200';
       default: return '';
     }
   }
@@ -265,12 +295,12 @@ export class ScheduleOwnerBookComponent {
 
   // Get day name
   getDayName(date: Date): string {
-    const days = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+    const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
     return days[date.getDay()];
   }
 
   // Get count by status for display in sidebar
-  getCountByStatus(status: 'AVAILABLE' | 'BOOKED' | 'CLOSED'): number {
+  getCountByStatus(status: 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE'): number {
     return this.scheduleData.filter(slot => slot.status === status).length;
   }
 
