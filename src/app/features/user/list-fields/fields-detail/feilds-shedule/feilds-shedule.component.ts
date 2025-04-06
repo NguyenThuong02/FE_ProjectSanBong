@@ -15,20 +15,12 @@ interface TimeSlot {
   week: number; 
   startTime: Date;
   endTime: Date;
-  status: 'available' | 'booked' | 'closed' | 'user-booked';
+  status: 'available' | 'booked' | 'closed' | 'user-booked' | 'not-in-api';
   bookedBy?: string;
   title?: string;
   description?: string;
-}
-
-interface FixedDataSlot {
-  id: number;
-  status: 'available' | 'booked' | 'closed';
-  bookedBy?: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  note: string;
+  slotId?: string;
+  finalPrice?: number;
 }
 
 @Component({
@@ -49,7 +41,7 @@ interface FixedDataSlot {
 export class FeildsSheduleComponent implements OnInit{
   timeSlots: TimeSlot[] = [];
   weekDays: Date[] = [];
-  timeRanges: {hour: number, label: string}[] = [];
+  timeRanges: {hour: number, minute: number, label: string}[] = [];
   selectedSlot: TimeSlot | null = null;
   bookingForm: FormGroup;
   currentWeekStart: Date = new Date();
@@ -66,148 +58,20 @@ export class FeildsSheduleComponent implements OnInit{
   dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
   
   statusColorMap = {
-    'available': '#fff',
-    'booked': 'bg-blue-100',
-    'closed': 'bg-gray-100',
-    'user-booked': 'bg-yellow-100'
+    'available': 'bg-green-400',
+    'booked': 'bg-blue-400',
+    'closed': 'bg-red-400',
+    'user-booked': 'bg-red-400',
+    'not-in-api': '#fff'
   };
   
   statusTextMap = {
     'available': 'Trống',
     'booked': 'Hết chỗ',
     'closed': 'Đã đóng',
-    'user-booked': 'Đã đặt'
+    'user-booked': 'Đã đặt',
+    'not-in-api': 'Không có lịch'
   };
-
-  // Dữ liệu cố định
-  fixedFieldData: FixedDataSlot[] = [
-    {
-      id: 1,
-      status: 'available',
-      date: '2025-03-20',
-      startTime: '07:00',
-      endTime: '08:00',
-      note: ''
-    },
-    {
-      id: 2,
-      status: 'booked',
-      bookedBy: '7c5e5a7a-3e85-4c4b-adf9-cc64ad277798',
-      date: '2025-03-24',
-      startTime: '08:00',
-      endTime: '09:00',
-      note: 'Đặt bởi anh Minh - SĐT: 0912345678'
-    },
-    {
-      id: 3,
-      status: 'booked',
-      bookedBy: '7c5e5a7a-3e85-4c4b-adf9-cc64ad277798',
-      date: '2025-03-24',
-      startTime: '09:00',
-      endTime: '10:00',
-      note: 'Đội 11 người, có thuê trọng tài riêng'
-    },
-    {
-      id: 4,
-      status: 'closed',
-      date: '2025-03-20',
-      startTime: '10:00',
-      endTime: '11:00',
-      note: 'Bảo trì hệ thống đèn chiếu sáng'
-    },
-    {
-      id: 5,
-      status: 'available',
-      date: '2025-03-19',
-      startTime: '11:00',
-      endTime: '12:00',
-      note: ''
-    },
-    {
-      id: 6,
-      status: 'booked',
-      bookedBy: '7c5e5a7a-3e85-4c4b-adf9-cc64ad277798',
-      date: '2025-03-20',
-      startTime: '12:00',
-      endTime: '13:00',
-      note: 'Đặt trước 3 ngày, đã đặt cọc 50%'
-    },
-    {
-      id: 7,
-      status: 'booked',
-      bookedBy: '70d4518e-9aec-443a-992f-8b9b4ea61cd0', // Giả sử đây là lịch của người dùng hiện tại
-      date: '2025-03-20',
-      startTime: '13:00',
-      endTime: '14:00',
-      note: 'Cần chuẩn bị phòng thay đồ cho 22 người'
-    },
-    {
-      id: 8,
-      status: 'available',
-      date: '2025-03-21',
-      startTime: '14:00',
-      endTime: '15:00',
-      note: ''
-    },
-    {
-      id: 9,
-      status: 'available',
-      date: '2025-03-22',
-      startTime: '07:00',
-      endTime: '08:00',
-      note: ''
-    },
-    {
-      id: 10,
-      status: 'closed',
-      date: '2025-03-23',
-      startTime: '08:00',
-      endTime: '09:00',
-      note: 'Yêu cầu 2 bình nước lớn và khăn lạnh'
-    },
-    {
-      id: 11,
-      status: 'booked',
-      bookedBy: '70d4518e-9aec-443a-992f-8b9b4ea61cd0', // Giả sử đây là lịch của người dùng hiện tại
-      date: '2025-03-22',
-      startTime: '09:00',
-      endTime: '10:00',
-      note: 'Đã thanh toán đầy đủ, cần hóa đơn VAT'
-    },
-    {
-      id: 12,
-      status: 'booked',
-      bookedBy: '7c5e5a7a-3e85-4c4b-adf9-cc64ad277798',
-      date: '2025-03-24',
-      startTime: '10:00',
-      endTime: '11:00',
-      note: 'Trận đấu giao hữu giữa hai công ty'
-    },
-    {
-      id: 13,
-      status: 'closed',
-      date: '2025-03-21',
-      startTime: '11:00',
-      endTime: '12:00',
-      note: 'Bảo dưỡng định kỳ'
-    },
-    {
-      id: 14,
-      status: 'available',
-      date: '2025-03-20',
-      startTime: '12:00',
-      endTime: '13:00',
-      note: ''
-    },
-    {
-      id: 15,
-      status: 'available',
-      date: '2025-03-22',
-      startTime: '13:00',
-      endTime: '14:00',
-      note: ''
-    }
-  ];
 
   constructor(
     private fb: FormBuilder,
@@ -260,13 +124,27 @@ export class FeildsSheduleComponent implements OnInit{
     this.currentWeekStart.setHours(0, 0, 0, 0);
   }
   
-  // Tạo các mốc thời gian trong ngày
+  // Tạo các mốc thời gian trong ngày (1.5 giờ mỗi slot)
   generateTimeRanges(): void {
-    // Tạo các khung giờ từ 7:00 đến 21:00
-    for (let hour = 6; hour <= 21; hour++) {
+    // Tạo các khung giờ từ 5:00 đến 23:00, mỗi slot 1.5 giờ
+    const startHour = 5;
+    const endHour = 23;
+    
+    for (let hour = startHour; hour < endHour; hour += 1.5) {
+      const fullHour = Math.floor(hour);
+      const minute = (hour - fullHour) * 60;
+      
+      const nextHour = hour + 1.5;
+      const nextFullHour = Math.floor(nextHour);
+      const nextMinute = (nextHour - nextFullHour) * 60;
+      
+      const startTimeStr = `${fullHour.toString().padStart(2, '0')}:${minute === 0 ? '00' : '30'}`;
+      const endTimeStr = `${nextFullHour.toString().padStart(2, '0')}:${nextMinute === 0 ? '00' : '30'}`;
+      
       this.timeRanges.push({
-        hour,
-        label: `${hour}:00 - ${hour + 1}:00`
+        hour: fullHour,
+        minute: minute,
+        label: `${startTimeStr} - ${endTimeStr}`
       });
     }
   }
@@ -325,109 +203,95 @@ export class FeildsSheduleComponent implements OnInit{
     }
   }
 
-  // Lấy dữ liệu lịch từ dữ liệu cố định
+  // Lấy dữ liệu lịch từ API
   fetchTimeSlots(): void {
     this.isLoading = true;
     try {
-      // Sử dụng dữ liệu cố định thay vì gọi API
-      this.convertFixedDataToTimeSlots();
+      // Sử dụng dữ liệu từ API
+      if (this.detailInfo && this.detailInfo.calendar) {
+        this.processApiData();
+      } else {
+        console.error('Không có dữ liệu từ API');
+        this.createEmptySlots();
+      }
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu:', error);
+      this.createEmptySlots();
     } finally {
       this.isLoading = false;
     }
   }
   
-  // Chuyển đổi dữ liệu cố định thành TimeSlot
-  convertFixedDataToTimeSlots(): void {
+  // Xử lý dữ liệu từ API
+  processApiData(): void {
     const slots: TimeSlot[] = [];
-    const isUserLoggedIn = this.isLoggedIn();
+    // Tham khảo dữ liệu từ API
+    const calendarData = this.detailInfo.calendar || [];
     
     // Lặp qua mỗi ngày trong tuần
     for (let dayIndex = 0; dayIndex < this.weekDays.length; dayIndex++) {
       const currentDate = this.weekDays[dayIndex];
       const dateString = this.formatDateForComparison(currentDate);
       
-      // Lọc các slot thuộc về ngày hiện tại
-      const daySlots = this.fixedFieldData.filter(slot => 
-        slot.date === dateString
-      );
-      
-      // Nếu không có dữ liệu cho ngày này, tạo slot mặc định
-      if (daySlots.length === 0) {
-        // Tạo các slot mặc định cho ngày này
-        for (let timeRange of this.timeRanges) {
-          const hour = timeRange.hour;
+      // Lặp qua các khoảng thời gian
+      for (let timeRangeIndex = 0; timeRangeIndex < this.timeRanges.length; timeRangeIndex++) {
+        const timeRange = this.timeRanges[timeRangeIndex];
+        
+        // Tạo đối tượng thời gian cho slot
+        const startTime = new Date(currentDate);
+        startTime.setHours(timeRange.hour, timeRange.minute, 0, 0);
+        
+        // Tính thời gian kết thúc (1.5 giờ sau)
+        const endTime = new Date(startTime);
+        if (timeRange.minute === 0) {
+          endTime.setHours(timeRange.hour + 1, 30, 0, 0);
+        } else {
+          endTime.setHours(timeRange.hour + 2, 0, 0, 0);
+        }
+        
+        // Format thời gian để so sánh với API
+        const startTimeStr = `${timeRange.hour.toString().padStart(2, '0')}:${timeRange.minute === 0 ? '00' : '30'}`;
+        const endTimeStr = endTime.getHours().toString().padStart(2, '0') + ":" + (endTime.getMinutes() === 0 ? '00' : '30');
+        
+        // Tìm slot từ API có cùng ngày và thời gian
+        const apiSlot = calendarData.find((slot: any) => {
+          const apiStartDate = new Date(slot.startDate);
+          const apiDateStr = this.formatDateForComparison(apiStartDate);
           
-          const startTime = new Date(currentDate);
-          startTime.setHours(hour, 0, 0, 0);
-          
-          const endTime = new Date(currentDate);
-          endTime.setHours(hour + 1, 0, 0, 0);
-          
+          return apiDateStr === dateString && 
+                slot.startTime === startTimeStr && 
+                slot.endTime === endTimeStr;
+        });
+        
+        if (apiSlot) {
+          // Nếu tìm thấy thông tin từ API
+          const status = apiSlot.status === 0 ? 'available' : 
+                        apiSlot.status === 1 ? 'booked' : 'closed';
+                        
           slots.push({
             id: slots.length + 1,
             day: dayIndex,
             week: this.currentWeekIndex,
             startTime,
             endTime,
-            status: 'available',
-            title: '',
+            status,
+            title: status !== 'available' ? this.statusTextMap[status] : '',
+            description: apiSlot.note || '',
+            slotId: apiSlot.slotId,
+            finalPrice: apiSlot.finalPrice
+          });
+        } else {
+          // Không tìm thấy dữ liệu từ API, đánh dấu là "not-in-api"
+          slots.push({
+            id: slots.length + 1,
+            day: dayIndex,
+            week: this.currentWeekIndex,
+            startTime,
+            endTime,
+            status: 'not-in-api',
+            title: this.statusTextMap['not-in-api'],
             description: ''
           });
-        }
-      } else {
-        // Sử dụng dữ liệu có sẵn cho ngày này
-        for (let timeRange of this.timeRanges) {
-          const hour = timeRange.hour;
-          const hourString = `${hour.toString().padStart(2, '0')}:00`;
-          
-          // Tìm slot có thời gian bắt đầu khớp với giờ hiện tại
-          const matchingSlot = daySlots.find(slot => 
-            slot.startTime === hourString
-          );
-          
-          const startTime = new Date(currentDate);
-          startTime.setHours(hour, 0, 0, 0);
-          
-          const endTime = new Date(currentDate);
-          endTime.setHours(hour + 1, 0, 0, 0);
-          
-          if (matchingSlot) {
-            // Xử lý trạng thái dựa vào việc người dùng đã đăng nhập hay chưa
-            let status: any = matchingSlot.status;
-            
-            // Nếu đã đăng nhập, kiểm tra xem có phải slot do người dùng đặt không
-            if (isUserLoggedIn && matchingSlot.status === 'booked' && matchingSlot.bookedBy === this.currentUserId) {
-              status = 'user-booked';
-            }
-            
-            slots.push({
-              id: matchingSlot.id,
-              day: dayIndex,
-              week: this.currentWeekIndex,
-              startTime,
-              endTime,
-              status: status,
-              bookedBy: matchingSlot.bookedBy,
-              title: matchingSlot.status !== 'available' ? 
-                  (status === 'user-booked' ? 'Đã đặt' : 
-                   matchingSlot.status === 'booked' ? 'Hết chỗ' : 'Đã đóng') : '',
-              description: matchingSlot.note
-            });
-          } else {
-            // Nếu không tìm thấy, tạo slot mặc định
-            slots.push({
-              id: slots.length + 1,
-              day: dayIndex,
-              week: this.currentWeekIndex,
-              startTime,
-              endTime,
-              status: 'available',
-              title: '',
-              description: ''
-            });
-          }
         }
       }
     }
@@ -435,24 +299,45 @@ export class FeildsSheduleComponent implements OnInit{
     this.timeSlots = slots;
   }
   
-  // Lấy class CSS cho slot dựa vào trạng thái
-  getSlotClass(dayIndex: number, timeHour: number): string {
-    const slot = this.getSlot(dayIndex, timeHour);
-    if (slot) {
-      if (slot.status === 'available') return '';
-      if (slot.status === 'booked') return 'bg-blue-100';
-      if (slot.status === 'closed') return 'bg-gray-100';
-      if (slot.status === 'user-booked') return 'bg-yellow-100';
+  // Tạo các slot trống khi không có dữ liệu
+  createEmptySlots(): void {
+    const slots: TimeSlot[] = [];
+    
+    // Lặp qua mỗi ngày trong tuần
+    for (let dayIndex = 0; dayIndex < this.weekDays.length; dayIndex++) {
+      const currentDate = this.weekDays[dayIndex];
+      
+      // Lặp qua các khoảng thời gian
+      for (let timeRangeIndex = 0; timeRangeIndex < this.timeRanges.length; timeRangeIndex++) {
+        const timeRange = this.timeRanges[timeRangeIndex];
+        
+        const startTime = new Date(currentDate);
+        startTime.setHours(timeRange.hour, timeRange.minute, 0, 0);
+        
+        const endTime = new Date(startTime);
+        if (timeRange.minute === 0) {
+          endTime.setHours(timeRange.hour + 1, 30, 0, 0);
+        } else {
+          endTime.setHours(timeRange.hour + 2, 0, 0, 0);
+        }
+        
+        slots.push({
+          id: slots.length + 1,
+          day: dayIndex,
+          week: this.currentWeekIndex,
+          startTime,
+          endTime,
+          status: 'not-in-api',
+          title: this.statusTextMap['not-in-api'],
+          description: ''
+        });
+      }
     }
-    return '';
+    
+    this.timeSlots = slots;
   }
   
-  // Lấy text hiển thị cho trạng thái slot
-  getSlotStatusText(slot: TimeSlot): string {
-    return this.statusTextMap[slot.status];
-  }
-  
-  // Format ngày để so sánh với dữ liệu cố định
+  // Format ngày để so sánh với dữ liệu API
   formatDateForComparison(date: Date): string {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -460,11 +345,12 @@ export class FeildsSheduleComponent implements OnInit{
     return `${year}-${month}-${day}`;
   }
   
-  // Lấy các slot theo ngày và giờ
-  getSlot(dayIndex: number, timeHour: number): TimeSlot | undefined {
+  // Lấy slot theo ngày và giờ
+  getSlot(dayIndex: number, timeRangeIndex: number): TimeSlot | undefined {
     return this.timeSlots.find(slot => 
       slot.day === dayIndex && 
-      slot.startTime.getHours() === timeHour
+      slot.startTime.getHours() === this.timeRanges[timeRangeIndex].hour &&
+      slot.startTime.getMinutes() === this.timeRanges[timeRangeIndex].minute
     );
   }
   
@@ -472,7 +358,6 @@ export class FeildsSheduleComponent implements OnInit{
     if (!this.isLoggedIn()) {
       // Lưu URL hiện tại vào localStorage
       localStorage.setItem('redirectUrl', window.location.pathname);
-      // Thêm flag thông báo cần hiển thị
       localStorage.setItem('requiresLogin', 'true');
       this.isVisible = true;
       return;
@@ -490,13 +375,13 @@ export class FeildsSheduleComponent implements OnInit{
     if (slot.status === 'available') {
       this.isVisibleBook = true;
     } else if (slot.status === 'user-booked') {
-      // Nếu là slot đã đặt bởi người dùng hiện tại
       this.isVisibleDetail = true;
     } else if (slot.status === 'booked') {
-      // Nếu là slot đã đặt bởi người khác
-      // this.isVisibleDetail = true;
+      // Slot đã đặt bởi người khác
     } else if (slot.status === 'closed') {
       this.isVisibleClosed = true;
+    } else if (slot.status === 'not-in-api') {
+      // Slot không có trong API
     }
   }
 

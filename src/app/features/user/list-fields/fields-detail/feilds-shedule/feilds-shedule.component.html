@@ -1,77 +1,81 @@
 <div>
   <div class="mb-4 flex flex-wrap gap-2">
     <div class="flex items-center">
-      <div class="w-4 h-4 bg-green-100 mr-1"></div>
+      <div class="w-4 h-4 bg-green-400 mr-1"></div>
       <span>Trống</span>
     </div>
     <div class="flex items-center">
-      <div class="w-4 h-4 bg-blue-100 mr-1"></div>
+      <div class="w-4 h-4 bg-blue-400 mr-1"></div>
       <span>Hết chỗ</span>
     </div>
     <div class="flex items-center">
-      <div class="w-4 h-4 bg-gray-100 mr-1"></div>
+      <div class="w-4 h-4 bg-red-400 mr-1"></div>
       <span>Đã đóng</span>
     </div>
+    <div class="flex items-center">
+      <div class="w-4 h-4 bg-white mr-1 border"></div>
+      <span>Không có lịch</span>
+    </div>
     <div *ngIf="isLoggedIn()" class="flex items-center">
-      <div class="w-4 h-4 bg-yellow-100 mr-1"></div>
+      <div class="w-4 h-4 bg-yellow-400 mr-1"></div>
       <span>Đã đặt</span>
     </div>
   </div>
     
-    <!-- Điều hướng tuần -->
-    <div class="flex justify-between items-center mb-4">
-      <button 
-        class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed" 
-        (click)="previousWeek()" 
-        [disabled]="!canGoPrevious()"
-      >
-        Tuần trước
-      </button>
-      
-      <h2 class="text-xl font-bold">{{ getCurrentWeekName() }}</h2>
-      
-      <button 
-        class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed" 
-        (click)="nextWeek()" 
-        [disabled]="!canGoNext()"
-      >
-        Tuần sau
-      </button>
-    </div>
+  <!-- Điều hướng tuần -->
+  <div class="flex justify-between items-center mb-4">
+    <button 
+      class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed" 
+      (click)="previousWeek()" 
+      [disabled]="!canGoPrevious()"
+    >
+      Tuần trước
+    </button>
     
-    <!-- Thời khóa biểu -->
-    <div class="w-full overflow-x-auto">
-      <table class="w-full border-collapse">
-        <thead>
-          <tr>
-            <th class="border p-2 bg-gray-100 w-20">Thời gian</th>
-            <th *ngFor="let day of weekDays; let i = index" class="border p-2 bg-gray-300">
-              {{ dayNames[day.getDay()] }} <br>
-              <span class="text-sm">{{ formatDate(day) }}</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let timeRange of timeRanges">
-            <td class="border p-2 font-medium text-center whitespace-nowrap">
-              {{ timeRange.label }}
-            </td>
-            <td *ngFor="let day of weekDays; let dayIndex = index" 
-                class="border p-2 relative h-[60px] align-top"
-                [ngClass]="getSlot(dayIndex, timeRange.hour)?.status ? statusColorMap[getSlot(dayIndex, timeRange.hour)!.status] : ''">
-              
-              <div *ngIf="getSlot(dayIndex, timeRange.hour) as slot" 
-                  class="w-full h-full cursor-pointer" 
-                  (click)="selectSlot(slot)">
-                <div class="absolute top-1 right-1 text-xs font-medium">
-                  {{ statusTextMap[slot.status] }}
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <h2 class="text-xl font-bold">{{ getCurrentWeekName() }}</h2>
+    
+    <button 
+      class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed" 
+      (click)="nextWeek()" 
+      [disabled]="!canGoNext()"
+    >
+      Tuần sau
+    </button>
+  </div>
+    
+  <!-- Thời khóa biểu -->
+  <div class="w-full overflow-x-auto">
+    <table class="w-full border-collapse">
+      <thead>
+        <tr>
+          <th class="border p-2 bg-gray-100 w-20">Thời gian</th>
+          <th *ngFor="let day of weekDays; let i = index" class="border p-2 bg-gray-300">
+            {{ dayNames[day.getDay()] }} <br>
+            <span class="text-sm">{{ formatDate(day) }}</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let timeRange of timeRanges; let timeIndex = index">
+          <td class="border p-2 font-medium text-center whitespace-nowrap">
+            {{ timeRange.label }}
+          </td>
+          <td *ngFor="let day of weekDays; let dayIndex = index" 
+              class="border p-2 relative h-[60px] align-top"
+              [ngClass]="getSlot(dayIndex, timeIndex)?.status ? statusColorMap[getSlot(dayIndex, timeIndex)!.status] : ''">
+            
+            <div *ngIf="getSlot(dayIndex, timeIndex) as slot" 
+                class="w-full h-full cursor-pointer" 
+                (click)="selectSlot(slot)">
+              <!-- <div class="absolute top-1 right-1 text-xs font-medium">
+                {{ statusTextMap[slot.status] }}
+              </div> -->
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
   
 <app-modal-book [isVisibleBook]="isVisibleBook" [slot]="slot" [detailInfo]="detailInfo" (changeVisibleBook)="handleChangeVisibleBook($event)"></app-modal-book>

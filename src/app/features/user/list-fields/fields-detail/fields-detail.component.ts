@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FeildsSheduleComponent } from './feilds-shedule/feilds-shedule.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { FacilityService } from '../../../../core/api/facility.service';
+import { BookService } from '../../../../core/api/book.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 interface TimeSlot {
   id: number;
@@ -39,9 +37,9 @@ export class FieldsDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private message: NzMessageService,
     private cdr: ChangeDetectorRef,
-    private facilityService: FacilityService,
+    private bookService: BookService,
+    private notification: NzNotificationService
   ){}
 
   ngOnInit(): void {
@@ -51,13 +49,16 @@ export class FieldsDetailComponent implements OnInit {
 
   getViewInfo(): void {
     if (!this.idFacility) return;
-
-    this.facilityService.getFacilityById(this.idFacility).subscribe({
+    this.bookService.getCalendarIdByCustomer(this.idFacility).subscribe({
       next: (res) => {
-        this.selectedField = res;
+        this.selectedField = res.data;
       },
       error: (err) => {
-        this.message.error('Không thể lấy thông tin sân!');
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Không thể lấy thông tin sân!'
+        );
       }
     });
   }

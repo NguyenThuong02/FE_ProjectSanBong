@@ -208,7 +208,7 @@ export class ScheduleOwnerBookComponent {
       case 'AVAILABLE': return 'bg-green-100 hover:bg-green-200';
       case 'BOOKED': return 'bg-red-100 hover:bg-red-200';
       case 'CLOSED': return 'bg-gray-100 hover:bg-gray-200';
-      case 'NOT_AVAILABLE': return 'bg-yellow-100 hover:bg-yellow-200';
+      case 'NOT_AVAILABLE': return 'bg-white-100 hover:bg-white-200';
       default: return '';
     }
   }
