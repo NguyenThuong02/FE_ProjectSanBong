@@ -7,6 +7,9 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { phoneNumberValidator } from '../../../../../shared/validate/check-phone-number.directive';
+import { BookService } from '../../../../../core/api/book.service';
+import { ActivatedRoute } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-modal-book',
@@ -22,7 +25,8 @@ import { phoneNumberValidator } from '../../../../../shared/validate/check-phone
     ReactiveFormsModule,
   ],
   templateUrl: './modal-book.component.html',
-  styleUrl: './modal-book.component.scss'
+  styleUrl: './modal-book.component.scss',
+  providers: [DatePipe]
 })
 export class ModalBookComponent {
   isVNPayModalVisible = false;
@@ -40,7 +44,10 @@ export class ModalBookComponent {
 
   constructor(
     private fb: FormBuilder,
-    private notification: NzNotificationService
+    private bookService: BookService,
+    private route: ActivatedRoute,
+    private notification: NzNotificationService,
+    private datePipe: DatePipe
   ) {}
 
   handleOk(): void {
@@ -57,14 +64,50 @@ export class ModalBookComponent {
       );
       return;
     }
-    console.log('Form data:', this.form.value);
-    // Tiếp tục xử lý đặt sân
-    this.notification.success(
-      'Thành công',
-      'Đặt sân thành công',
-      { nzDuration: 3000 }
-    );
-    this.changeVisibleBook.emit(false);
+
+    const formattedBookingDate = this.slot.startDate;
+    let formattedStartTime = this.slot.startTime;
+    let formattedEndTime = this.slot.endTime;
+
+    if (this.slot.startTime instanceof Date) {
+      formattedStartTime = this.datePipe.transform(this.slot.startTime, 'HH:mm');
+    }
+    
+    if (this.slot.endTime instanceof Date) {
+      formattedEndTime = this.datePipe.transform(this.slot.endTime, 'HH:mm');
+    }
+
+    const body = {
+      facilityTimeSlotId: this.slot.slotId,
+      facilityId: this.route.snapshot.paramMap.get('id'),
+      bookingDate: formattedBookingDate, // Send the original date format
+      startTime: formattedStartTime,
+      endTime: formattedEndTime,
+      customerName: this.form.value.nameCustomer,
+      customerPhone: this.form.value.cellPhone,
+      paymentMethod: this.form.value.paymentMethod,
+      note: this.form.value.description,
+      finalPrice: this.slot.finalPrice
+    }
+    
+    // Rest of the code remains the same
+    this.bookService.createBooking(body).subscribe({
+      next: (res) => {
+        this.notification.success(
+          'Thành công',
+          'Đặt sân thành công',
+          { nzDuration: 3000 }
+        );
+        this.changeVisibleBook.emit(false);
+      },
+      error: (err) => {
+        this.notification.error(
+          'Thất bại',
+          'Đặt sân không thành công',
+          { nzDuration: 3000 }
+        );
+      }
+    })
   }
 
   onPaymentMethodChange(event: Event){

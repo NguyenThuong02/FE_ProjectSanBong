@@ -25,12 +25,11 @@ export class BookService {
   }
 
   getSlotDetail(id?: any, date?: any, startTime?: any, endTime?: any): Observable<any> {
-    return this.http.get(this.apiUrl + `/api/booking/calendar/slot-detail
-      ?slotId=${id}
-      &date=${date}
-      &startTime=${startTime}
-      &endTime=${endTime}
-      `);
+    return this.http.get(this.apiUrl + `/api/booking/calendar/slot-detail?slotId=${encodeURIComponent(id)}&date=${encodeURIComponent(date)}&startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}`);
+  }
+
+  createBooking(body?: any): Observable<any> {
+    return this.http.post(this.apiUrl + `/api/booking/create`, body);
   }
 
   getAllManagement(page: number, pageSize: number): Observable<any> {

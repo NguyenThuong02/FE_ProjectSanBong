@@ -33,9 +33,9 @@
                     <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Chủ sân</div>
                     <div class="flex flex-col items-start w-full">
                         <div class="h-[40px] w-full px-[10px] py-[8px] text-[16px] text-[#434657] font-medium">
-                            Nguyễn Thanh Thưởng
+                            {{slot.ownerFullName}}
                         </div>
-                        <div class="h-[40px] w-full px-[10px] py-[8px] text-[#82869E]">0981973347</div>
+                        <div class="h-[40px] w-full px-[10px] py-[8px] text-[#82869E]">{{slot.ownerPhone}}</div>
                     </div>
                 </div>
             </div>
@@ -43,13 +43,13 @@
                 <div class="w-[30%] flex flex-col">
                     <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Tên sân</div>
                     <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657] font-medium">
-                        {{detailInfo.name}}
+                        {{slot.facilityName}}
                     </div>
                 </div>
                 <div class="w-[15%] flex flex-col">
                     <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Ngày đặt</div>
                     <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
-                        {{ slot.date}}
+                        {{ slot.startDate | date:'dd/MM/yyyy'}}
                     </div>
                 </div>
                 <div class="w-[15%] flex flex-col">
@@ -59,8 +59,8 @@
                     </div>
                 </div>
                 <div class="w-[20%] flex flex-col">
-                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Giá sân</div>
-                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">100.000 (VND)</div>
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Giá cuối</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">{{slot.finalPrice}}</div>
                 </div>
                 <div class="w-[20%] flex flex-col">
                     <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Cọc (30% giá sân)</div>
@@ -70,7 +70,7 @@
             <div class="w-full flex flex-col border">
                 <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Địa chỉ</div>
                 <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
-                    {{detailInfo.address}}
+                    {{slot.facilityAddress}}
                 </div>
             </div>
             <!-- Phương thức thanh toán -->

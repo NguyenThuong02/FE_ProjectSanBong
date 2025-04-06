@@ -8,6 +8,8 @@ import { PopupNeedLoginComponent } from '../popup-need-login/popup-need-login.co
 import { ModalBookComponent } from '../modal-book/modal-book.component';
 import { ModalDetailComponent } from '../modal-detail/modal-detail.component';
 import { ModalCloseComponent } from '../modal-close/modal-close.component';
+import { BookService } from '../../../../../core/api/book.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 interface TimeSlot {
   id: number;
@@ -77,6 +79,8 @@ export class FeildsSheduleComponent implements OnInit{
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router,   
+    private bookService: BookService,
+    private notification: NzNotificationService,
     private oauthService: OAuthService 
   ) {
     this.bookingForm = this.fb.group({
@@ -354,6 +358,54 @@ export class FeildsSheduleComponent implements OnInit{
     );
   }
   
+  // selectSlot(slot: TimeSlot): void {
+  //   if (!this.isLoggedIn()) {
+  //     // Lưu URL hiện tại vào localStorage
+  //     localStorage.setItem('redirectUrl', window.location.pathname);
+  //     localStorage.setItem('requiresLogin', 'true');
+  //     this.isVisible = true;
+  //     return;
+  //   }
+    
+  //   // Định dạng thông tin slot
+  //   const formattedSlot = {
+  //     ...slot,
+  //     date: this.formatDateForDisplay(slot.startTime)
+  //   };
+    
+  //   this.slot = formattedSlot;
+  //   const body = {
+  //     slotId: slot.slotId,
+  //     date: formattedSlot.date,
+  //     startTime: formattedSlot.startTime,
+  //     endTime: formattedSlot.endTime
+  //   }
+  //   console.log("Bodddy: ", body)
+  //   this.bookService.getSlotDetail(slot.slotId, formattedSlot.date, formattedSlot.startTime, formattedSlot.endTime).subscribe({
+  //     next: (res) => {
+        
+  //     },
+  //     error: (err) => {
+  //       this.notification.create(
+  //         'error',
+  //         'Thất bại!',
+  //         'Không thể lấy thông tin sân!'
+  //       );
+  //     }
+  //   })
+  //   // Xử lý dựa vào trạng thái của slot
+  //   if (slot.status === 'available') {
+  //     this.isVisibleBook = true;
+  //   } else if (slot.status === 'user-booked') {
+  //     this.isVisibleDetail = true;
+  //   } else if (slot.status === 'booked') {
+  //     // Slot đã đặt bởi người khác
+  //   } else if (slot.status === 'closed') {
+  //     this.isVisibleClosed = true;
+  //   } else if (slot.status === 'not-in-api') {
+  //     // Slot không có trong API
+  //   }
+  // }
   selectSlot(slot: TimeSlot): void {
     if (!this.isLoggedIn()) {
       // Lưu URL hiện tại vào localStorage
@@ -371,6 +423,27 @@ export class FeildsSheduleComponent implements OnInit{
     
     this.slot = formattedSlot;
     
+    // Format startTime và endTime thành chuỗi "HH:MM"
+    const formattedStartTime = this.formatTimeForApi(slot.startTime);
+    const formattedEndTime = this.formatTimeForApi(slot.endTime);  
+    this.bookService.getSlotDetail(
+      slot.slotId, 
+      formattedSlot.date, 
+      formattedStartTime, 
+      formattedEndTime
+    ).subscribe({
+      next: (res) => {
+        this.slot = res.data
+      },
+      error: (err) => {
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Không thể lấy thông tin sân!'
+        );
+      }
+    })
+    
     // Xử lý dựa vào trạng thái của slot
     if (slot.status === 'available') {
       this.isVisibleBook = true;
@@ -383,6 +456,11 @@ export class FeildsSheduleComponent implements OnInit{
     } else if (slot.status === 'not-in-api') {
       // Slot không có trong API
     }
+  }
+  formatTimeForApi(date: Date): string {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
 
   formatDateForDisplay(date: Date): string {
