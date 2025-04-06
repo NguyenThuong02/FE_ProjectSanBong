@@ -17,7 +17,11 @@ export class BookService {
   }
 
   getCalendarIdByCustomer(id?: any): Observable<any> {
-    return this.http.get(this.apiUrl + `/api/booking/customer-calendar/` + id);
+    return this.http.get(this.apiUrl + `/api/booking/guest-calendar?facilityId=${id}`);
+  }
+
+  getCalendarIdByCustomerLogin(id?: any): Observable<any> {
+    return this.http.get(this.apiUrl + `/api/booking/calendar/customer/` + id);
   }
 
   getSlotDetail(id?: any, date?: any, startTime?: any, endTime?: any): Observable<any> {

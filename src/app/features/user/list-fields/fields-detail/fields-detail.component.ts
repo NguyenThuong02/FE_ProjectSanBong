@@ -5,6 +5,7 @@ import { FeildsSheduleComponent } from './feilds-shedule/feilds-shedule.componen
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BookService } from '../../../../core/api/book.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 interface TimeSlot {
   id: number;
@@ -39,7 +40,8 @@ export class FieldsDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private bookService: BookService,
-    private notification: NzNotificationService
+    private notification: NzNotificationService,
+    private oauthService: OAuthService 
   ){}
 
   ngOnInit(): void {
@@ -47,20 +49,40 @@ export class FieldsDetailComponent implements OnInit {
     this.getViewInfo();
   }
 
+  isLoggedIn(): boolean {
+    return this.oauthService.hasValidAccessToken();
+  }
+
   getViewInfo(): void {
     if (!this.idFacility) return;
-    this.bookService.getCalendarIdByCustomer(this.idFacility).subscribe({
-      next: (res) => {
-        this.selectedField = res.data;
-      },
-      error: (err) => {
-        this.notification.create(
-          'error',
-          'Thất bại!',
-          'Không thể lấy thông tin sân!'
-        );
-      }
-    });
+    
+    if (this.isLoggedIn()) {
+      this.bookService.getCalendarIdByCustomerLogin(this.idFacility).subscribe({
+        next: (res) => {
+          this.selectedField = res.data;
+        },
+        error: (err) => {
+          this.notification.create(
+            'error',
+            'Thất bại!',
+            'Không thể lấy thông tin sân!'
+          );
+        }
+      });
+    } else {
+      this.bookService.getCalendarIdByCustomer(this.idFacility).subscribe({
+        next: (res) => {
+          this.selectedField = res.data;
+        },
+        error: (err) => {
+          this.notification.create(
+            'error',
+            'Thất bại!',
+            'Không thể lấy thông tin sân!'
+          );
+        }
+      });
+    }
   }
 
   nextShedule() {
