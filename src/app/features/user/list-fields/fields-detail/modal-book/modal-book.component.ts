@@ -50,65 +50,67 @@ export class ModalBookComponent {
     private datePipe: DatePipe
   ) {}
 
-  handleOk(): void {
-    if (this.form.invalid) {
-      Object.keys(this.form.controls).forEach(key => {
-        const control = this.form.get(key);
-        control?.markAsTouched();
-      });
-      
-      this.notification.warning(
-        'Thông báo',
-        'Vui lòng điền đầy đủ thông tin bắt buộc',
+handleOk(): void {
+  if (this.form.invalid) {
+    Object.keys(this.form.controls).forEach(key => {
+      const control = this.form.get(key);
+      control?.markAsTouched();
+    });
+    
+    this.notification.warning(
+      'Thông báo',
+      'Vui lòng điền đầy đủ thông tin bắt buộc',
+      { nzDuration: 3000 }
+    );
+    return;
+  }
+
+  const formattedBookingDate = this.slot.startDate;
+  let formattedStartTime = this.slot.startTime;
+  let formattedEndTime = this.slot.endTime;
+
+  if (this.slot.startTime instanceof Date) {
+    formattedStartTime = this.datePipe.transform(this.slot.startTime, 'HH:mm');
+  }
+  
+  if (this.slot.endTime instanceof Date) {
+    formattedEndTime = this.datePipe.transform(this.slot.endTime, 'HH:mm');
+  }
+
+  const body = {
+    facilityTimeSlotId: this.slot.slotId,
+    facilityId: this.route.snapshot.paramMap.get('id'),
+    bookingDate: formattedBookingDate, 
+    startTime: formattedStartTime,
+    endTime: formattedEndTime,
+    customerName: this.form.value.nameCustomer,
+    customerPhone: this.form.value.cellPhone,
+    paymentMethod: this.form.value.paymentMethod,
+    note: this.form.value.description,
+    finalPrice: this.slot.finalPrice,
+    // Add the missing required fields
+    ownerFullName: this.slot.ownerFullName,
+    ownerPhone: this.slot.ownerPhone
+  }
+
+  this.bookService.createBooking(body).subscribe({
+    next: (res) => {
+      this.notification.success(
+        'Thành công',
+        'Đặt sân thành công',
         { nzDuration: 3000 }
       );
-      return;
+      this.changeVisibleBook.emit(false);
+    },
+    error: (err) => {
+      this.notification.error(
+        'Thất bại',
+        'Đặt sân không thành công',
+        { nzDuration: 3000 }
+      );
     }
-
-    const formattedBookingDate = this.slot.startDate;
-    let formattedStartTime = this.slot.startTime;
-    let formattedEndTime = this.slot.endTime;
-
-    if (this.slot.startTime instanceof Date) {
-      formattedStartTime = this.datePipe.transform(this.slot.startTime, 'HH:mm');
-    }
-    
-    if (this.slot.endTime instanceof Date) {
-      formattedEndTime = this.datePipe.transform(this.slot.endTime, 'HH:mm');
-    }
-
-    const body = {
-      facilityTimeSlotId: this.slot.slotId,
-      facilityId: this.route.snapshot.paramMap.get('id'),
-      bookingDate: formattedBookingDate, // Send the original date format
-      startTime: formattedStartTime,
-      endTime: formattedEndTime,
-      customerName: this.form.value.nameCustomer,
-      customerPhone: this.form.value.cellPhone,
-      paymentMethod: this.form.value.paymentMethod,
-      note: this.form.value.description,
-      finalPrice: this.slot.finalPrice
-    }
-    
-    // Rest of the code remains the same
-    this.bookService.createBooking(body).subscribe({
-      next: (res) => {
-        this.notification.success(
-          'Thành công',
-          'Đặt sân thành công',
-          { nzDuration: 3000 }
-        );
-        this.changeVisibleBook.emit(false);
-      },
-      error: (err) => {
-        this.notification.error(
-          'Thất bại',
-          'Đặt sân không thành công',
-          { nzDuration: 3000 }
-        );
-      }
-    })
-  }
+  })
+}
 
   onPaymentMethodChange(event: Event){
     this.isVNPayModalVisible = true;

@@ -110,10 +110,10 @@ export class ConcertByOwnerAddComponent implements OnInit{
     
     this.concertService.getEventById(this.idFacility).subscribe({
       next: (res) => {
-        if (res.data) {
+        if (res) {
           // Parse the ISO date strings from the API response
-          const startDateTime = new Date(res.data.startDate);
-          const endDateTime = new Date(res.data.endDate);
+          const startDateTime = new Date(res.startTime);
+          const endDateTime = new Date(res.endTime);
           
           // Format start time as HH:MM for the form
           const startHours = String(startDateTime.getHours()).padStart(2, '0');
@@ -126,20 +126,20 @@ export class ConcertByOwnerAddComponent implements OnInit{
           const endTime = `${endHours}:${endMinutes}`;
           
           this.form.patchValue({
-            name: res.data.title,
-            type: res.data.eventType,
-            address: '', // Set a default value or leave as null if not in response
+            name: res.title,
+            type: res.eventType,
+            address: res.address,
             startDate: startDateTime,
             startTime: startTime,
             endDate: endDateTime,
             endTime: endTime,
-            description: res.data.description,
-            imageUrl: res.data.imageUrl
+            description: res.description,
+            imageUrl: res.imageUrl
           });
           
-          if (res.data.imageUrl) {
-            this.imagePreview = res.data.imageUrl;
-            this.selectedFileName = this.extractFileNameFromUrl(res.data.imageUrl);
+          if (res.imageUrl) {
+            this.imagePreview = res.imageUrl;
+            this.selectedFileName = this.extractFileNameFromUrl(res.imageUrl);
           }
         }
       },
@@ -320,11 +320,11 @@ export class ConcertByOwnerAddComponent implements OnInit{
     if(!this.isEdit) {
       const body = {
         title: this.form.get('name')?.value,
-        // address: this.form.get('address')?.value,
+        address: this.form.get('address')?.value,
         description: this.form.get('description')?.value,
         eventType: this.form.get('type')?.value,
-        startDate: startDate,
-        endDate: endDate,
+        startTime: startDate,
+        endTime: endDate,
         imageUrl: this.form.get('imageUrl')?.value,
       };
       this.concertService.createEvent(body).subscribe({
@@ -349,13 +349,13 @@ export class ConcertByOwnerAddComponent implements OnInit{
     } else {
       const body = {
         id: this.idFacility,
-        ownerId: this.idOwner,
+        // ownerId: this.idOwner,
         title: this.form.get('name')?.value,
         address: this.form.get('address')?.value,
         description: this.form.get('description')?.value,
         eventType: this.form.get('type')?.value,
-        startDate: startDate,
-        endDate: endDate,
+        startTime: startDate,
+        endTime: endDate,
         imageUrl: this.form.get('imageUrl')?.value,
       };      
       this.concertService.updateEvent(body).subscribe({

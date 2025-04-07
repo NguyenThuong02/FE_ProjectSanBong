@@ -8,10 +8,10 @@
     </div>
     <div class="w-full flex items-start px-5 mt-7 gap-8">
         <div class="w-[50%] flex flex-col gap-5">
-            <img class="object-cover w-full h-[400px]" [src]="selectedEvent.image"/>
+            <img class="object-cover w-full h-[400px]" [src]="selectedEvent.imageUrl"/>
         </div>
         <div class="w-[50%] flex flex-col items-start justify-start gap-3">
-            <div class="text-[30px] font-semibold">{{selectedEvent.name}}</div>
+            <div class="text-[30px] font-semibold">{{selectedEvent.title}}</div>
             <div class="text-[17px] leading-[120%] mt-1 font-semibold">
                 <i class="fa-solid fa-location-dot"></i>
                 Địa chỉ: 
@@ -20,12 +20,12 @@
             <div class="text-[17px] leading-[120%] mt-1 font-semibold">
                 <i class="fa-solid fa-clock"></i>
                 Ngày bắt đầu: 
-                <span class="font-normal">{{selectedEvent?.startDate | date:'HH:mm dd/MM/yyyy'}}</span>
+                <span class="font-normal">{{selectedEvent?.startTime | date:'HH:mm dd/MM/yyyy'}}</span>
             </div>
             <div class="text-[17px] leading-[120%] mt-1 font-semibold">
                 <i class="fa-solid fa-clock-rotate-left"></i>
                 Ngày kết thúc: 
-                <span class="font-normal">{{selectedEvent?.endDate | date:'HH:mm dd/MM/yyyy'}}</span>
+                <span class="font-normal">{{selectedEvent?.endTime | date:'HH:mm dd/MM/yyyy'}}</span>
             </div>
             <div class="text-[16px] leading-[120%] border-t border-[#AAA] py-3 w-full">
                 <span class="font-normal">{{selectedEvent.description}}</span>

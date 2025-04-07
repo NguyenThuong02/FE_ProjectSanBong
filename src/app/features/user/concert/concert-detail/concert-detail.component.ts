@@ -38,7 +38,7 @@ export class ConcertDetailComponent implements OnInit{
 
     this.concertService.getEventById(this.idEvent).subscribe({
       next: (res) => {
-        this.selectedEvent = res.data;
+        this.selectedEvent = res;
         this.cdr.detectChanges();
       },
       error: (err) => {

@@ -43,16 +43,16 @@
                 {{item?.eventType}}
               </td>
               <td >
-                {{item?.name}}
+                {{item?.title}}
               </td>
               <td >
                 <div class="flex justify-center"><img class="object-cover w-[100px] h-[60px]" [src]="item.imageUrl"/></div>
               </td>
               <td >
-                {{item?.startDate | date:'HH:mm dd/MM/yyyy'}}
+                {{item?.startTime | date:'HH:mm dd/MM/yyyy'}}
               </td>
               <td> 
-                {{item?.endDate | date:'HH:mm dd/MM/yyyy'}}
+                {{item?.endTime | date:'HH:mm dd/MM/yyyy'}}
               </td>
               <td class="relative">
                 <i class="fa-solid fa-ellipsis-vertical cursor-pointer p-4 hover:scale-105 hover:text-primary" (click)="toggleMenu(item.id)"></i>

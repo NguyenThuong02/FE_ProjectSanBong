@@ -46,10 +46,10 @@
             <div *ngIf="!isLoading && listEvents.length > 0" class="flex flex-col w-full items-start gap-4 mt-8 list-events">
                 <div *ngFor="let item of listEvents" class="flex flex-col w-full items-start p-2 shadow-shadow-timeword border bg-[#fcfbfb]">
                     <div class="w-full text-[16px] font-semibold text-start mt-2">{{item?.title}}</div>
-                    <div class="w-full text-[15px] font-normal text-start mt-[2px]">Từ: <span class="italic font-medium">{{item?.startDate | date:'HH:mm dd/MM/yyyy'}}</span> 
-                        đến <span class="italic font-medium">{{item?.endDate | date:'HH:mm dd/MM/yyyy'}}</span></div>
+                    <div class="w-full text-[15px] font-normal text-start mt-[2px]">Từ: <span class="italic font-medium">{{item?.startTime | date:'HH:mm dd/MM/yyyy'}}</span> 
+                        đến <span class="italic font-medium">{{item?.endTime | date:'HH:mm dd/MM/yyyy'}}</span></div>
                     <div class="w-full text-[15px] font-normal text-start mt-[2px]">
-                        Địa chỉ: <span>24 Hoàng Quốc Việt, Nam Từ Liêm, Hà Nội.</span>
+                        Địa chỉ: <span>{{item.address}}</span>
                     </div>
                     <div class="w-full flex justify-start items-start gap-5 mt-[10px]">
                         <div class="w-[260px] h-[180px]">
