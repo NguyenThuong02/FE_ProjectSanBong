@@ -14,6 +14,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FacilityService } from '../../../../core/api/facility.service';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { TextEditorComponent } from '../../../../shared/components/text-editor/text-editor.component';
 
 @Component({
   selector: 'app-add-facility',
@@ -31,6 +32,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
     TranslateModule,
     NzButtonModule,
     ReactiveFormsModule,
+    TextEditorComponent, // Add the TextEditorComponent to imports
   ],
   templateUrl: './add-facility.component.html',
   styleUrl: './add-facility.component.scss'
@@ -266,5 +268,12 @@ export class AddFacilityComponent implements OnInit {
         }
       });
     }
+  }
+
+  // Add this method to handle content changes from the editor
+  onEditorContentChanged(content: string): void {
+    this.form.patchValue({
+      description: content
+    });
   }
 }
