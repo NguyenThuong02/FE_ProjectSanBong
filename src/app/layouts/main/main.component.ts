@@ -250,6 +250,7 @@ export class MainComponent implements OnInit, OnChanges {
     }
     const routeTitles: { [key: string]: string } = {
       '/user-management': 'Danh sách tài khoản',
+      '/email-template': 'Cấu hình email',
       '/statistical/list': 'Thống kê',
       '/setting': 'Cài đặt',
       '/facility/list': 'Quản lý sân',

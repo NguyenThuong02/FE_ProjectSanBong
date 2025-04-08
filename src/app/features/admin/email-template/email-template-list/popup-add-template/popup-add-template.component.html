@@ -1,0 +1,19 @@
+<nz-modal nzWidth="750px" [(nzVisible)]="isVisible" nzCentered [nzContent]="modalContent"
+    [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()" class="rounded-xl">
+
+    <ng-template #modalContent>
+        <form [formGroup]="form" class="flex flex-col gap-[10px] w-full">
+            <div class="isEdit">Nguyễn Thanh Thưởng</div>
+        </form>
+    </ng-template>
+
+    <ng-template #modalFooter>
+        <div class="flex justify-center gap-9">
+            <button class="px-6 py-2 w-[120px] bg-[#969696] text-[#fff] font-medium rounded-lg" nz-button nzType="default" (click)="handleCancel()">Quay lại</button>
+            <button nz-button nzType="primary"
+            class="!bg-[#14b82e] px-5 py-2 text-[#fff] font-medium rounded-lg"
+            (click)="handleOk()">Đồng ý</button>
+        </div>
+    </ng-template>
+</nz-modal>
+

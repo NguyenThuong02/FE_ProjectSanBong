@@ -1,0 +1,24 @@
+<div class="h-[100vh] w-full p-10">
+    <div class="w-full flex justify-between items-center">
+        <div class="text-[24px] text-primary font-semibold">Danh sách cấu hình email</div>
+        <div (click)="addTemplate()" class="flex justify-center items-center gap-2 text-white bg-primary">
+            <i class="fa-solid fa-plus"></i>
+            Thêm cấu hình email
+        </div>
+    </div>
+    <div class="w-full">
+        <div *ngIf="isLoading" class="w-full flex justify-center my-8">
+            <div class="text-center">Đang tải dữ liệu...</div>
+        </div>
+        <div *ngIf="!isLoading && listTemplates.length === 0" class="w-full flex justify-center my-8">
+            <div class="text-center">Không tìm thấy cấu hình nào</div>
+        </div>
+        <div *ngIf="!isLoading && listTemplates.length > 0" >
+            <div *ngFor="let item of listTemplates"  class="flex-shrink-0 pb-2 flex flex-col grid-cols-1 shadow-shadow-timeword rounded-md">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-popup-add-template [isVisible]="isVisible" [idTemplate]="idTemplate" [isEdit]="isEdit"></app-popup-add-template>

@@ -95,6 +95,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'email-template',
+        loadChildren: () =>
+          import('../../features/admin/email-template/email-template.routing.module').then(
+            (m) => m.EmailTemplateRoutingModule,
+          ),
+      },
+      {
         path: 'user-management',
         loadChildren: () =>
           import('../../features/admin/management/management.routing.module').then(
