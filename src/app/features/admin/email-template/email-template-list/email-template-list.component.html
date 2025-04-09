@@ -1,7 +1,7 @@
-<div class="h-[100vh] w-full p-10">
-    <div class="w-full flex justify-between items-center">
+<div class="w-full mt-5 px-10 pb-10">
+    <div class="w-full flex justify-between items-center mb-5">
         <div class="text-[24px] text-primary font-semibold">Danh sách cấu hình email</div>
-        <div (click)="addTemplate()" class="flex justify-center items-center gap-2 text-white bg-primary">
+        <div (click)="addTemplate()" class="flex justify-center items-center gap-2 p-2 rounded-xl text-[15px] text-white bg-primary cursor-pointer">
             <i class="fa-solid fa-plus"></i>
             Thêm cấu hình email
         </div>
@@ -14,11 +14,30 @@
             <div class="text-center">Không tìm thấy cấu hình nào</div>
         </div>
         <div *ngIf="!isLoading && listTemplates.length > 0" >
-            <div *ngFor="let item of listTemplates"  class="flex-shrink-0 pb-2 flex flex-col grid-cols-1 shadow-shadow-timeword rounded-md">
-
+            <div *ngFor="let item of listTemplates"  class="flex-shrink-0 border text-[15px] p-[12px] flex flex-col grid-cols-1 shadow-shadow-timeword rounded-md gap-2 mb-5">
+                <div *ngIf="item.templateName" class="flex w-full items-start">
+                    <div class="font-semibold w-[35%] text-left">Template Name</div>
+                    <div class="font-semibold w-[65%] text-left"> {{item.templateName}} </div>
+                </div>
+                <div *ngIf="item.subject" class="flex w-full items-start">
+                    <div class="font-semibold w-[35%] text-left">Subject</div>
+                    <div class="font-normal w-[65%] text-left"> {{item.subject}} </div>
+                </div>
+                <div *ngIf="item.body" class="flex w-full items-start">
+                    <div class="font-semibold w-[35%] text-left">Body</div>
+                    <div class="font-normal w-[65%] text-left" [innerHTML]="item.body"></div>
+                </div>
+                <div class="flex w-full items-start">
+                    <div class="font-semibold w-[35%] text-left"></div>
+                    <div class="w-[65%] flex items-center justify-start gap-3">
+                        <div (click)="viewTemplateDetail(item.id)" class="text-primary font-medium cursor-pointer hover:scale-105">Chi tiết</div>
+                        <div (click)="viewDeleta(item)" class="text-red-500 font-medium cursor-pointer hover:scale-105">Xoá</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<app-popup-add-template [isVisible]="isVisible" [idTemplate]="idTemplate" [isEdit]="isEdit"></app-popup-add-template>
+<app-popup-add-template [isVisible]="isVisible" [idTemplate]="idTemplate" [isEdit]="isEdit" (changeVisibleDetail)="handleVisibilityChange($event)"></app-popup-add-template>
+<app-popup-delete-template [isVisibleDelete]="isVisibleDelete"  [item]="item" (changeVisibleDelete)="handleChangeVisibleDelete($event)"></app-popup-delete-template>
