@@ -3,7 +3,25 @@
 
     <ng-template #modalContent>
         <form [formGroup]="form" class="flex flex-col gap-[10px] w-full">
-            <div class="isEdit">Nguyễn Thanh Thưởng</div>
+            <div class="text-left font-semibold text-[22px]">{{isEdit ? "Chỉnh sửa cấu hình email" : "Thêm mới cấu hình email"}}</div>
+            <div class="w-full flex flex-col border">
+                <div class="h-[40px] uppercase bg-[#F8F8FC] font-semibold text-[#82869E] p-[10px]">Template name</div>
+                <input formControlName="templateName" placeholder="Nhập tên cấu hình" class="w-full outline-none px-[10px] py-[8px]">
+            </div>
+            <div class="w-full flex flex-col border">
+                <div class="h-[40px] uppercase bg-[#F8F8FC] font-semibold text-[#82869E] p-[10px]">Subject</div>
+                <input formControlName="subject" placeholder="Nhập tiêu đề" class="w-full outline-none px-[10px] py-[8px]">
+            </div>
+            <div class="w-full flex flex-col border">
+                <div class="h-[40px] uppercase bg-[#F8F8FC] font-semibold text-[#82869E] p-[10px]">Body</div>
+                <textarea
+                    id="body" 
+                    formControlName="body"
+                    placeholder="Nhập nội dung email"
+                    class="w-full outline-none px-[10px] py-[8px]"
+                    rows="6"
+                ></textarea>
+            </div>
         </form>
     </ng-template>
 
@@ -12,7 +30,7 @@
             <button class="px-6 py-2 w-[120px] bg-[#969696] text-[#fff] font-medium rounded-lg" nz-button nzType="default" (click)="handleCancel()">Quay lại</button>
             <button nz-button nzType="primary"
             class="!bg-[#14b82e] px-5 py-2 text-[#fff] font-medium rounded-lg"
-            (click)="handleOk()">Đồng ý</button>
+            (click)="handleOk()">{{isEdit ? 'Cập nhật' : 'Tạo mới'}}</button>
         </div>
     </ng-template>
 </nz-modal>
