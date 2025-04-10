@@ -7,6 +7,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { EmailTemplateService } from '../../../../../core/api/email-template.service';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 @Component({
   selector: 'app-popup-add-template',
@@ -20,6 +22,7 @@ import { EmailTemplateService } from '../../../../../core/api/email-template.ser
     MatFormFieldModule,
     MatSelectModule,
     ReactiveFormsModule,
+    CKEditorModule
   ],
   templateUrl: './popup-add-template.component.html',
   styleUrl: './popup-add-template.component.scss'
@@ -29,7 +32,7 @@ export class PopupAddTemplateComponent implements OnChanges {
   @Input() isEdit!: boolean;
   @Input() idTemplate: any;
   @Output() changeVisibleDetail = new EventEmitter<any>();
-
+  public Editor = ClassicEditor;
   public form: FormGroup = this.fb.group({
     templateName: ['', Validators.required],
     subject: ['', Validators.required],
@@ -137,11 +140,3 @@ export class PopupAddTemplateComponent implements OnChanges {
     this.changeVisibleDetail.emit(false);
   }
 }
-        // () => {
-        //   this.notification.success('Thành công', 'Tạo cấu hình email thành công');
-        //   this.handleCancel();
-        // },
-        // error => {
-        //   this.notification.error('Lỗi', 'Không thể tạo cấu hình email');
-        //   console.error('Error creating template:', error);
-        // }

@@ -1,0 +1,30 @@
+:host ::ng-deep .ck-editor {
+  height: 100%;
+  width: 100%;
+  overflow: visible;
+}
+
+:host ::ng-deep .ck-editor__main {
+  height: calc(100% - 39px);
+  min-height: 200px;
+}
+
+:host ::ng-deep .ck-content {
+  height: 100%;
+  min-height: 200px;
+}
+
+:host ::ng-deep .ck-toolbar {
+  z-index: 10 !important;
+  position: relative !important;
+}
+
+:host ::ng-deep .avatar-uploader > .ant-upload {
+  width: 85px;
+  height: 45px;
+}
+
+:host ::ng-deep .avatar-uploader.ant-upload-picture-card-wrapper {
+  width: fit-content !important;
+}
+  

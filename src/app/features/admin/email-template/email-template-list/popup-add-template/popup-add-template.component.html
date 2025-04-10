@@ -14,13 +14,15 @@
             </div>
             <div class="w-full flex flex-col border">
                 <div class="h-[40px] uppercase bg-[#F8F8FC] font-semibold text-[#82869E] p-[10px]">Body</div>
-                <textarea
+                <!-- <textarea
                     id="body" 
                     formControlName="body"
                     placeholder="Nhập nội dung email"
                     class="w-full outline-none px-[10px] py-[8px]"
                     rows="6"
-                ></textarea>
+                ></textarea> -->
+                <ckeditor class="w-full !h-full" [editor]="Editor" formControlName="body">
+                </ckeditor>
             </div>
         </form>
     </ng-template>
