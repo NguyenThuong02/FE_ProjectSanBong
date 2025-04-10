@@ -107,7 +107,10 @@ handleOk(): void {
         'Đặt sân thành công',
         { nzDuration: 3000 }
       );
-      this.changeVisibleBook.emit(false);
+      this.form.reset({
+        paymentMethod: 'cash'
+      });
+      this.changeVisibleBook.emit({ visible: false, success: true });
     },
     error: (err) => {
       this.notification.error(
@@ -131,6 +134,6 @@ handleOk(): void {
     this.form.reset({
       paymentMethod: 'cash'
     });
-    this.changeVisibleBook.emit(false);
+    this.changeVisibleBook.emit({ visible: false, success: false });
   }
 }

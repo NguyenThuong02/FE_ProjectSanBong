@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { PopupNeedLoginComponent } from '../popup-need-login/popup-need-login.component';
 import { ModalBookComponent } from '../modal-book/modal-book.component';
@@ -56,7 +56,8 @@ export class FeildsSheduleComponent implements OnInit{
   isVisibleClosed: boolean = false;
   slot: any;
   currentUserId: string = '';
-  @Input() detailInfo: any;
+  idFacility: any;
+  detailInfo: any;
   dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
   
   statusColorMap = {
@@ -81,6 +82,7 @@ export class FeildsSheduleComponent implements OnInit{
     private router: Router,   
     private bookService: BookService,
     private notification: NzNotificationService,
+    private route: ActivatedRoute,
     private oauthService: OAuthService 
   ) {
     this.bookingForm = this.fb.group({
@@ -97,7 +99,8 @@ export class FeildsSheduleComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    // Lấy ID người dùng hiện tại (nếu đã đăng nhập)
+    this.idFacility = this.route.snapshot.paramMap.get('id');
+    this.getViewInfo();
     if (this.isLoggedIn()) {
       this.getCurrentUserId();
     }
@@ -106,12 +109,45 @@ export class FeildsSheduleComponent implements OnInit{
     this.generateWeekDays();
     
     // Tải dữ liệu cho tuần hiện tại
-    this.fetchTimeSlots();
   }
   
   // Kiểm tra xem người dùng đã đăng nhập chưa
   isLoggedIn(): boolean {
     return this.oauthService.hasValidAccessToken();
+  }
+
+  getViewInfo(): void {
+    if (!this.idFacility) return;
+    
+    if (this.isLoggedIn()) {
+      this.bookService.getCalendarIdByCustomerLogin(this.idFacility).subscribe({
+        next: (res) => {
+          this.detailInfo = res.data;
+          this.fetchTimeSlots();
+        },
+        error: (err) => {
+          this.notification.create(
+            'error',
+            'Thất bại!',
+            'Không thể lấy thông tin sân!'
+          );
+        }
+      });
+    } else {
+      this.bookService.getCalendarIdByCustomer(this.idFacility).subscribe({
+        next: (res) => {
+          this.detailInfo = res.data;
+          this.fetchTimeSlots();
+        },
+        error: (err) => {
+          this.notification.create(
+            'error',
+            'Thất bại!',
+            'Không thể lấy thông tin sân!'
+          );
+        }
+      });
+    }
   }
   
   // Lấy ID người dùng hiện tại từ token
@@ -451,6 +487,9 @@ export class FeildsSheduleComponent implements OnInit{
 
   handleChangeVisibleBook(data: any) {
     this.isVisibleBook = data.visible;
+    if(data.success === true) {
+      this.getViewInfo();
+    }
   }
 
   handleChangeVisibleDetail(data: any) {
