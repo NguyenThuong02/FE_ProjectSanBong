@@ -63,7 +63,7 @@ export class FeildsSheduleComponent implements OnInit{
     'available': 'bg-green-400',
     'booked': 'bg-blue-400',
     'closed': 'bg-red-400',
-    'user-booked': 'bg-red-400',
+    'user-booked': 'bg-yellow-400',
     'not-in-api': '#fff'
   };
   
@@ -269,9 +269,20 @@ export class FeildsSheduleComponent implements OnInit{
         
         if (apiSlot) {
           // Nếu tìm thấy thông tin từ API
-          const status = apiSlot.status === 0 ? 'available' : 
-                        apiSlot.status === 1 ? 'booked' : 'closed';
-                        
+          // const status = apiSlot.status === 0 ? 'available' : 
+          //               apiSlot.status === 1 ? 'booked' : 'closed';
+          let status: 'available' | 'booked' | 'closed' | 'user-booked' | 'not-in-api';
+          if (apiSlot.status === 0) {
+            status = 'available';
+          } else if (apiSlot.status === 3) {
+            status = 'booked';
+          } else if (apiSlot.status === 2) {
+            status = 'closed';
+          } else if (apiSlot.status === 1) {
+            status = apiSlot.userId === this.currentUserId ? 'user-booked' : 'booked';
+          } else {
+            status = 'not-in-api';
+          }
           slots.push({
             id: slots.length + 1,
             day: dayIndex,
@@ -358,54 +369,6 @@ export class FeildsSheduleComponent implements OnInit{
     );
   }
   
-  // selectSlot(slot: TimeSlot): void {
-  //   if (!this.isLoggedIn()) {
-  //     // Lưu URL hiện tại vào localStorage
-  //     localStorage.setItem('redirectUrl', window.location.pathname);
-  //     localStorage.setItem('requiresLogin', 'true');
-  //     this.isVisible = true;
-  //     return;
-  //   }
-    
-  //   // Định dạng thông tin slot
-  //   const formattedSlot = {
-  //     ...slot,
-  //     date: this.formatDateForDisplay(slot.startTime)
-  //   };
-    
-  //   this.slot = formattedSlot;
-  //   const body = {
-  //     slotId: slot.slotId,
-  //     date: formattedSlot.date,
-  //     startTime: formattedSlot.startTime,
-  //     endTime: formattedSlot.endTime
-  //   }
-  //   console.log("Bodddy: ", body)
-  //   this.bookService.getSlotDetail(slot.slotId, formattedSlot.date, formattedSlot.startTime, formattedSlot.endTime).subscribe({
-  //     next: (res) => {
-        
-  //     },
-  //     error: (err) => {
-  //       this.notification.create(
-  //         'error',
-  //         'Thất bại!',
-  //         'Không thể lấy thông tin sân!'
-  //       );
-  //     }
-  //   })
-  //   // Xử lý dựa vào trạng thái của slot
-  //   if (slot.status === 'available') {
-  //     this.isVisibleBook = true;
-  //   } else if (slot.status === 'user-booked') {
-  //     this.isVisibleDetail = true;
-  //   } else if (slot.status === 'booked') {
-  //     // Slot đã đặt bởi người khác
-  //   } else if (slot.status === 'closed') {
-  //     this.isVisibleClosed = true;
-  //   } else if (slot.status === 'not-in-api') {
-  //     // Slot không có trong API
-  //   }
-  // }
   selectSlot(slot: TimeSlot): void {
     if (!this.isLoggedIn()) {
       // Lưu URL hiện tại vào localStorage
@@ -433,7 +396,13 @@ export class FeildsSheduleComponent implements OnInit{
       formattedEndTime
     ).subscribe({
       next: (res) => {
-        this.slot = res.data
+        if (res.data) {
+          // If the API doesn't return the date in the correct format, we set it
+          if (!res.data.date || res.data.date.indexOf('/') !== 4) {
+            res.data.date = formattedSlot.date;
+          }
+        }
+        this.slot = res.data;
       },
       error: (err) => {
         this.notification.create(
@@ -464,11 +433,16 @@ export class FeildsSheduleComponent implements OnInit{
   }
 
   formatDateForDisplay(date: Date): string {
-    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}/${month}/${day}`;
   }
   
   formatDate(date: Date): string {
-    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    return `${day}/${month}`;
   }
 
   handleChangeVisible(data: any) {

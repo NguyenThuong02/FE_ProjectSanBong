@@ -65,7 +65,14 @@ handleOk(): void {
     return;
   }
 
-  const formattedBookingDate = this.slot.startDate;
+  let formattedBookingDate = this.slot.startDate;
+  if (this.slot.startDate instanceof Date) {
+    formattedBookingDate = this.datePipe.transform(this.slot.startDate, 'yyyy-MM-dd');
+  } else if (typeof this.slot.startDate === 'string') {
+    // Parse the date string and ensure it's in the correct format yyyy-MM-dd
+    const dateObj = new Date(this.slot.startDate);
+    formattedBookingDate = this.datePipe.transform(dateObj, 'yyyy-MM-dd');
+  }
   let formattedStartTime = this.slot.startTime;
   let formattedEndTime = this.slot.endTime;
 
@@ -80,7 +87,7 @@ handleOk(): void {
   const body = {
     facilityTimeSlotId: this.slot.slotId,
     facilityId: this.route.snapshot.paramMap.get('id'),
-    bookingDate: formattedBookingDate, 
+    bookingDate: formattedBookingDate.toString(), 
     startTime: formattedStartTime,
     endTime: formattedEndTime,
     customerName: this.form.value.nameCustomer,
@@ -89,8 +96,8 @@ handleOk(): void {
     note: this.form.value.description,
     finalPrice: this.slot.finalPrice,
     // Add the missing required fields
-    ownerFullName: this.slot.ownerFullName,
-    ownerPhone: this.slot.ownerPhone
+    // ownerFullName: this.slot.ownerFullName, 
+    // ownerPhone: this.slot.ownerPhone
   }
 
   this.bookService.createBooking(body).subscribe({
