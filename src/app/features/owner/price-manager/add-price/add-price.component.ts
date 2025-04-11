@@ -14,6 +14,7 @@ import { FacilityService } from '../../../../core/api/facility.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { MatNativeDateModule } from '@angular/material/core';
 import { PriceService } from '../../../../core/api/price.service';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-add-price',
@@ -41,6 +42,9 @@ export class AddPriceComponent implements OnInit {
   isEdit: boolean = false;
   idPrice: any;
   listFacility: any;
+  imagePreview: string | null = null;
+  uploadProgress: number = 0;
+  selectedFileName: string = '';
   listTime: any = [
     {
       value: '05:00',
@@ -106,6 +110,8 @@ export class AddPriceComponent implements OnInit {
     deposit: [{value: null, disabled: true}],
     startDate: [null, Validators.required],
     endDate: [null, Validators.required],
+    imageUrl: [null],
+    imageName: [null]
   });
   
   constructor(
@@ -116,6 +122,7 @@ export class AddPriceComponent implements OnInit {
       private router: Router,
       private facilityService: FacilityService,
       private priceService: PriceService,
+      private http: HttpClient
   ) {}
   
   ngOnInit(): void {
@@ -171,7 +178,12 @@ export class AddPriceComponent implements OnInit {
           coefficient: res.coefficient,
           lastPrice: res.finalPrice,
           deposit: res.basePrice * 0.3,
+          imageUrl: res.priceImageUrl
         });
+        if (res.priceImageUrl) {
+          this.imagePreview = res.priceImageUrl;
+          this.selectedFileName = this.extractFileNameFromUrl(res.priceImageUrl);
+        }
       },
       error: (err) => {
         this.notification.create(
@@ -188,6 +200,68 @@ export class AddPriceComponent implements OnInit {
       .subscribe(res => {
         this.listFacility = res.data;
       });
+  }
+
+  extractFileNameFromUrl(url: string): string {
+    if (!url) return '';
+    // Lấy phần cuối của URL sau dấu '/'
+    const parts = url.split('/');
+    return parts[parts.length - 1];
+  }
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFileName = file.name;
+      this.form.patchValue({
+        imageName: file.name
+      });
+      
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagePreview = e.target.result;
+        this.cdr.detectChanges();
+      };
+      reader.readAsDataURL(file);
+      this.uploadFile(file);
+    }
+  }
+
+  uploadFile(file: File): void {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    this.http.post('https://cdn-test.eztek.net/gateway/Media/Upload', formData, {
+      reportProgress: true,
+      observe: 'events'
+    }).subscribe({
+      next: (event) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          this.uploadProgress = Math.round(100 * event.loaded / event.total);
+          this.cdr.detectChanges();
+        } else if (event.type === HttpEventType.Response) {
+          const response = event.body as any;
+          if (response && Array.isArray(response) && response.length > 0) {
+            this.form.patchValue({
+              imageUrl: response[0]
+            });
+            this.notification.create(
+              'success',
+              'Thành công!',
+              'Tải ảnh lên thành công!'
+            );
+          }
+        }
+      },
+      error: (err) => {
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Tải ảnh lên thất bại!'
+        );
+        this.uploadProgress = 0;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   handleSubmit(): void {
@@ -216,6 +290,7 @@ export class AddPriceComponent implements OnInit {
         endDate: this.form.get('endDate')?.value,
         basePrice: Number(this.form.get('price')?.value),
         coefficient: Number(this.form.get('coefficient')?.value),
+        priceImageUrl: this.form.get('imageUrl')?.value,
       };
       this.priceService.createPrice(body).subscribe({
         next: (res) => {
@@ -236,35 +311,35 @@ export class AddPriceComponent implements OnInit {
         }
       });
     } else {
-      // const body = {
-      //   id: this.idPrice,
-      //   ownerId: this.idOwner,
-      //   name: this.form.get('name')?.value,
-      //   address: this.form.get('address')?.value,
-      //   description: this.form.get('description')?.value,
-      //   facilityType: this.form.get('type')?.value,
-      //   price: this.form.get('price')?.value,
-      //   image: this.form.get('imageUrl')?.value,
-      //   status: 1
-      // };
-      // this.facilityService.updateFacility(body).subscribe({
-      //   next: (res) => {
-      //     this.notification.create(
-      //       'success',
-      //       'Thành công!',
-      //       'Cập nhật sân thành công!'
-      //     );
-      //     this.cdr.detectChanges();
-      //     this.router.navigate(['/facility/list']);
-      //   },
-      //   error: (err) => {
-      //     this.notification.create(
-      //       'error',
-      //       'Thất bại!',
-      //       'Cập nhật sân thất bại!'
-      //     );
-      //   }
-      // });
+      const body = {
+        id: this.idPrice,
+        facilityId: this.form.get('facility')?.value,
+        startTime: this.form.get('timeStart')?.value,
+        endTime: this.form.get('timeEnd')?.value,
+        startDate: this.form.get('startDate')?.value,
+        endDate: this.form.get('endDate')?.value,
+        basePrice: Number(this.form.get('price')?.value),
+        coefficient: Number(this.form.get('coefficient')?.value),
+        priceImageUrl: this.form.get('imageUrl')?.value,
+      };
+      this.priceService.updatedPrice(body).subscribe({
+        next: (res) => {
+          this.notification.create(
+            'success',
+            'Thành công!',
+            'Cập nhật giá thành công!'
+          );
+          this.cdr.detectChanges();
+          this.router.navigate(['/price']);
+        },
+        error: (err) => {
+          this.notification.create(
+            'error',
+            'Thất bại!',
+            'Cập nhật giá thất bại!'
+          );
+        }
+      });
     }
   }
 }

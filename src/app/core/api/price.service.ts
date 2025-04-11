@@ -16,6 +16,10 @@ export class PriceService {
     return this.http.post(this.apiUrl + `/api/facility-price/create-price`, body);
   }
 
+  updatedPrice(body?: any): Observable<any> {
+    return this.http.put(this.apiUrl + `/api/facility-price/update-price`, body);
+  }
+
   getAllPrice(page: number, pageSize: number, name: string = ''): Observable<any> {
     let url = this.apiUrl + `/api/facility-price/list-price?pageNumber=${page}&pageSize=${pageSize}`;
     if (name && name.trim() !== '') {

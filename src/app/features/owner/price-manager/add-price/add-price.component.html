@@ -119,6 +119,28 @@
                     </mat-form-field>
                 </div>
             </div>
+            <div class="flex w-full flex-col flex-1">
+                <span class="mb-1">Ảnh QR</span>
+                <div *ngIf="imagePreview" class="w-full flex flex-col items-center gap-1 justify-center mb-2">
+                    <img [src]="imagePreview" alt="Preview" class="max-w-[300px] max-h-[200px] object-cover border rounded">
+                    <div class="mt-1 text-sm text-gray-700 italic">{{ selectedFileName }}</div>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center">
+                        <button type="button" class="bg-[#353535] border-none flex justify-center items-center gap-1 text-white px-4 py-2 rounded" (click)="fileInput.click()">
+                            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                            Tải ảnh mã QR thanh toán
+                        </button>
+                        <input hidden type="file" #fileInput (change)="onFileSelected($event)" accept="image/*">
+                        <span *ngIf="uploadProgress > 0 && uploadProgress < 100" class="ml-3">
+                            Đang tải lên: {{ uploadProgress }}%
+                        </span>
+                    </div>
+                    <div *ngIf="form.get('imageUrl')?.value" class="text-green-600 text-sm">
+                        Ảnh đã được tải lên thành công
+                    </div>
+                </div>
+            </div>
         </form>
         <div class="flex justify-center items-center mt-[80px] gap-4">
             <div [routerLink]="['/facility/list']" class="rounded-lg px-3 py-2 font-semibold text-white bg-[#BAC1CC] cursor-pointer">

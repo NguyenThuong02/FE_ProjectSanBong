@@ -73,42 +73,48 @@
                     {{slot.facilityAddress}}
                 </div>
             </div>
-            <!-- Phương thức thanh toán -->
-            <div class="w-full flex flex-col border">
-                <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Phương thức thanh toán</div>
-                <div class="p-[10px]">
-                    <div class="flex items-center mb-2">
-                        <input 
-                            type="radio" 
-                            id="cash" 
-                            name="paymentMethod"
-                            formControlName="paymentMethod" 
-                            value="cash" 
-                            class="mr-2"
-                        >
-                        <label for="cash" class="text-[15px] text-[#434657] flex justify-start items-center gap-[6px]">
-                            <img class="object-cover h-[26px] w-[26px]"  src="../../../../../../assets/img/CODbank.jpg"/>
-                            Thanh toán bằng tiền mặt
-                        </label>
+            <!-- Mã QR thanh toán -->
+            <div class="w-full flex items-center gap-[10px] border">
+                <div class="w-[50%] flex flex-col border">
+                    <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Mã QR thanh toán</div>
+                    <div class="flex flex-col items-center justify-center w-full h-[300px] p-4">
+                        <div class="flex flex-col items-center">
+                            <img src="../../../../../../assets/img/QRVnpay.jpg" alt="QR Code" class="object-contain max-w-[200px] max-h-[200px] mb-2"/>
+                            <p class="text-sm text-gray-600 mt-2">Quét mã QR để thanh toán tiền cọc</p>
+                            <p class="text-sm font-medium text-green-600 mt-1">30.000 VND</p>
+                        </div>
                     </div>
-                    <div class="flex items-center">
-                        <input 
-                            type="radio" 
-                            id="vnpay" 
-                            name="paymentMethod"
-                            formControlName="paymentMethod" 
-                            value="vnpay" 
-                            class="mr-2"
-                            (change)="onPaymentMethodChange($event)"
-                        >
-                        <label for="vnpay" class="text-[15px] text-[#434657] flex justify-start items-center gap-[6px]">
-                            <img class="object-cover h-[26px] w-[26px]"  src="../../../../../../assets/img/vnpayBank.png"/>
-                            Thanh toán qua VNPay
-                        </label>
-                    </div>
-                    <span *ngIf="form.get('paymentMethod')?.invalid && form.get('paymentMethod')?.touched" class="text-red-500 text-sm">
-                        <i class="fa-solid fa-triangle-exclamation"></i> Vui lòng chọn phương thức thanh toán.
-                    </span>
+                </div>
+                <div class="w-[50%] flex flex-col border">
+                    <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Ảnh bill thanh toán</div>
+                    <!-- <div class="flex flex-col items-center justify-center w-full h-[300px] p-4">
+                        <div *ngIf="!paymentImage" class="flex flex-col items-center justify-center h-full w-full">
+                            <div 
+                                class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition-colors w-full h-full flex flex-col items-center justify-center"
+                                (click)="fileInput.click()"
+                            >
+                                <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-gray-500">Nhấp để tải lên ảnh bill thanh toán</p>
+                                <p class="text-xs text-gray-400 mt-1">Hỗ trợ: JPG, PNG, JPEG</p>
+                            </div>
+                            <input 
+                                #fileInput 
+                                type="file" 
+                                accept="image/*" 
+                                class="hidden" 
+                                (change)="onFileSelected($event)"
+                            />
+                        </div>
+                        <div *ngIf="paymentImage" class="relative h-full w-full flex items-center justify-center">
+                            <img [src]="paymentImage" alt="Payment Bill" class="object-contain max-h-[250px] max-w-full rounded"/>
+                            <button 
+                                class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md"
+                                (click)="removeImage()"
+                            >
+                                <i class="fa-solid fa-times text-xs"></i>
+                            </button>
+                        </div>
+                    </div> -->
                 </div>
             </div>
             <div class="w-full flex flex-col border">
