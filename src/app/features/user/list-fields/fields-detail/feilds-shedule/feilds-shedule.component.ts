@@ -11,13 +11,14 @@ import { ModalCloseComponent } from '../modal-close/modal-close.component';
 import { BookService } from '../../../../../core/api/book.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 
+// Update the TimeSlot interface to include the new status
 interface TimeSlot {
   id: number;
   day: number;
   week: number; 
   startTime: Date;
   endTime: Date;
-  status: 'available' | 'booked' | 'closed' | 'user-booked' | 'not-in-api';
+  status: 'available' | 'booked' | 'closed' | 'user-booked' | 'not-in-api' | 'waiting-approval';
   bookedBy?: string;
   title?: string;
   description?: string;
@@ -65,6 +66,7 @@ export class FeildsSheduleComponent implements OnInit{
     'booked': 'bg-blue-400',
     'closed': 'bg-red-400',
     'user-booked': 'bg-yellow-400',
+    'waiting-approval': 'bg-gray-400',
     'not-in-api': '#fff'
   };
   
@@ -73,6 +75,7 @@ export class FeildsSheduleComponent implements OnInit{
     'booked': 'Hết chỗ',
     'closed': 'Đã đóng',
     'user-booked': 'Đã đặt',
+    'waiting-approval': 'Chờ phê duyệt',
     'not-in-api': 'Không có lịch'
   };
 
@@ -307,13 +310,15 @@ export class FeildsSheduleComponent implements OnInit{
           // Nếu tìm thấy thông tin từ API
           // const status = apiSlot.status === 0 ? 'available' : 
           //               apiSlot.status === 1 ? 'booked' : 'closed';
-          let status: 'available' | 'booked' | 'closed' | 'user-booked' | 'not-in-api';
+          let status: 'available' | 'booked' | 'closed' | 'user-booked' | 'waiting-approval' | 'not-in-api';
           if (apiSlot.status === 0) {
             status = 'available';
           } else if (apiSlot.status === 3) {
             status = 'booked';
           } else if (apiSlot.status === 2) {
             status = 'closed';
+          } else if (apiSlot.status === 4) {
+            status = 'waiting-approval';
           } else if (apiSlot.status === 1) {
             status = apiSlot.userId === this.currentUserId ? 'user-booked' : 'booked';
           } else {
