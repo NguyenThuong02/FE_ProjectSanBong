@@ -9,7 +9,7 @@ import { BookService } from '../../../../core/api/book.service';
 interface ScheduleSlot {
   date: Date;
   time: string;
-  status: 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE';
+  status: 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE' | 'WAITING_APPROVAL';
   price: number;
   description: string;
   slotId?: string;
@@ -119,10 +119,25 @@ export class ScheduleOwnerBookComponent {
         const startTime = slot.startTime;
         const endTime = slot.endTime;
         const timeSlot = `${startTime}-${endTime}`;
+        
+        // Determine status based on the API status value
+        let status: 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE' | 'WAITING_APPROVAL';
+        if (slot.status === 0) {
+          status = 'AVAILABLE';
+        } else if (slot.status === 1) {
+          status = 'BOOKED';
+        } else if (slot.status === 2) {
+          status = 'CLOSED';
+        } else if (slot.status === 4) {
+          status = 'WAITING_APPROVAL';
+        } else {
+          status = 'NOT_AVAILABLE';
+        }
+        
         this.scheduleData.push({
           date: startDate,
           time: timeSlot,
-          status: slot.status === 0 ? 'AVAILABLE' : 'BOOKED', 
+          status: status,
           price: slot.finalPrice,
           description: slot.note || '',
           slotId: slot.slotId
@@ -189,7 +204,7 @@ export class ScheduleOwnerBookComponent {
   }
 
   // Get slot status
-  getSlotStatus(date: Date, time: string): 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE' {
+  getSlotStatus(date: Date, time: string): 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE' | 'WAITING_APPROVAL' {
     const slot = this.scheduleData.find(s => 
       this.isSameDay(s.date, date) && s.time === time
     );
@@ -202,15 +217,25 @@ export class ScheduleOwnerBookComponent {
   }
 
   // Get CSS class based on slot status
-  getSlotClass(date: Date, time: string): string {
-    const status = this.getSlotStatus(date, time);
-    switch(status) {
-      case 'AVAILABLE': return 'bg-green-100 hover:bg-green-200';
-      case 'BOOKED': return 'bg-red-100 hover:bg-red-200';
-      case 'CLOSED': return 'bg-gray-100 hover:bg-gray-200';
-      case 'NOT_AVAILABLE': return 'bg-white-100 hover:bg-white-200';
+  getSlotClass(day: Date, time: string): string {
+    const slot = this.getSlot(day, time);
+    if (!slot) return '';
+    
+    switch (slot.status) {
+      case 'AVAILABLE': return 'bg-green-500 text-white';
+      case 'BOOKED': return 'bg-red-500 text-white';
+      case 'CLOSED': return 'bg-yellow-500 text-white';
+      case 'WAITING_APPROVAL': return 'bg-gray-400 text-white';
+      case 'NOT_AVAILABLE': return 'bg-white border';
       default: return '';
     }
+  }
+
+  // Get slot by date and time
+  getSlot(date: Date, time: string): ScheduleSlot | undefined {
+    return this.scheduleData.find(s => 
+      this.isSameDay(s.date, date) && s.time === time
+    );
   }
 
   // Open edit modal
@@ -300,7 +325,7 @@ export class ScheduleOwnerBookComponent {
   }
 
   // Get count by status for display in sidebar
-  getCountByStatus(status: 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE'): number {
+  getCountByStatus(status: 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE' | 'WAITING_APPROVAL'): number {
     return this.scheduleData.filter(slot => slot.status === status).length;
   }
 
