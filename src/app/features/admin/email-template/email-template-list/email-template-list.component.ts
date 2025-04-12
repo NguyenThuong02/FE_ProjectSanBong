@@ -41,7 +41,7 @@ export class EmailTemplateListComponent implements OnInit {
   loadTemplates() {
     this.isLoading = true;
     this.emailTemplateService.getAllTemplates().subscribe((res: any) => {
-      this.listTemplates = res;
+      this.listTemplates = res.data;
       this.isLoading = false;
       this.cdr.detectChanges();
     });
