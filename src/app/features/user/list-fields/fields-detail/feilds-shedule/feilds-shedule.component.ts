@@ -10,6 +10,7 @@ import { ModalDetailComponent } from '../modal-detail/modal-detail.component';
 import { ModalCloseComponent } from '../modal-close/modal-close.component';
 import { BookService } from '../../../../../core/api/book.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { ModalCancelComponent } from '../modal-cancel/modal-cancel.component';
 
 // Update the TimeSlot interface to include the new status
 interface TimeSlot {
@@ -36,7 +37,8 @@ interface TimeSlot {
     PopupNeedLoginComponent,
     ModalBookComponent,
     ModalDetailComponent,
-    ModalCloseComponent
+    ModalCloseComponent,
+    ModalCancelComponent
   ],
   templateUrl: './feilds-shedule.component.html',
   styleUrl: './feilds-shedule.component.scss'
@@ -55,6 +57,7 @@ export class FeildsSheduleComponent implements OnInit{
   isVisibleBook: boolean = false;
   isVisibleDetail: boolean = false;
   isVisibleClosed: boolean = false;
+  isVisibleCancel: boolean = false;
   slot: any;
   currentUserId: string = '';
   idFacility: any;
@@ -463,6 +466,8 @@ export class FeildsSheduleComponent implements OnInit{
       // Slot đã đặt bởi người khác
     } else if (slot.status === 'closed') {
       this.isVisibleClosed = true;
+    } else if (slot.status === 'waiting-approval') {
+      this.isVisibleCancel = true;
     } else if (slot.status === 'not-in-api') {
       // Slot không có trong API
     }
@@ -503,5 +508,9 @@ export class FeildsSheduleComponent implements OnInit{
 
   handleChangeVisibleClosed(data: any) {
     this.isVisibleClosed = data.visible;
+  }
+
+  handleChangeVisibleCancel(data: any) {
+    this.isVisibleCancel = data.visible;
   }
 }

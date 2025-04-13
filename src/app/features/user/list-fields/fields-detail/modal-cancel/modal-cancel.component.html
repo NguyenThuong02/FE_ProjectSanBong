@@ -1,0 +1,92 @@
+<nz-modal nzWidth="700px" [(nzVisible)]="isVisibleCancel" nzCentered [nzContent]="modalContent"
+    [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()" class="rounded-xl">
+
+    <ng-template #modalContent>
+        <div class="flex w-full flex-col gap-[10px]">
+            <div class="text-center !text-[20px] font-semibold">Lịch đặt của bạn</div>
+            <div class="w-[100%] flex flex-col border">
+                <div class="h-[40px] uppercase bg-[#F8F8FC] text-[#82869E] p-[10px]">Chủ sân</div>
+                <div class="flex items-center w-full">
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[16px] text-[#434657] font-medium">
+                        {{slot.ownerFullName}}
+                    </div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[#82869E]">{{slot.ownerPhone}}</div>
+                </div>
+            </div>
+            <div class="w-full border flex items-center">
+                <div class="w-[40%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Tên sân</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657] font-medium">
+                        {{slot.facilityName}}
+                    </div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Ngày</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
+                        {{ slot.startDate | date: 'dd/MM/yyyy'}}
+                    </div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Khung giờ</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657]">
+                        {{ slot.startTime }} - {{ slot.endTime }}
+                    </div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px] text-center">Trạng thái</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-gray-500 text-center">
+                        Chờ phê duyệt
+                    </div>
+                </div>
+            </div>
+            <div class="w-full border flex items-center">
+                <div class="w-[40%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Giá gốc</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657] font-semibold">
+                        {{formatCurrency(slot.basePrice)}} <span class="text-[12px]">(VND)</span>
+                    </div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Hệ số</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-red-500">
+                        {{slot.coefficient}}
+                    </div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Giá cuối</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657] font-semibold">
+                        {{formatCurrency(slot.finalPrice)}} <span class="text-[12px]">(VND)</span>
+                    </div>
+                </div>
+                <div class="w-[20%] flex flex-col">
+                    <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Đặt cọc</div>
+                    <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-green-500">
+                        {{formatCurrency(slot.deposit)}} <span class="text-[12px] text-[#434657] font-semibold">(VND)</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <img [src]="slot.priceImageUrl" alt="Booking Image" class="w-full max-h-[200px] object-contain border rounded">
+                <label class="block mt-2 text-center italic text-gray-500">Hoá đơn thanh toán</label>
+            </div>
+            <!-- <div class="w-full border flex flex-col">
+                <div class="h-[40px] bg-[#F8F8FC] text-[#82869E] p-[10px]">Mô tả</div>
+                <div class="h-[40px] w-full px-[10px] py-[8px] text-[15px] text-[#434657] font-medium">
+                    {{slot.note }}
+                </div>
+            </div> -->
+        </div>
+    </ng-template>
+
+    <ng-template #modalFooter>
+        <div class="flex items-center justify-center gap-7">
+            <div class="flex justify-center gap-9">
+                <button class="px-6 py-[6px] w-[120px] bg-[#969696] text-[#fff] font-medium rounded-lg text-center" nz-button nzType="default" (click)="handleCancel()">Đóng</button>
+            </div>
+            <div class="flex justify-center gap-9">
+                <button class="px-6 py-[6px] w-[120px] bg-red-500 text-[#fff] font-medium rounded-lg text-center" nz-button nzType="default" (click)="handleCancel()">Huỷ đơn</button>
+            </div>
+        </div>
+    </ng-template>
+</nz-modal>
+

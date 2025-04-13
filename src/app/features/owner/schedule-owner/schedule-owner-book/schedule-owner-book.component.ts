@@ -251,7 +251,7 @@ export class ScheduleOwnerBookComponent {
             ...res.data,
             status: this.getStatusFromCode(res.data.status)
           };
-          console.log("SelectedSlot: ", this.selectedSlot);
+          this.showModal = true;
         }
       },
       error: (err) => {
@@ -262,8 +262,6 @@ export class ScheduleOwnerBookComponent {
         );
       }
     });
-    
-    this.showModal = true;
   }
   
   // Helper method to convert status code to string
