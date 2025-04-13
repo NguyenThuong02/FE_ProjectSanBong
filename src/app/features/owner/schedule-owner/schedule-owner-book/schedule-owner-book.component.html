@@ -43,26 +43,7 @@
         </div>
         <div class="w-[75%]">
             <div class="mb-3 w-full flex flex-col items-center">
-                <h3 class="text-[24px] font-bold mb-2">Lịch sân</h3>
-                <!-- <div class="flex items-center gap-4 mb-4">
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 bg-green-500 rounded"></div>
-                        <span>Còn trống</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 bg-red-500 rounded"></div>
-                        <span>Đã đặt</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 bg-gray-500 rounded"></div>
-                        <span>Đóng cửa</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 bg-yellow-500 rounded"></div>
-                        <span>Chưa có lịch</span>
-                    </div>
-                </div> -->
-                
+                <h3 class="text-[24px] font-bold mb-2">Lịch sân</h3>                
                 <div class="flex gap-4 mb-4">
                     <button class="px-3 py-1 border rounded" [class.text-white]="currentWeekIndex === 0" [class.bg-primary]="currentWeekIndex === 0" (click)="showWeek(0)">Tuần này</button>
                     <button class="px-3 py-1 border rounded" [class.text-white]="currentWeekIndex === 1" [class.bg-primary]="currentWeekIndex === 1" (click)="showWeek(1)">Tuần sau</button>
@@ -95,39 +76,60 @@
 
 <!-- Modal chỉnh sửa trạng thái -->
 <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-[500px] max-w-full">
-        <h3 class="text-xl font-bold mb-4">Chỉnh sửa lịch sân</h3>
-        <div class="mb-4">
-            <p><span class="font-semibold">Ngày:</span> {{formatDate(selectedSlot.date)}}</p>
-            <p><span class="font-semibold">Giờ:</span> {{selectedSlot.time}}</p>
+    <div class="bg-white p-6 rounded-lg shadow-lg w-[650px] max-w-full">
+        <h3 class="text-xl text-center font-bold mb-4">Cập nhật lịch sân</h3>
+        <div class="mb-4 flex gap-[8px] items-center justify-start text-red-500">
+            <span class="font-semibold text-black">Lịch đặt sân: </span> 
+            {{selectedSlot.startTime}} - {{selectedSlot.endTime}} 
+            <span class="text-black">|</span> 
+            {{selectedSlot.startDate | date: "dd-MM-yyyy"}}
         </div>
         
-        <div class="mb-4">
-            <label class="block mb-2">Trạng thái:</label>
-            <select [(ngModel)]="selectedSlot.status" class="w-full p-2 border rounded">
-                <option value="AVAILABLE">Còn trống</option>
-                <option value="BOOKED">Đã đặt</option>
-                <option value="CLOSED">Đóng cửa</option>
-                <option value="WAITING_APPROVAL">Chờ phê duyệt</option>
-                <option value="NOT_AVAILABLE" [disabled]="selectedSlot.status === 'NOT_AVAILABLE'">Chưa có lịch</option>
-            </select>
+        <div class="flex justify-between items-center gap-[20px] mb-4">
+            <div class="flex-1">
+                <label class="block mb-2">Trạng thái:</label>
+                <select [(ngModel)]="selectedSlot.status" class="w-full p-2 border rounded">
+                    <option value="AVAILABLE" style="color: #22c55e">Còn trống</option>
+                    <option value="BOOKED" style="color: #ef4444">Đã đặt</option>
+                    <option value="CLOSED" style="color: #eab308">Đóng cửa</option>
+                    <option value="WAITING_APPROVAL" style="color: #9ca3af">Chờ phê duyệt</option>
+                    <option value="NOT_AVAILABLE" style="color: #000000; border: 1px solid #e5e7eb" [disabled]="selectedSlot.status === 'NOT_AVAILABLE'">Chưa có lịch</option>
+                </select>
+            </div>
+            <div class="flex-1">
+                <label class="block mb-2">Giá tiền gốc:</label>
+                <input type="number" [(ngModel)]="selectedSlot.basePrice" class="w-full p-2 border rounded" />
+            </div>
         </div>
         
-        <div class="mb-4">
-            <label class="block mb-2">Giá tiền:</label>
-            <input type="number" [(ngModel)]="selectedSlot.price" class="w-full p-2 border rounded" />
+        <div class="flex justify-between items-center gap-[20px] mb-4">
+            <div class="flex-1">
+                <label class="block mb-2">Hệ số:</label>
+                <input type="number" [(ngModel)]="selectedSlot.coefficient" class="w-full p-2 border rounded" />
+            </div>
+            <div class="flex-1">
+                <label class="block mb-2">Giá tiền cuối:</label>
+                <input type="number" disabled [(ngModel)]="selectedSlot.finalPrice" class="w-full p-2 border rounded" />
+            </div>
+            <div class="flex-1">
+                <label class="block mb-2">Tiền cọc:</label>
+                <input type="number" disabled [(ngModel)]="selectedSlot.deposit" class="w-full p-2 border rounded text-green-500" />
+            </div>
         </div>
-        
-        <div class="mb-6">
+        <div *ngIf="selectedSlot.status !== 'AVAILABLE' && selectedSlot.status !== 'CLOSED'" class="mb-2">
+            <label class="block mb-2">Hình ảnh bill thanh toán:</label>
+            <img [src]="selectedSlot.priceImageUrl" alt="Booking Image" class="w-full max-h-[200px] object-contain border rounded">
+        </div>
+        <div class="mb-4">
             <label class="block mb-2">Mô tả:</label>
             <textarea [(ngModel)]="selectedSlot.description" class="w-full p-2 border rounded h-24"></textarea>
         </div>
         
-        <div class="flex justify-end gap-3">
-            <button class="px-4 py-2 border rounded hover:bg-gray-100" (click)="closeModal()">Hủy</button>
+        <div class="flex justify-center items-center gap-3">
+            <button class="px-4 py-2 border rounded hover:bg-gray-100" (click)="closeModal()">Hủy bỏ</button>
             <button class="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark" 
                     [disabled]="selectedSlot.status === 'NOT_AVAILABLE'"
-                    (click)="saveSlotChanges()">Lưu thay đổi</button>
+                    (click)="saveSlotChanges()">Cập nhật</button>
         </div>
     </div>
 </div>

@@ -32,6 +32,10 @@ export class BookService {
     return this.http.post(this.apiUrl + `/api/booking/create`, body);
   }
 
+  updatedBooking(body?: any): Observable<any> {
+    return this.http.put(this.apiUrl + `/api/booking/calendar/update-slot-detail`, body);
+  }
+
   getAllManagement(page: number, pageSize: number): Observable<any> {
     return this.http.get(this.apiUrl + `/api/user/get-all-users?page=${page}&pageSize=${pageSize}`);
   }

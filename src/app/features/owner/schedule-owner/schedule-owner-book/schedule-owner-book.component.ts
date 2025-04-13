@@ -13,6 +13,7 @@ interface ScheduleSlot {
   price: number;
   description: string;
   slotId?: string;
+  imageUrl?: string;
 }
 
 @Component({
@@ -46,13 +47,7 @@ export class ScheduleOwnerBookComponent {
   
   // Modal properties
   showModal: boolean = false;
-  selectedSlot: ScheduleSlot = {
-    date: new Date(),
-    time: '',
-    status: 'AVAILABLE',
-    price: 0,
-    description: ''
-  };
+  selectedSlot: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -240,23 +235,46 @@ export class ScheduleOwnerBookComponent {
 
   // Open edit modal
   openEditModal(date: Date, time: string): void {
-    const slot = this.scheduleData.find(s => 
+    const slot:any = this.scheduleData.find(s => 
       this.isSameDay(s.date, date) && s.time === time
     );
     
-    if (slot) {
-      this.selectedSlot = {...slot};
-    } else {
-      this.selectedSlot = {
-        date: new Date(date),
-        time: time,
-        status: 'AVAILABLE',
-        price: 100000,
-        description: ''
-      };
-    }
+    const [startTime, endTime] = slot.time.split('-');
+        
+    // Format date for API (YYYY-MM-DD)
+    const formattedDate = this.formatDateForApi(date);
+    
+    this.bookService.getSlotDetail(slot.slotId, formattedDate, startTime, endTime).subscribe({
+      next: (res) => {
+        if (res && res.data) {
+          this.selectedSlot = {
+            ...res.data,
+            status: this.getStatusFromCode(res.data.status)
+          };
+          console.log("SelectedSlot: ", this.selectedSlot);
+        }
+      },
+      error: (err) => {
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Không thể lấy thông tin chi tiết!'
+        );
+      }
+    });
     
     this.showModal = true;
+  }
+  
+  // Helper method to convert status code to string
+  getStatusFromCode(statusCode: number): 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE' | 'WAITING_APPROVAL' {
+    switch (statusCode) {
+      case 0: return 'AVAILABLE';
+      case 1: return 'BOOKED';
+      case 2: return 'CLOSED';
+      case 4: return 'WAITING_APPROVAL';
+      default: return 'NOT_AVAILABLE';
+    }
   }
 
   // Close modal
@@ -266,25 +284,30 @@ export class ScheduleOwnerBookComponent {
 
   // Save slot changes
   saveSlotChanges(): void {
-    const index = this.scheduleData.findIndex(s => 
-      this.isSameDay(s.date, this.selectedSlot.date) && s.time === this.selectedSlot.time
-    );
+    const startDate = typeof this.selectedSlot.startDate === 'string' 
+    ? new Date(this.selectedSlot.startDate) 
+    : this.selectedSlot.startDate;
+    const formattedDate = this.formatDateForApi(startDate);
+
+    const updateData = {
+      slotId: this.selectedSlot.slotId,
+      date: formattedDate,
+      startTime: this.selectedSlot.startTime,
+      endTime: this.selectedSlot.endTime,
+      note: this.selectedSlot.description,
+      finalPrice: this.selectedSlot.finalPrice,
+      status: this.getStatusCode(this.selectedSlot.status)
+    };
     
-    if (index !== -1) {
-      this.scheduleData[index] = {...this.selectedSlot};
-    } else {
-      this.scheduleData.push({...this.selectedSlot});
-    }
-    
-    // In real implementation, you would update to backend:
-    /*
-    this.facilityService.updateScheduleSlot(this.idFacility, this.selectedSlot).subscribe({
+    this.bookService.updatedBooking(updateData).subscribe({
       next: (res) => {
         this.notification.create(
           'success',
           'Thành công!',
           'Cập nhật lịch thành công!'
         );
+        this.getViewInfo();
+        this.closeModal();
       },
       error: (err) => {
         this.notification.create(
@@ -294,42 +317,45 @@ export class ScheduleOwnerBookComponent {
         );
       }
     });
-    */
-    
-    // Show success notification
-    this.notification.create(
-      'success',
-      'Thành công!',
-      'Cập nhật lịch thành công!'
-    );
-    
-    this.closeModal();
   }
 
-  // Helper to check if two dates are the same day
+  formatDateForApi(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  getStatusCode(status: 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE' | 'WAITING_APPROVAL'): number {
+    switch (status) {
+      case 'AVAILABLE': return 0;
+      case 'BOOKED': return 1;
+      case 'CLOSED': return 2;
+      case 'WAITING_APPROVAL': return 4;
+      case 'NOT_AVAILABLE': 
+      default: return 3;
+    }
+  }
+
   isSameDay(date1: Date, date2: Date): boolean {
     return date1.getFullYear() === date2.getFullYear() &&
            date1.getMonth() === date2.getMonth() &&
            date1.getDate() === date2.getDate();
   }
 
-  // Format date for display
   formatDate(date: Date): string {
     return `${date.getDate()}/${date.getMonth() + 1}`;
   }
 
-  // Get day name
   getDayName(date: Date): string {
     const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
     return days[date.getDay()];
   }
 
-  // Get count by status for display in sidebar
   getCountByStatus(status: 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE' | 'WAITING_APPROVAL'): number {
     return this.scheduleData.filter(slot => slot.status === status).length;
   }
 
-  // Get total slots
   getTotalSlots(): number {
     return this.scheduleData.length;
   }

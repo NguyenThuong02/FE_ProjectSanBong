@@ -163,8 +163,8 @@
     "notify": "Notification",
     "registerSuccess": "Register Success",
     "confirmDelete": "Confirm Delete",
-    "wrongUserNameOrpassword": "Wrong username or password",
-    "TokenExpired": "Login session expired please try again"
+    "wrongUserNameOrpassword": "Tài khoản hoặc mật khẩu không đúng",
+    "TokenExpired": "Hết phiên đăng nhập, hãy thử lại"
   },
 
   "item": {
