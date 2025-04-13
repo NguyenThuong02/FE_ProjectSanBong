@@ -84,7 +84,18 @@
                 <button class="px-6 py-[6px] w-[120px] bg-[#969696] text-[#fff] font-medium rounded-lg text-center" nz-button nzType="default" (click)="handleCancel()">Đóng</button>
             </div>
             <div class="flex justify-center gap-9">
-                <button class="px-6 py-[6px] w-[120px] bg-red-500 text-[#fff] font-medium rounded-lg text-center" nz-button nzType="default" (click)="handleCancel()">Huỷ đơn</button>
+                <button 
+                    class="px-6 py-[6px] w-[120px] bg-red-500 text-[#fff] font-medium rounded-lg text-center" 
+                    nz-button 
+                    nz-popconfirm
+                    nzPopconfirmTitle="Bạn có chắc chắn muốn huỷ đơn này không?"
+                    nzPopconfirmPlacement="top"
+                    nzOkText="Đồng ý"
+                    nzCancelText="Huỷ"
+                    (nzOnConfirm)="handleCancelOrder()"
+                >
+                    Huỷ đơn
+                </button>
             </div>
         </div>
     </ng-template>
