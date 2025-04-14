@@ -16,33 +16,50 @@
             </div>
         </div>
         <form class="flex flex-col gap-2 mt-4 p-[1px] " [formGroup]="form">
+            <div class="w-full flex flex-col items-center gap-3 justify-center mb-4">
+                <div *ngIf="!imagePreview" class="w-[150px] h-[150px] border-2 border-dashed border-gray-300 rounded-full flex flex-col items-center justify-center cursor-pointer" (click)="fileInput.click()">
+                    <i class="fa-regular fa-user text-4xl text-gray-400 mb-2"></i>
+                    <p class="text-gray-500 text-sm text-center">Nhấp để tải lên ảnh đại diện</p>
+                    <input 
+                        #fileInput 
+                        type="file" 
+                        accept="image/*" 
+                        class="hidden" 
+                        (change)="onFileSelected($event)"
+                    />
+                </div>
+                <div *ngIf="imagePreview" class="relative">
+                    <img [src]="imagePreview" alt="Avatar" class="w-[150px] h-[150px] object-cover rounded-full border-2 border-gray-200">
+                    <button *ngIf="isEdit"
+                        class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md"
+                        (click)="removeImage()"
+                    >
+                        <i class="fa-solid fa-times text-xs"></i>
+                    </button>
+                </div>
+                <div *ngIf="uploadProgress > 0 && uploadProgress < 100" class="w-full max-w-[200px]">
+                    <div class="bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-blue-600 h-2.5 rounded-full" [style.width.%]="uploadProgress"></div>
+                    </div>
+                    <p class="text-xs text-center mt-1">Đang tải lên: {{ uploadProgress }}%</p>
+                </div>
+            </div>
+
             <div class="flex w-full gap-9">
                 <div class="flex flex-col flex-1">
                     <span class="mb-2"
                     [ngClass]="!isEdit ? 'font-normal text-[#888]' : 'font-medium text-textColor' "
-                    >Họ và tên<span class="text-red-500">*</span></span>
-                    <mat-form-field class="custom-input " appearance="outline">
-                        <input matInput placeholder="Nhập họ và tên" formControlName="fullName" />
-                        <mat-error
-                            *ngIf="form.get('fullName')?.errors?.['required']&& (form.get('fullName')?.dirty || form.get('fullName')?.touched)"
-                            class="text-red-600">
-                            Vui lòng nhập đầy đủ thông tin!
-                        </mat-error>
+                    >Họ và tên</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput formControlName="fullName" />
                     </mat-form-field>
                 </div>
-                <div class=" flex flex-col flex-1">
+                <div class="flex flex-col flex-1">
                     <span class="mb-2"
                     [ngClass]="!isEdit ? 'font-normal text-[#888]' : 'font-medium text-textColor' "
-                    >Ngày sinh<span class="text-red-500">*</span></span>
-                    <mat-form-field class="custom-input " appearance="outline">
-                        <input placeholder="Nhập ngày sinh" formControlName="dob" matInput [matDatepicker]="picker2" />
-                        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-                        <mat-datepicker #picker2></mat-datepicker>
-                        <mat-error
-                            *ngIf="form.get('dob')?.errors?.['required']&& (form.get('dob')?.dirty || form.get('dob')?.touched)"
-                            class="text-red-600">
-                            Vui lòng nhập đầy đủ thông tin!
-                        </mat-error>
+                    >Tên đăng nhập</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput formControlName="userName" />
                     </mat-form-field>
                 </div>
             </div>
@@ -50,31 +67,29 @@
                 <div class="flex flex-col flex-1">
                     <span class="mb-2"
                     [ngClass]="!isEdit ? 'font-normal text-[#888]' : 'font-medium text-textColor' "
-                    >Username<span class="text-red-500">*</span></span>
-                    <mat-form-field class="custom-input " appearance="outline">
-                        <input matInput placeholder="Nhập username" formControlName="userName" />
-                        <mat-error
-                            *ngIf="form.get('userName')?.errors?.['required']&& (form.get('userName')?.dirty || form.get('userName')?.touched)"
-                            class="text-red-600">
-                            Vui lòng nhập đầy đủ thông tin!
-                        </mat-error>
+                    >Ngày sinh</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput [matDatepicker]="picker" formControlName="dob" />
+                        <mat-datepicker-toggle
+                            matIconSuffix
+                            [for]="picker"
+                        ></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
                     </mat-form-field>
                 </div>
                 <div class="flex flex-col flex-1">
                     <span class="mb-2"
                     [ngClass]="!isEdit ? 'font-normal text-[#888]' : 'font-medium text-textColor' "
-                    >Giới tính<span class="text-red-500">*</span></span>
-                    <mat-form-field class="custom-input " appearance="outline">
+                    >Giới tính</span>
+                    <mat-form-field class="custom-input" appearance="outline">
                         <mat-select formControlName="gender">
-                            <mat-option *ngFor="let gender of listGender" [value]="gender.value">
-                              {{ gender.label }}
+                            <mat-option
+                                *ngFor="let item of listGender"
+                                [value]="item.value"
+                            >
+                                {{ item.label }}
                             </mat-option>
                         </mat-select>
-                        <mat-error
-                            *ngIf="form.get('gender')?.errors?.['required']&& (form.get('gender')?.dirty || form.get('gender')?.touched)"
-                            class="text-red-600">
-                            {{'PopUpRegister.noEmty'|translate}}
-                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>
@@ -82,56 +97,38 @@
                 <div class="flex flex-col flex-1">
                     <span class="mb-2"
                     [ngClass]="!isEdit ? 'font-normal text-[#888]' : 'font-medium text-textColor' "
-                    >Số điện thoại<span
-                            class="text-red-500 text-[8px] cursor-pointer translate-y-[-5px] px-1 ml-1 inline-block border border-red-500"
-                            >i</span></span>
-                    <mat-form-field class="custom-input " appearance="outline">
-                        <input placeholder="Nhập số điện thoại" matInput formControlName="phoneNumber" maxlength="10" />
-                        <mat-error *ngIf="form.get('phoneNumber')?.errors?.['phoneNumberCheck']" class="text-red-600">
-                            Số điện thoại không hợp lệ!
-                        </mat-error>
+                    >Số điện thoại</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput formControlName="phoneNumber" />
                     </mat-form-field>
                 </div>
                 <div class="flex flex-col flex-1">
                     <span class="mb-2"
                     [ngClass]="!isEdit ? 'font-normal text-[#888]' : 'font-medium text-textColor' "
-                            >Email<span
-                            class="text-red-500 text-[8px] cursor-pointer translate-y-[-5px] px-1 ml-1 inline-block border border-red-500">i</span></span>
-                    <div class="flex relative">
-                        <mat-form-field class="custom-input   w-full" appearance="outline">
-                            <input placeholder="Nhập Email" class="!w-[100%]" matInput formControlName="email" />
-                            <mat-error
-                                *ngIf="form.get('email')?.errors?.['email']&& (form.get('email')?.dirty || form.get('email')?.touched)"
-                                class="text-red-600">
-                                Email không hợp lệ!
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
+                    >Email</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput formControlName="email" />
+                    </mat-form-field>
                 </div>
             </div>
-            <div class="flex flex-col w-full">
+            <div class="flex w-full gap-9">
                 <div class="flex flex-col flex-1">
                     <span class="mb-2"
                     [ngClass]="!isEdit ? 'font-normal text-[#888]' : 'font-medium text-textColor' "
-                    >Địa chỉ<span class="text-red-500">*</span></span>
-                    <mat-form-field class="custom-input " appearance="outline">
-                        <input matInput placeholder="Nhập địa chỉ" formControlName="address" />
-                        <mat-error
-                        *ngIf="form.get('address')?.errors?.['required']&& (form.get('address')?.dirty || form.get('address')?.touched)"
-                        class="text-red-600">
-                        Vui lòng nhập đầy đủ thông tin
-                    </mat-error>
+                    >Địa chỉ</span>
+                    <mat-form-field class="custom-input" appearance="outline">
+                        <input matInput formControlName="address" />
                     </mat-form-field>
+                </div>
+            </div>
+            <div *ngIf="isEdit" class="flex justify-center items-center mt-[40px] gap-4">
+                <div (click)="handleCancel()" class="rounded-lg px-3 py-2 font-semibold text-white bg-[#BAC1CC] cursor-pointer">
+                    Huỷ bỏ
+                </div>
+                <div (click)="handleSubmit()" class="rounded-lg px-3 py-2 font-semibold text-white bg-[#22B14C] cursor-pointer">
+                    Lưu thay đổi
                 </div>
             </div>
         </form>
-        <div class="flex justify-center items-center mt-6 h-[76px]">
-            <div *ngIf="isEdit" class="w-fit flex gap-6">
-                <button type="button" (click)="handleEdit()"
-                    class="w-[124px] py-2 !bg-danger rounded-lg shadow-shadow-timeword font-bold text-[16px] text-white hover:opacity-80">{{"Button.cancel"|translate}}</button>
-                <button type="button" (click)="handleSubmit()"
-                    class="w-[124px] py-2 !bg-[#1DC469] rounded-lg shadow-shadow-timeword font-bold text-[16px] text-white hover:opacity-80">{{"Button.save"|translate}}</button>
-            </div>
-        </div>
     </div>
 </div>

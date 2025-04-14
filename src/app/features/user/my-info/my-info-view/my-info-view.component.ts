@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,6 +14,7 @@ import { phoneNumberValidator } from '../../../../shared/validate/check-phone-nu
 import { AccountService } from '../../../../core/api/account.service';
 import { RouterLink } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 
 
 @Component({
@@ -38,12 +39,17 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
   styleUrl: './my-info-view.component.scss'
 })
 export class MyInfoViewComponent implements OnInit {
+  @ViewChild('fileInput') fileInput!: ElementRef;
   requiredMsg: string = '';
   fullName: string = '';
   isLoadingSaveEdit: boolean = false;
+  imagePreview: string | null = null;
   isEdit: boolean = false;
   idOwner: any;
   nameOwner: any;
+  uploadProgress: number = 0;
+  selectedFileName: string = '';
+  
   public listGender: any = [
     {
       value: 0,
@@ -59,6 +65,7 @@ export class MyInfoViewComponent implements OnInit {
       private cdr: ChangeDetectorRef,
       private accountService: AccountService,
       private notification: NzNotificationService,
+      private http: HttpClient
   ) {     
   }
   ngOnInit(): void {
@@ -90,6 +97,7 @@ export class MyInfoViewComponent implements OnInit {
       email: [null, [Validators.required, Validators.email]],
       address: [null, Validators.required],
       gender: [true, Validators.required],
+      avatarUrl: [null]
   });
 
 
@@ -104,8 +112,14 @@ export class MyInfoViewComponent implements OnInit {
           gender: res.gender,
           phoneNumber: res.phone,
           email: res.email,
-          address: res.address
+          address: res.address,
+          avatarUrl: res.avatarUrl
         });
+        
+        if (res.avatarUrl) {
+          this.imagePreview = res.avatarUrl;
+        }
+        
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -118,6 +132,67 @@ export class MyInfoViewComponent implements OnInit {
     })
   }
 
+  // Image upload methods
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFileName = file.name;
+      
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagePreview = e.target.result;
+        this.cdr.detectChanges();
+      };
+      reader.readAsDataURL(file);
+      this.uploadFile(file);
+    }
+  }
+
+  uploadFile(file: File): void {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    this.http.post('https://cdn-test.eztek.net/gateway/Media/Upload', formData, {
+      reportProgress: true,
+      observe: 'events'
+    }).subscribe({
+      next: (event) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          this.uploadProgress = Math.round(100 * event.loaded / event.total);
+          this.cdr.detectChanges();
+        } else if (event.type === HttpEventType.Response) {
+          const response = event.body as any;
+          if (response && Array.isArray(response) && response.length > 0) {
+            this.form.patchValue({
+              avatarUrl: response[0]
+            });
+            this.notification.create(
+              'success',
+              'Thành công!',
+              'Tải ảnh lên thành công!'
+            );
+          }
+        }
+      },
+      error: (err) => {
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Tải ảnh lên thất bại!'
+        );
+        this.uploadProgress = 0;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  removeImage(): void {
+    this.imagePreview = null;
+    this.form.patchValue({
+      avatarUrl: null
+    });
+    this.selectedFileName = '';
+  }
 
   handleSubmit(): void {
     const body = {
@@ -125,7 +200,8 @@ export class MyInfoViewComponent implements OnInit {
         gender: this.form.get('gender')?.value,
         address: this.form.get('address')?.value,
         birthday: this.form.get('dob')?.value,
-        phone: this.form.get('phoneNumber')?.value
+        phone: this.form.get('phoneNumber')?.value,
+        avatarUrl: this.form.get('avatarUrl')?.value,
     }
     this.accountService.updateInfo(body).subscribe({
       next: (res) => {
@@ -148,8 +224,10 @@ export class MyInfoViewComponent implements OnInit {
       },
     });
   }
+  
   handleCancel(): void {
-      
+    this.isEdit = false;
+    this.form.disable();
+    this.getViewInfo();
   }
-
 }

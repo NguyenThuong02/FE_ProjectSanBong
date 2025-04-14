@@ -21,7 +21,7 @@ export class AccountService {
   }
 
   updateInfo(body: any): Observable<any> {
-    return this.http.patch(this.apiUrl + '/api/user/update-user', body)
+    return this.http.put(this.apiUrl + '/api/user/update-profile', body)
   }
 
   forgotPassword(body: any): Observable<any> {
