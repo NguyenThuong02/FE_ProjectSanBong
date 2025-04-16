@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,6 +7,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { BookService } from '../../../../../core/api/book.service';
 
 @Component({
   selector: 'app-modal-cancel',
@@ -23,7 +24,8 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
     NzPopconfirmModule,
   ],
   templateUrl: './modal-cancel.component.html',
-  styleUrl: './modal-cancel.component.scss'
+  styleUrl: './modal-cancel.component.scss',
+  providers: [DatePipe] 
 })
 export class ModalCancelComponent {
   @Input() isVisibleCancel!: boolean;
@@ -32,7 +34,9 @@ export class ModalCancelComponent {
   @Output() changeVisibleCancel = new EventEmitter<any>();
 
   constructor(
-    private notification: NzNotificationService
+    private notification: NzNotificationService,
+    private bookService: BookService,
+    private datePipe: DatePipe 
   ) {}
 
   handleCancel(): void {
@@ -45,12 +49,35 @@ export class ModalCancelComponent {
   }
 
   handleCancelOrder(): void {
-    // Here you would add the API call to cancel the order
-    this.notification.success(
-      'Thành công',
-      'Huỷ đơn thành công',
-      { nzDuration: 3000 }
-    );
-    this.changeVisibleCancel.emit(false);
+      let formattedDate = this.slot?.startDate;
+      if (typeof this.slot?.startDate === 'string') {
+        const dateObj = new Date(this.slot.startDate);
+        formattedDate = this.datePipe.transform(dateObj, 'yyyy-MM-dd');
+      }
+      
+      const body = {
+        slotId: this.slot?.slotId,
+        date: formattedDate, 
+        startTime: this.slot?.startTime,
+        endTime: this.slot?.endTime
+      }
+      
+    this.bookService.cancelBooking(body).subscribe({
+      next: (res: any) => {
+          this.notification.success(
+            'Thành công',
+            'Huỷ đơn thành công',
+            { nzDuration: 3000 }
+          );
+          this.changeVisibleCancel.emit(false);
+      },
+      error: (err: any) => {
+        this.notification.create(
+          'error',
+          'Thất bại!',
+          'Huỷ đơn thất bại!'
+        );
+      },
+    })
   }
 }

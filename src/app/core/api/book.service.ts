@@ -32,6 +32,10 @@ export class BookService {
     return this.http.post(this.apiUrl + `/api/booking/create`, body);
   }
 
+  cancelBooking(body?: any): Observable<any> {
+    return this.http.post(this.apiUrl + `/api/booking/cancel-booking`, body);
+  }
+
   updatedBooking(body?: any): Observable<any> {
     return this.http.put(this.apiUrl + `/api/booking/calendar/update-slot-detail`, body);
   }

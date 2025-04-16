@@ -11,6 +11,7 @@ import { BookService } from '../../../../../core/api/book.service';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpEventType } from '@angular/common/http';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
   selector: 'app-modal-book',
@@ -24,6 +25,7 @@ import { HttpClient, HttpEventType } from '@angular/common/http';
     MatFormFieldModule,
     MatSelectModule,
     ReactiveFormsModule,
+    NzSpinModule, // Add this if you want to use Ant Design's spinner
   ],
   templateUrl: './modal-book.component.html',
   styleUrl: './modal-book.component.scss',
@@ -36,6 +38,9 @@ export class ModalBookComponent {
   @Input() slot: any;
   @Input() detailInfo: any;
   @Output() changeVisibleBook = new EventEmitter<any>();
+
+  // Add loading state
+  isLoading: boolean = false;
 
   // Image upload properties
   paymentImage: string | null = null;
@@ -75,6 +80,9 @@ handleOk(): void {
     return;
   }
 
+  // Set loading state to true before API call
+  this.isLoading = true;
+
   let formattedBookingDate = this.slot.startDate;
   if (this.slot.startDate instanceof Date) {
     formattedBookingDate = this.datePipe.transform(this.slot.startDate, 'yyyy-MM-dd');
@@ -111,6 +119,8 @@ handleOk(): void {
 
   this.bookService.createBooking(body).subscribe({
     next: (res) => {
+      // Set loading state to false on success
+      this.isLoading = false;
       this.notification.success(
         'Thành công',
         'Đặt sân thành công',
@@ -122,6 +132,8 @@ handleOk(): void {
       this.changeVisibleBook.emit({ visible: false, success: true });
     },
     error: (err) => {
+      // Set loading state to false on error
+      this.isLoading = false;
       this.notification.error(
         'Thất bại',
         'Đặt sân không thành công',

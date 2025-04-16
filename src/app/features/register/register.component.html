@@ -80,7 +80,14 @@
                 <input class="cursor-pointer h-4 w-4" type="checkbox"/>
                 <span class="text-white">Tôi đồng ý với <span class="underline cursor-pointer">Điều khoản và Điều kiện</span></span>
             </div>
-            <div class="w-full mt-[20px] py-[8px] cursor-pointer bg-[#528558] rounded-[15px] text-center text-white text-[20px] font-bold" (click)="handleOk()">Đăng ký</div>
+            <div class="w-full mt-[20px] py-[8px] cursor-pointer bg-[#528558] rounded-[15px] text-center text-white text-[20px] font-bold" (click)="handleOk()">
+                <ng-container *ngIf="!isLoading; else loadingTemplate">
+                    Đăng ký
+                </ng-container>
+                <ng-template #loadingTemplate>
+                    <i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...
+                </ng-template>
+            </div>
         </div>
     </div>
 </div>

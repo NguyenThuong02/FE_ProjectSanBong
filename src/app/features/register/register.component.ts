@@ -31,6 +31,7 @@ import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { HttpErrorResponse } from '@angular/common/http';
 import { passWordValidator } from '../../shared/validate/check-password.directive';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
   selector: 'app-register',
@@ -48,6 +49,7 @@ import { passWordValidator } from '../../shared/validate/check-password.directiv
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
+    NzSpinModule, // Add this if you want to use Ant Design's spinner
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
@@ -61,7 +63,7 @@ export class RegisterComponent implements OnInit {
   hideRePass: boolean = true;
   avatarUrl: string | null = null;
   identityCardUrl: string | null = null;
-  
+  isLoading: boolean = false;
   // Thêm các biến để quản lý lỗi từ API
   emailError: string | null = null;
   phoneError: string | null = null;
@@ -124,7 +126,7 @@ export class RegisterComponent implements OnInit {
   handleOk(): void {
     // Reset các lỗi trước khi gửi request
     this.resetApiErrors();
-    
+    this.isLoading = true;
     const body = {
       userName: this.form.get('username')?.value,
       fullName: this.form.get('fullName')?.value,
@@ -136,6 +138,7 @@ export class RegisterComponent implements OnInit {
     
     this.accountService.register(body).subscribe({
       next: (res) => {
+        this.isLoading = false;
         this.notification.create(
           'success',
           'Xác thực thành công',
@@ -144,6 +147,7 @@ export class RegisterComponent implements OnInit {
         this.router.navigate(['/login']);
       },
       error: (err: HttpErrorResponse) => {
+        this.isLoading = false;
         const errorMessage = err.error || err || '';
         console.log('vvv: ', err.error);
         if (errorMessage.includes('Duplicate entry') && errorMessage.includes('CellPhone')) {

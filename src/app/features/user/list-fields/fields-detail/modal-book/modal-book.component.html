@@ -141,7 +141,15 @@
             <button class="px-5 py-2 bg-[#969696] text-[#fff] font-medium rounded-lg" nz-button nzType="default" (click)="handleCancel()">Hủy</button>
             <button nz-button nzType="primary"
             class="!bg-[#14b82e] px-5 py-2 text-[#fff] font-medium rounded-lg"
-            (click)="handleOk()">Đồng ý</button>
+            [disabled]="isLoading"
+            (click)="handleOk()">
+                <ng-container *ngIf="!isLoading; else loadingTemplate">
+                    Đồng ý
+                </ng-container>
+                <ng-template #loadingTemplate>
+                    <i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang xử lý...
+                </ng-template>
+            </button>
         </div>
     </ng-template>
 </nz-modal>
