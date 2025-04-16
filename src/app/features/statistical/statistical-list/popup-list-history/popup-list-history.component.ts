@@ -9,6 +9,8 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInput } from '@angular/material/input';
 
 interface OrderHistory {
   id: string;
@@ -28,7 +30,9 @@ interface OrderHistory {
     NzModalModule,
     NzIconModule,
     MatFormFieldModule,
+    MatDatepickerModule,
     MatSelectModule,
+    MatInput,
     ReactiveFormsModule,
     NzSpinModule,
     NzTableModule,
