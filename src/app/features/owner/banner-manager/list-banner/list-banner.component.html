@@ -1,0 +1,62 @@
+<div class="h-[100vh] w-full p-5">
+    <div class="mb-8 flex justify-between items-center">
+        <div></div>
+        <div [routerLink]="['/banner/add']" class="px-[12px] py-[8px] rounded-[6px] flex items-center justify-center gap-1 border border-primary text-primary cursor-pointer hover:bg-primary hover:text-[#fff]" >
+            <i class="fa-solid fa-circle-plus"></i>
+            Thêm danh sách banner mới
+        </div>
+    </div>
+    <div>
+      <div class="mt-[27px] w-full">
+      <table class="text-[13px] font-normal w-full relative">
+        <thead class="border-b-[#96E6A1] border-b *:py-4 *:text-center bg-white z-2  font-medium sticky top-0 ">
+            <th class="px-3">#</th>
+            <th><div class="text-left">Tiêu đề</div></th>
+            <th class=""><div class="text-left">Danh sách banner</div></th>
+            <th class=""><div class="text-center">Trạng thái</div></th>
+            <th class="">Thao tác</th>
+        </thead>
+        <div class="w-full" *ngIf="isLoading; else data">
+          <div class="flex items-center justify-center absolute mt-[100px] !w-[100%]">
+            <nz-spin class="inline-block w-full text-center" nzSize="large" ></nz-spin>
+          </div>
+        </div>  
+        <div class="w-full" *ngIf="listPrice.length == 0">
+          <div class="flex flex-col items-center justify-center absolute mt-[100px] !w-[100%]">
+            <span nz-icon nzType="exclamation-circle" nzTheme="outline" class="text-[20px]"></span>
+            <div class="text-myText font-[500] text-[14px] mt-[10px]">Danh sách trống</div>
+          </div>
+        </div>  
+        <ng-template #data>
+          <tbody> 
+            <tr class="*:py-4 *:text-center border-b border px-2 h-[60px]" *ngFor="let item of listPrice; let index = index">
+              <td class="px-3">
+                {{index + 1}}
+              </td>
+              <td >
+                <div class="text-left flex items-center justify-start gap-2 font-semibold">
+                   {{item?.facilityName}}
+                </div>
+              </td>
+              <td >
+                <div class="flex justify-center text-primary font-medium">{{item?.finalPrice}}</div>
+              </td>
+              <td class="relative">
+                <i class="fa-solid fa-ellipsis-vertical cursor-pointer p-4 hover:scale-105 hover:text-primary" (click)="toggleMenu(item.id)"></i>
+                <div *ngIf="selectedBannerId === item.id" class="absolute right-0 mt-1 w-[120px] bg-white border rounded-lg shadow-lg z-10">
+                  <div class="p-2 cursor-pointer hover:bg-gray-200" (click)="viewDetail(item.id)">Xem chi tiết</div>
+                  <div
+                  class="p-2 cursor-pointer hover:bg-gray-200 text-red-500">Xoá</div>
+                </div>
+              </td>              
+            </tr>
+          </tbody> 
+        </ng-template>                   
+      </table>
+      </div>
+      <div class="float-right w-fit mt-5">
+        <app-pagi [totalCount]="totalCount" [page]="params.page" [pageSize]="params.pageSize"
+          (PageEvent)="changePage($event)" (PageSizeEvent)="changePageSize($event)"></app-pagi>
+      </div>
+    </div>
+</div>

@@ -241,6 +241,7 @@ export class MainComponent implements OnInit, OnChanges {
       { pattern: /^\/user-management\/edit\/[0-9a-f-]+$/, title: 'Chi tiết tài khoản' },
       { pattern: /^\/shedule-owner\/book\/[0-9a-f-]+$/, title: 'Chi tiết lịch sân' },
       { pattern: /^\/price\/detail\/[0-9a-f-]+$/, title: 'Chi tiết bảng giá' },
+      { pattern: /^\/banner\/detail\/[0-9a-f-]+$/, title: 'Chi tiết banner' },
     ];
     for (const route of dynamicRoutePatterns) {
       if (route.pattern.test(currentUrl)) {
@@ -262,6 +263,8 @@ export class MainComponent implements OnInit, OnChanges {
       '/shedule-owner/add': 'Tạo lịch sân mới',
       '/price': 'Quản lý giá tiền',
       '/price/add': 'Tạo giá tiền mới',
+      '/banner': 'Quản lý Banner',
+      '/banner/add': 'Tạo banner mới',
       '/home-page': 'Trang chủ',
       '/list-feilds': 'Danh sách sân',
       '/concert': 'Danh sách sự kiện',
