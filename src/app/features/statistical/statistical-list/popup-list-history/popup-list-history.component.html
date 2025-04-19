@@ -1,0 +1,46 @@
+<nz-modal nzWidth="850px" [(nzVisible)]="isVisible" nzCentered [nzContent]="modalContent"
+    [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()" [nzTitle]="'Lịch sử đơn đặt hàng'" class="rounded-xl">
+
+    <ng-template #modalContent>
+        <div class="flex w-full gap-5 items-start">
+            <mat-form-field class="custom-input w-[40%]" appearance="outline">
+                <input matInput placeholder="Tìm kiếm theo tên sân"/>
+            </mat-form-field>
+            <mat-form-field class="custom-input w-[40%]" appearance="outline">
+                <input matInput [matDatepicker]="startDatePicker" placeholder="Ngày đặt sân">
+                <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #startDatePicker></mat-datepicker>
+            </mat-form-field>
+            <div class="py-2 px-4 border-none rounded-[6px] bg-primary font-medium text-white text-[16px] cursor-pointer">
+                Tìm kiếm
+            </div>
+        </div>
+        <div *ngIf="listHistory.length === 0" class="text-center py-5">
+            Không có dữ liệu đơn hàng
+        </div>
+        <div *ngIf="listHistory.length > 0" class="order-history-list">
+            <nz-table #orderTable [nzData]="listHistory" [nzPageSize]="10">
+                <thead>
+                    <tr>
+                        <th>Tên sân</th>
+                        <th>Ngày đặt</th>
+                        <th>Thời gian</th>
+                        <th>Tổng tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of listHistory">
+                        <td>{{ item.facilityName }}</td>
+                        <td>{{ item.bookingDate | date:'dd/MM/yyyy' }}</td>
+                        <td>{{item.startTime}} - {{item.endTime}}</td>
+                        <td>{{ item.price }} VND</td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+    </ng-template>
+
+    <ng-template #modalFooter>
+        <button nz-button nzType="default" (click)="handleCancel()">Đóng</button>
+    </ng-template>
+</nz-modal>
