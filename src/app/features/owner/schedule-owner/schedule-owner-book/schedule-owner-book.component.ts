@@ -44,7 +44,7 @@ export class ScheduleOwnerBookComponent {
   // Week navigation
   currentWeekIndex: number = 0;
   currentWeekDays: Date[] = [];
-  
+  weekOffset: number = 0;
   // Modal properties
   showModal: boolean = false;
   selectedSlot: any;
@@ -87,19 +87,21 @@ export class ScheduleOwnerBookComponent {
   initializeSchedule(): void {
     const today = new Date();
     
-    // Generate slots for 3 weeks
-    for (let week = 0; week < 3; week++) {
+    for (let week = -2; week <= 2; week++) {
       for (let day = 0; day < 7; day++) {
         const date = new Date(today);
-        date.setDate(today.getDate() + (week * 7) + day);
+        const currentDay = today.getDay();
+        const diff = currentDay === 0 ? -6 : 1 - currentDay; 
+        date.setDate(today.getDate() + diff);
+        date.setDate(date.getDate() + (week * 7) + day);
         
         for (let time of this.timeSlots) {
           this.scheduleData.push({
             date: new Date(date),
             time: time,
-            status: 'AVAILABLE', // Default to available
-            price: 100000, // Default price
-            description: ''
+            status: 'NOT_AVAILABLE', 
+            price: 0,
+            description: 'Chưa tạo giá tiền'
           });
         }
       }
@@ -144,11 +146,15 @@ export class ScheduleOwnerBookComponent {
   
   generateMissingSlots(): void {
     const today = new Date();
+    const currentDay = today.getDay();
+    const firstDayOfCurrentWeek = new Date(today);
+    const diff = currentDay === 0 ? -6 : 1 - currentDay;
+    firstDayOfCurrentWeek.setDate(today.getDate() + diff);
 
-    for (let week = 0; week < 3; week++) {
+    for (let week = -2; week <= 2; week++) {
       for (let day = 0; day < 7; day++) {
-        const date = new Date(today);
-        date.setDate(today.getDate() + (week * 7) + day);
+        const date = new Date(firstDayOfCurrentWeek);
+        date.setDate(firstDayOfCurrentWeek.getDate() + (week * 7) + day);
         
         for (let time of this.timeSlots) {
           // Check if this slot exists in scheduleData
@@ -171,25 +177,63 @@ export class ScheduleOwnerBookComponent {
     }
   }
 
-  // Generate days for a specific week
-  generateWeekDays(weekIndex: number): void {
+  generateWeekDays(weekOffset: number): void {
+    this.weekOffset = weekOffset;
     this.currentWeekDays = [];
     const today = new Date();
+    const currentDay = today.getDay(); 
+    const firstDayOfWeek = new Date(today);
+    const diff = currentDay === 0 ? -6 : 1 - currentDay; // Nếu là CN thì lùi 6 ngày, nếu không thì lùi (currentDay - 1) ngày
     
-    // Start from today instead of finding Sunday
-    const firstDay = new Date(today);
-    
-    // Add weekIndex weeks
-    if (weekIndex > 0) {
-      firstDay.setDate(firstDay.getDate() + (weekIndex * 7));
-    }
-    
-    // Generate 7 days starting from today
+    firstDayOfWeek.setDate(today.getDate() + diff);
+    firstDayOfWeek.setDate(firstDayOfWeek.getDate() + (weekOffset * 7));
     for (let i = 0; i < 7; i++) {
-      const nextDay = new Date(firstDay);
-      nextDay.setDate(firstDay.getDate() + i);
+      const nextDay = new Date(firstDayOfWeek);
+      nextDay.setDate(firstDayOfWeek.getDate() + i);
       this.currentWeekDays.push(nextDay);
     }
+  }
+
+  navigateWeek(direction: number): void {
+    const newOffset = this.weekOffset + direction;
+    if (newOffset >= -2 && newOffset <= 2) {
+      this.generateWeekDays(newOffset);
+    }
+  }
+
+  getWeekRangeText(): string {
+    if (this.currentWeekDays.length === 0) return '';
+    
+    const firstDay = this.currentWeekDays[0];
+    const lastDay = this.currentWeekDays[6];
+    
+    const formatDay = (date: Date) => {
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    };
+    
+    return `${formatDay(firstDay)} - ${formatDay(lastDay)}`;
+  }
+
+  getWeekLabel(): string {
+    if (this.weekOffset === 0) return 'Tuần hiện tại';
+    if (this.weekOffset < 0) return `${Math.abs(this.weekOffset)} tuần trước`;
+    return `${this.weekOffset} tuần sau`;
+  }
+
+  getCountByStatusForCurrentWeek(status: 'AVAILABLE' | 'BOOKED' | 'CLOSED' | 'NOT_AVAILABLE' | 'WAITING_APPROVAL'): number {
+    if (!this.currentWeekDays.length) return 0;
+    
+    return this.scheduleData.filter(slot => {
+      const slotDate = new Date(slot.date);
+      const isInCurrentWeek = this.currentWeekDays.some(day => this.isSameDay(day, slotDate));
+      
+      return isInCurrentWeek && slot.status === status;
+    }).length;
+  }
+
+  getTotalSlotsForCurrentWeek(): number {
+    if (!this.currentWeekDays.length) return 0;
+    return this.timeSlots.length * this.currentWeekDays.length;
   }
 
   // Show a specific week

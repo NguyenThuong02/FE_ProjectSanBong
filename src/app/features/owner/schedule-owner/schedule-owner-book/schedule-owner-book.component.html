@@ -17,37 +17,50 @@
                 <div class="text-[14px] leading-[120%] font-semibold flex items-center justify-start">
                     <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
                     Đã đặt: 
-                    <span class="font-normal ml-[2px]">{{getCountByStatus('BOOKED')}}/{{getTotalSlots()}}</span>
+                    <span class="font-normal ml-[2px]">{{getCountByStatusForCurrentWeek('BOOKED')}}/{{getTotalSlotsForCurrentWeek()}}</span>
                 </div>
                 <div class="text-[14px] leading-[120%] font-semibold flex items-center justify-start">
                     <div class="w-4 h-4 bg-green-500 rounded mr-2"></div>
                     Còn trống: 
-                    <span class="font-normal ml-[2px]">{{getCountByStatus('AVAILABLE')}}/{{getTotalSlots()}}</span>
+                    <span class="font-normal ml-[2px]">{{getCountByStatusForCurrentWeek('AVAILABLE')}}/{{getTotalSlotsForCurrentWeek()}}</span>
                 </div>
                 <div class="text-[14px] leading-[120%] font-semibold flex items-center justify-start">
                     <div class="w-4 h-4 bg-yellow-500 rounded mr-2"></div>
                     Đóng: 
-                    <span class="font-normal ml-[2px]">{{getCountByStatus('CLOSED')}}/{{getTotalSlots()}}</span>
+                    <span class="font-normal ml-[2px]">{{getCountByStatusForCurrentWeek('CLOSED')}}/{{getTotalSlotsForCurrentWeek()}}</span>
                 </div>
                 <div class="text-[14px] leading-[120%] font-semibold flex items-center justify-start">
                     <div class="w-4 h-4 bg-gray-400 rounded mr-2"></div>
                     Chờ phê duyệt: 
-                    <span class="font-normal ml-[2px]">{{getCountByStatus('WAITING_APPROVAL')}}/{{getTotalSlots()}}</span>
+                    <span class="font-normal ml-[2px]">{{getCountByStatusForCurrentWeek('WAITING_APPROVAL')}}/{{getTotalSlotsForCurrentWeek()}}</span>
                 </div>
                 <div class="text-[14px] leading-[120%] font-semibold flex items-center justify-start">
                     <div class="w-4 h-4 bg-white-500 rounded border mr-2"></div>
                     Chưa có lịch: 
-                    <span class="font-normal ml-[2px]">{{getCountByStatus('NOT_AVAILABLE')}}/{{getTotalSlots()}}</span>
+                    <span class="font-normal ml-[2px]">{{getCountByStatusForCurrentWeek('NOT_AVAILABLE')}}/{{getTotalSlotsForCurrentWeek()}}</span>
                 </div>
             </div>
         </div>
         <div class="w-[75%]">
             <div class="mb-3 w-full flex flex-col items-center">
                 <h3 class="text-[24px] font-bold mb-2">Lịch sân</h3>                
-                <div class="flex gap-4 mb-4">
-                    <button class="px-3 py-1 border rounded" [class.text-white]="currentWeekIndex === 0" [class.bg-primary]="currentWeekIndex === 0" (click)="showWeek(0)">Tuần này</button>
-                    <button class="px-3 py-1 border rounded" [class.text-white]="currentWeekIndex === 1" [class.bg-primary]="currentWeekIndex === 1" (click)="showWeek(1)">Tuần sau</button>
-                    <button class="px-3 py-1 border rounded" [class.text-white]="currentWeekIndex === 2" [class.bg-primary]="currentWeekIndex === 2" (click)="showWeek(2)">2 tuần sau</button>
+                <div class="w-full flex items-center justify-around mb-4">
+                    <button class="px-3 py-1 border rounded" 
+                            [ngClass]="{'bg-primary': weekOffset > -2, 'bg-gray-300': weekOffset <= -2}"
+                            [disabled]="weekOffset <= -2"
+                            (click)="navigateWeek(-1)">
+                        <i class="fa-solid fa-chevron-left" [ngClass]="{'text-white font-bold': weekOffset > -2, 'text-gray-500': weekOffset <= -2}"></i>
+                    </button>
+                    <div class="text-center">
+                        <span class="font-medium">{{getWeekRangeText()}}</span>
+                        <div class="text-sm text-gray-500">{{getWeekLabel()}}</div>
+                    </div>
+                    <button class="px-3 py-1 border rounded" 
+                            [ngClass]="{'bg-primary': weekOffset < 2, 'bg-gray-300': weekOffset >= 2}"
+                            [disabled]="weekOffset >= 2"
+                            (click)="navigateWeek(1)">
+                        <i class="fa-solid fa-chevron-right" [ngClass]="{'text-white font-bold': weekOffset < 2, 'text-gray-500': weekOffset >= 2}"></i>
+                    </button>
                 </div>
             </div>
             
