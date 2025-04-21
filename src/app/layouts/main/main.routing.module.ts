@@ -53,6 +53,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'banner',
+        loadChildren: () =>
+          import('../../features/owner/banner-manager/banner-manager.routing.module').then(
+            (m) => m.BannerManagerRoutingModule,
+          ),
+      },
+      {
         path: 'changePassword',
         loadChildren: () =>
           import('../../features/user/change-password/change-password.routing.module').then(
