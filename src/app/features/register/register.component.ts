@@ -67,7 +67,7 @@ export class RegisterComponent implements OnInit {
   // Thêm các biến để quản lý lỗi từ API
   emailError: string | null = null;
   phoneError: string | null = null;
-
+  userNameError: string | null = null;
   listGender = [
     {
       label: 'Nam',
@@ -121,6 +121,7 @@ export class RegisterComponent implements OnInit {
   resetApiErrors(): void {
     this.emailError = null;
     this.phoneError = null;
+    this.userNameError = null;
   }
 
   handleOk(): void {
@@ -150,9 +151,9 @@ export class RegisterComponent implements OnInit {
         this.isLoading = false;
         const errorMessage = err.error || err || '';
         console.log('vvv: ', err.error);
-        if (errorMessage.includes('Duplicate entry') && errorMessage.includes('CellPhone')) {
-          this.phoneError = 'Số điện thoại đã được đăng ký';
-          this.form.get('cellPhone')?.markAsTouched();
+        if (errorMessage.message.includes('username already exists')) {
+          this.userNameError = 'Tên đăng nhập đã được sử dụng';
+          this.form.get('username')?.markAsTouched();
         }
         if (errorMessage.includes('Duplicate entry')) {
           this.emailError = 'Email đã được đăng ký';
